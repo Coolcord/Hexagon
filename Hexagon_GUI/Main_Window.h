@@ -2,10 +2,12 @@
 #define MAIN_WINDOW_H
 
 #include "../Hexagon/Hexagon_Interface.h"
+#include "Settings.h"
 #include <QDialog>
 #include <QString>
 
 class Error_Messages;
+class Settings_File;
 class String_Manipulator;
 
 namespace Ui {
@@ -28,13 +30,14 @@ private slots:
     void on_btnConvertHEXPtoQtCode_clicked();
     void on_btnConvertQtCodetoHEXP_clicked();
     void on_tbOriginalFile_clicked();
-    void on_cbAskForSaveLocation_clicked(bool checked);
     void on_Main_Window_finished(int result);
 
 private:
     Ui::Main_Window *ui;
     Hexagon_Interface *hexagonPlugin;
     Error_Messages *errorMessages;
+    Settings settings;
+    Settings_File *settingsFile;
     String_Manipulator *stringManipulator;
     QString defaultFileOpenLocation;
     QString defaultPatchOpenLocation;

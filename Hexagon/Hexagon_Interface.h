@@ -9,6 +9,7 @@ namespace Hexagon_Error_Codes {
     enum Error_Code {
         OK,
         READ_ERROR,
+        READ_MODIFIED_ERROR,
         WRITE_ERROR,
         PARSE_ERROR,
         CONFLICTS_DETECTED
@@ -24,7 +25,7 @@ public:
     virtual Hexagon_Error_Codes::Error_Code Apply_Hexagon_Patch(const QString &patchFileLocation, const QString &originalFileLocation,
                                                                 const QString &outputFileLocation, int &lineNum)=0;
     virtual Hexagon_Error_Codes::Error_Code Create_Hexagon_Patch(const QString &originalFileLocation, const QString &modifiedFileLocation,
-                                                                 const QString &outputFileLocation)=0;
+                                                                 const QString &outputFileLocation, int &lineNume)=0;
 
     //Dev Tools
     virtual Hexagon_Error_Codes::Error_Code Convert_Hexagon_Patch_To_Qt_Code(const QString &patchFileLocation, const QString &outputFileLocation,

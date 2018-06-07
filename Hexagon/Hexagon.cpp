@@ -20,7 +20,7 @@ Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QString &patc
     //TODO: Write this...
 }
 
-Hexagon_Error_Codes::Error_Code Hexagon::Create_Hexagon_Patch(const QString &originalFileLocation, const QString &modifiedFileLocation, const QString &outputFileLocation) {
+Hexagon_Error_Codes::Error_Code Hexagon::Create_Hexagon_Patch(const QString &originalFileLocation, const QString &modifiedFileLocation, const QString &outputFileLocation, int &lineNume) {
     qDebug() << "Create_Hexagon_Patch() called!";
     //TODO: Write this...
 }
