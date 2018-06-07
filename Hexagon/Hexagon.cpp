@@ -15,23 +15,23 @@ void Hexagon::Startup(QWidget *parent, const QString &location) {
 }
 
 Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QString &patchFileLocation, const QString &originalFileLocation, const QString &outputFileLocation, int &lineNum) {
-
+    //TODO: Write this...
 }
 
 Hexagon_Error_Codes::Error_Code Hexagon::Create_Hexagon_Patch(const QString &originalFileLocation, const QString &modifiedFileLocation, const QString &outputFileLocation) {
-
+    //TODO: Write this...
 }
 
 Hexagon_Error_Codes::Error_Code Hexagon::Convert_Hexagon_Patch_To_Qt_Code(const QString &patchFileLocation, const QString &outputFileLocation, int &lineNum) {
-
+    //TODO: Write this...
 }
 
 Hexagon_Error_Codes::Error_Code Hexagon::Convert_Qt_Code_To_Hexagon_Patch(const QString &qtCodeFileLocation, const QString &outputFileLocation, int &lineNum) {
-
+    //TODO: Write this...
 }
 
 Hexagon_Error_Codes::Error_Code Hexagon::Check_For_Conflicts_Between_Hexagon_Patches(const QString &patchFileLocation, const QStringList &otherPatchFileLocations, const QStringList &conflictList, int &lineNum, int &otherLineNum, int &otherFileNum) {
-
+    //TODO: Write this...
 }
 
 bool Hexagon::Set_Compare_Size(int size) {

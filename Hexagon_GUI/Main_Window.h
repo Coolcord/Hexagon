@@ -2,6 +2,7 @@
 #define MAIN_WINDOW_H
 
 #include <QDialog>
+#include <QString>
 
 namespace Ui {
 class Main_Window;
@@ -29,6 +30,8 @@ private slots:
 
 private:
     Ui::Main_Window *ui;
+    QString defaultFileOpenLocation;
+    QString defaultPatchOpenLocation;
 };
 
 #endif // MAIN_WINDOW_H
