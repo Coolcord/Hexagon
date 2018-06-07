@@ -1,5 +1,6 @@
 #include "String_Manipulator.h"
 #include <assert.h>
+#include <QStringList>
 
 QString String_Manipulator::Get_Extension(const QString &fileName) {
     if (fileName.isEmpty()) return QString();
@@ -15,11 +16,11 @@ QString String_Manipulator::Get_File_Name_Without_Path(const QString &filePath) 
     return filePath.split('/').last();
 }
 
-QString String_Manipulator::Get_Output_File_Path_From_Patch_And_Original_Paths(const QString &patchFileName, const QString &originalFilePath) {
-    assert(!patchFileName.contains('/'));
+QString String_Manipulator::Get_Output_File_Path_From_Patch_And_Original_Paths(const QString &patchFilePath, const QString &originalFilePath) {
+    QString patchFileNameWithoutExtension = this->Get_File_Name_Without_Extension(this->Get_File_Name_Without_Path(patchFilePath));
     QString originalFileName = this->Get_File_Name_Without_Path(originalFilePath);
     QString extension = this->Get_Extension(originalFileName);
-    return this->Get_Path_Without_File_Name(originalFilePath)+"/"+this->Get_File_Name_Without_Extension(patchFileName)+"."+extension;
+    return this->Get_Path_Without_File_Name(originalFilePath)+"/"+patchFileNameWithoutExtension+"."+extension;
 }
 
 QString String_Manipulator::Get_Path_Without_File_Name(const QString &path) {
@@ -28,11 +29,11 @@ QString String_Manipulator::Get_Path_Without_File_Name(const QString &path) {
 
 QString String_Manipulator::Get_Everything_Before_Last_Character(const QString &string, char c) {
     if (string.isEmpty()) return QString();
-    QStringList strings = string.split('.');
-    QString string = QString();
-    for (unsigned int i = 0; i < strings.size()-1; ++i) {
-        string += strings.at(i);
-        if (i != strings.size()-2) string+".";
+    QStringList strings = string.split(c);
+    QString newString = QString();
+    for (int i = 0; i < strings.size()-1; ++i) {
+        newString += strings.at(i);
+        if (i != strings.size()-2) newString+".";
     }
-    return string;
+    return newString;
 }

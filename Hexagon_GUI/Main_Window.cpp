@@ -1,6 +1,7 @@
 #include "Main_Window.h"
 #include "ui_Main_Window.h"
 #include "Common_Strings.h"
+#include "Error_Messages.h"
 #include "String_Manipulator.h"
 #include "Version.h"
 #include <assert.h>
@@ -8,7 +9,7 @@
 #include <QFileInfo>
 #include <QMessageBox>
 
-Main_Window::Main_Window(QWidget *parent, Hexagon_Interface *hexagonPlugin) :
+Main_Window::Main_Window(QWidget *parent, Hexagon_Interface *hexagonPlugin, Error_Messages *errorMessages) :
     QDialog(parent, Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint),
     ui(new Ui::Main_Window)
 {
@@ -21,6 +22,8 @@ Main_Window::Main_Window(QWidget *parent, Hexagon_Interface *hexagonPlugin) :
     this->defaultPatchOpenLocation = this->defaultFileOpenLocation;
 
     //Prepare Classes
+    this->errorMessages = errorMessages;
+    this->errorMessages->Update_Parent(this);
     this->stringManipulator = new String_Manipulator();
 
     //Set the Window Title
@@ -47,7 +50,7 @@ void Main_Window::on_btnApplyPatch_clicked() {
     if (patchFileLocation == NULL || patchFileLocation.isEmpty()) return;
     QFileInfo patchFileInfo(patchFileLocation);
     if (!patchFileInfo.isReadable()) {
-        //TODO: Show Read/Write Error...
+        this->errorMessages->Show_Read_Error(patchFileInfo.fileName());
         return;
     }
     this->defaultPatchOpenLocation = patchFileInfo.path();
@@ -61,7 +64,7 @@ void Main_Window::on_btnApplyPatch_clicked() {
         if (originalFileLocation == NULL || originalFileLocation.isEmpty()) return;
         originalFileInfo = QFileInfo(originalFileLocation);
         if (!originalFileInfo.isReadable()) {
-            //TODO: Show Read/Write Error...
+            this->errorMessages->Show_Read_Error(originalFileInfo.fileName());
             return;
         }
     }
@@ -69,28 +72,30 @@ void Main_Window::on_btnApplyPatch_clicked() {
     QString originalFileExtension = originalFileInfo.fileName().split('.').last();
 
     //Choose Where to Save the New File
-    QStringList names = patchFileInfo.fileName().split('.');
-    QString patchFileNameWithoutExtension = QString();
-    for (unsigned int i = 0; i < names.size()-1; ++i) {
-        patchFileNameWithoutExtension += names.at(i);
-        if (i != names.size()-2) patchFileNameWithoutExtension+".";
-    }
-    QString outputFileLocation = originalFileInfo.path()+"/"+patchFileNameWithoutExtension+"."+originalFileExtension;
-    //QFileInfo outputFileInfo;
-    if (this->ui->cbAskForSaveLocation->isChecked()) {
+    QString outputFileLocation = this->stringManipulator->Get_Output_File_Path_From_Patch_And_Original_Paths(patchFileLocation, originalFileLocation);
+    QFileInfo outputFileInfo(outputFileLocation);
+    if (this->ui->cbAlwaysAskForSaveLocation->isChecked() || outputFileInfo.exists()) {
         outputFileLocation = QFileDialog::getSaveFileName(this, "Save File", this->defaultPatchOpenLocation,
                                                             "(*."+originalFileExtension+")");
         if (outputFileLocation == NULL || outputFileLocation.isEmpty()) return;
         outputFileInfo = QFileInfo(outputFileLocation);
-    } else { //save the file in the same folder as the patch
-        //TODO: Write this...
+    }
+    if (!outputFileInfo.isWritable()) {
+        this->errorMessages->Show_Write_Error(outputFileInfo.fileName());
+        return;
     }
 
-    //QMessageBox::information(this, Common_Strings::STRING_HEXAGON, "Apply Patch clicked!", Common_Strings::STRING_OK);
-
-    //TODO: Write this...
+    //Run the Command via the Plugin
     int lineNum = 0;
     Hexagon_Error_Codes::Error_Code errorCode = this->hexagonPlugin->Apply_Hexagon_Patch(patchFileLocation, originalFileLocation, outputFileLocation, lineNum);
+    switch (errorCode) {
+    default: assert(false); return;
+    case Hexagon_Error_Codes::OK: this->errorMessages->Show_Information(outputFileInfo.fileName()+" created!"); return;
+    case Hexagon_Error_Codes::READ_ERROR: this->errorMessages->Show_Read_Error(originalFileInfo.fileName()); return;
+    case Hexagon_Error_Codes::WRITE_ERROR: this->errorMessages->Show_Write_Error(outputFileInfo.fileName()); return;
+    case Hexagon_Error_Codes::PARSE_ERROR: this->errorMessages->Show_Parse_Error(lineNum); return;
+    case Hexagon_Error_Codes::CONFLICTS_DETECTED: assert(false); return; //this should never happen
+    }
 }
 
 void Main_Window::on_btnCreatePatch_clicked() {

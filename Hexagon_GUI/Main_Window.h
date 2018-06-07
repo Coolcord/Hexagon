@@ -5,6 +5,7 @@
 #include <QDialog>
 #include <QString>
 
+class Error_Messages;
 class String_Manipulator;
 
 namespace Ui {
@@ -16,7 +17,7 @@ class Main_Window : public QDialog
     Q_OBJECT
 
 public:
-    Main_Window(QWidget *parent, Hexagon_Interface *hexagonPlugin);
+    Main_Window(QWidget *parent, Hexagon_Interface *hexagonPlugin, Error_Messages *errorMessages);
     ~Main_Window();
 
 private slots:
@@ -33,6 +34,7 @@ private slots:
 private:
     Ui::Main_Window *ui;
     Hexagon_Interface *hexagonPlugin;
+    Error_Messages *errorMessages;
     String_Manipulator *stringManipulator;
     QString defaultFileOpenLocation;
     QString defaultPatchOpenLocation;

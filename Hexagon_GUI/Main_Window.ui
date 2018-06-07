@@ -209,9 +209,9 @@
         </spacer>
        </item>
        <item>
-        <widget class="QCheckBox" name="cbAskForSaveLocation">
+        <widget class="QCheckBox" name="cbAlwaysAskForSaveLocation">
          <property name="text">
-          <string>Ask for save location</string>
+          <string>Always ask for save location</string>
          </property>
         </widget>
        </item>
@@ -297,7 +297,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>leOriginalFile</tabstop>
   <tabstop>tbOriginalFile</tabstop>
   <tabstop>sbCompareSize</tabstop>
-  <tabstop>cbAskForSaveLocation</tabstop>
+  <tabstop>cbAlwaysAskForSaveLocation</tabstop>
   <tabstop>textAbout</tabstop>
  </tabstops>
  <resources/>
