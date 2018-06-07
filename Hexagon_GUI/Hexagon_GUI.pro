@@ -29,7 +29,9 @@ SOURCES += \
         Main_Window.cpp
 
 HEADERS += \
-        Main_Window_W.h
+    Common_Strings.h \
+    Main_Window.h \
+    Version.h
 
 FORMS += \
         Main_Window.ui
