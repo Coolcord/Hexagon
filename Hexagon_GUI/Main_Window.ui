@@ -1,96 +1,108 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>Main_Window</class>
- <widget class="QMainWindow" name="Main_Window">
+ <widget class="QDialog" name="Main_Window">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>301</width>
-    <height>212</height>
+    <width>451</width>
+    <height>352</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Hexagon</string>
+   <string>Main_Window</string>
   </property>
-  <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QPushButton" name="pushButton">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="text">
-       <string>Apply Patch</string>
-      </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tabPatch">
+      <attribute name="title">
+       <string>Patch</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QPushButton" name="pushButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Apply Patch</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Create Patch</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="pushButton_2">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="text">
-       <string>Create Patch</string>
-      </property>
+     <widget class="QWidget" name="tabConflictChecker">
+      <attribute name="title">
+       <string>Conflict Checker</string>
+      </attribute>
      </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>301</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuDev_Tools">
-    <property name="title">
-     <string>Dev Tools</string>
-    </property>
-    <addaction name="actionConvert_Patch_to_Qt_Code"/>
-    <addaction name="actionConvert_Qt_Code_to_Patch"/>
-    <addaction name="separator"/>
-    <addaction name="actionCheck_for_conflicts_between_Patches"/>
-   </widget>
-   <widget class="QMenu" name="menuAbout">
-    <property name="title">
-     <string>About</string>
-    </property>
-    <addaction name="actionAbout_Hexagon"/>
-   </widget>
-   <addaction name="menuDev_Tools"/>
-   <addaction name="menuAbout"/>
-  </widget>
-  <widget class="QStatusBar" name="statusBar"/>
-  <action name="actionAbout_Hexagon">
-   <property name="text">
-    <string>About Hexagon</string>
-   </property>
-  </action>
-  <action name="actionConvert_Patch_to_Qt_Code">
-   <property name="text">
-    <string>Convert RHP to Qt Code</string>
-   </property>
-  </action>
-  <action name="actionConvert_Qt_Code_to_Patch">
-   <property name="text">
-    <string>Convert Qt Code to RHP</string>
-   </property>
-  </action>
-  <action name="actionCheck_for_conflicts_between_Patches">
-   <property name="text">
-    <string>Check for conflicts between Patches</string>
-   </property>
-  </action>
+     <widget class="QWidget" name="tabDevTools">
+      <attribute name="title">
+       <string>Dev Tools</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QPushButton" name="pushButton_3">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Convert HEXP to Qt Code</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_4">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Convert Qt Code to HEXP</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabOptions">
+      <attribute name="title">
+       <string>Options</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="tabAbout">
+      <attribute name="title">
+       <string>About</string>
+      </attribute>
+     </widget>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

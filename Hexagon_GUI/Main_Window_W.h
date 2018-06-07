@@ -1,13 +1,13 @@
-#ifndef MAIN_WINDOW_H
-#define MAIN_WINDOW_H
+#ifndef MAIN_WINDOW_W_H
+#define MAIN_WINDOW_W_H
 
-#include <QMainWindow>
+#include <QDialog>
 
 namespace Ui {
 class Main_Window;
 }
 
-class Main_Window : public QMainWindow
+class Main_Window : public QDialog
 {
     Q_OBJECT
 
@@ -19,4 +19,4 @@ private:
     Ui::Main_Window *ui;
 };
 
-#endif // MAIN_WINDOW_H
+#endif // MAIN_WINDOW_W_H

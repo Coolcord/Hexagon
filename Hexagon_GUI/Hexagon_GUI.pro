@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2018-06-06T18:16:01
+# Project created by QtCreator 2018-06-06T20:42:47
 #
 #-------------------------------------------------
 
@@ -10,7 +10,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Hexagon_GUI
 TEMPLATE = app
-CONFIG += c++11 pendantic Wall
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
@@ -29,7 +28,7 @@ SOURCES += \
         Main_Window.cpp
 
 HEADERS += \
-        Main_Window.h
+        Main_Window_W.h
 
 FORMS += \
         Main_Window.ui
