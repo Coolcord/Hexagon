@@ -1,0 +1,8 @@
+build-*/
+Plugin_Debugger/
+Generator_Plugin_Tester/
+*.pro.user
+*.pro.user.*
+.~lock.*
+*.autosave
+
