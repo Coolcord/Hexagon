@@ -2,14 +2,18 @@
 #include "ui_Main_Window.h"
 #include "Common_Strings.h"
 #include "Version.h"
+#include <assert.h>
 #include <QFileDialog>
 #include <QMessageBox>
 
-Main_Window::Main_Window(QWidget *parent) :
+Main_Window::Main_Window(QWidget *parent, Hexagon_Interface *hexagonPlugin) :
     QDialog(parent, Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint),
     ui(new Ui::Main_Window)
 {
+    assert(hexagonPlugin);
+    this->hexagonPlugin = hexagonPlugin;
     ui->setupUi(this);
+    hexagonPlugin->Startup(this, QApplication::applicationDirPath());
     this->defaultFileOpenLocation = QApplication::applicationDirPath();
     this->defaultPatchOpenLocation = this->defaultFileOpenLocation;
 
@@ -31,7 +35,7 @@ Main_Window::~Main_Window() {
 
 void Main_Window::on_btnApplyPatch_clicked() {
     QString patchFileLocation = QFileDialog::getOpenFileName(this, "Open a "+Common_Strings::STRING_HEXAGON+" Patch", this->defaultPatchOpenLocation,
-                                                        Common_Strings::STRING_HEXAGON+" Patches (*."+Common_Strings::STRING_PATCH_EXTENSION+")");
+                                                        Common_Strings::STRING_PATCH_EXTENSION_FILTER);
     if (patchFileLocation == NULL || patchFileLocation.isEmpty()) return;
     //QString originalFileLocation;
     //QString outputFileLocation;
@@ -63,18 +67,18 @@ void Main_Window::on_btnConvertQtCodetoHEXP_clicked() {
     //TODO: Write this...
 }
 
-void Main_Window::on_leOriginalFile_textChanged(const QString &arg1) {
-    //TODO: Write this...
-}
-
 void Main_Window::on_tbOriginalFile_clicked() {
-    //TODO: Write this...
-}
-
-void Main_Window::on_sbCompareSize_valueChanged(int arg1) {
-    //TODO: Write this...
+    QString openLocation = QFileInfo(this->ui->leOriginalFile->text()).absolutePath();
+    if (!QFileInfo(openLocation).exists()) openLocation = this->defaultFileOpenLocation;
+    QString originalFileLocation = QFileDialog::getOpenFileName(this, "Open File", openLocation, "All files (*.*)");
+    if (originalFileLocation.isEmpty()) return;
+    else this->ui->leOriginalFile->setText(originalFileLocation);
 }
 
 void Main_Window::on_cbAskForSaveLocation_clicked(bool checked) {
+    //TODO: Write this...
+}
+
+void Main_Window::on_Main_Window_finished(int result) {
     //TODO: Write this...
 }

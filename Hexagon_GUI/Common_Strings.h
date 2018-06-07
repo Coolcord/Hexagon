@@ -4,10 +4,21 @@
 #include <QString>
 
 namespace Common_Strings {
+    #ifdef Q_OS_WIN32
+    const static QString STRING_PLUGIN_EXTENSION = ".dll"; //Windows uses .dll files
+    const static QString STRING_NEW_LINE = "\r\n"; //Qt's endl seems to use only \n for some reason... I'll look into this later
+    #else
+    const static QString STRING_PLUGIN_EXTENSION = ".so"; //Unix uses .so files
+    const static QString STRING_NEW_LINE = "\n";
+    #endif
+
     const static QString STRING_HEXAGON = "Hexagon";
     const static QString STRING_PATCH_EXTENSION = ".hexp";
+    const static QString STRING_PATCH_EXTENSION_FILTER = STRING_HEXAGON+" Patches (*."+STRING_PATCH_EXTENSION+")";
+    const static QString STRING_PLUGIN_LOCATION = "./Plugins/"+STRING_HEXAGON+STRING_PLUGIN_EXTENSION;
     const static QString STRING_CONFIG = "Config";
     const static QString STRING_HEXAGON_SETTINGS_FILENAME = STRING_HEXAGON+".cfg";
+    const static QString STRING_CONFIG_LOCATION = "./"+STRING_CONFIG+"/"+STRING_HEXAGON_SETTINGS_FILENAME;
     const static QString STRING_OK = "OK";
 
     //About Strings
@@ -19,14 +30,6 @@ namespace Common_Strings {
     const static QString STRING_SOURCE_CODE = "Source Code";
     const static QString STRING_SOURCE_CODE_LINK = "https://github.com/Coolcord/Hexagon";
     const static QString STRING_HTML_NEW_LINE = "<br/>";
-
-    #ifdef Q_OS_WIN32
-    const static QString STRING_PLUGIN_EXTENSION = ".dll"; //Windows uses .dll files
-    const static QString STRING_NEW_LINE = "\r\n"; //Qt's endl seems to use only \n for some reason... I'll look into this later
-    #else
-    const static QString STRING_PLUGIN_EXTENSION = ".so"; //Unix uses .so files
-    const static QString STRING_NEW_LINE = "\n";
-    #endif
 }
 
 #endif // COMMON_STRINGS_H
