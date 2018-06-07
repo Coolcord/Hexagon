@@ -29,7 +29,8 @@ SOURCES += \
         Main_Window.cpp \
     Settings_File.cpp \
     String_Manipulator.cpp \
-    Error_Messages.cpp
+    Error_Messages.cpp \
+    File_Dialog_Manager.cpp
 
 HEADERS += \
     Common_Strings.h \
@@ -38,7 +39,9 @@ HEADERS += \
     Settings_File.h \
     Settings.h \
     String_Manipulator.h \
-    Error_Messages.h
+    Error_Messages.h \
+    File_Dialog_Manager.h \
+    File_Types.h
 
 FORMS += \
         Main_Window.ui

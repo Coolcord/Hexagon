@@ -7,6 +7,7 @@
 #include <QString>
 
 class Error_Messages;
+class File_Dialog_Manager;
 class Settings_File;
 class String_Manipulator;
 
@@ -14,8 +15,7 @@ namespace Ui {
 class Main_Window;
 }
 
-class Main_Window : public QDialog
-{
+class Main_Window : public QDialog {
     Q_OBJECT
 
 public:
@@ -36,6 +36,7 @@ private:
     Ui::Main_Window *ui;
     Hexagon_Interface *hexagonPlugin;
     Error_Messages *errorMessages;
+    File_Dialog_Manager *fileDialogManager;
     Settings settings;
     Settings_File *settingsFile;
     String_Manipulator *stringManipulator;

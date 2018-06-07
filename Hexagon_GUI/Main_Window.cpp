@@ -2,6 +2,7 @@
 #include "ui_Main_Window.h"
 #include "Common_Strings.h"
 #include "Error_Messages.h"
+#include "File_Dialog_Manager.h"
 #include "Settings_File.h"
 #include "String_Manipulator.h"
 #include "Version.h"
@@ -27,6 +28,7 @@ Main_Window::Main_Window(QWidget *parent, Hexagon_Interface *hexagonPlugin, Erro
     this->errorMessages->Update_Parent(this);
     this->settingsFile = new Settings_File();
     this->stringManipulator = new String_Manipulator();
+    this->fileDialogManager = new File_Dialog_Manager(this, this->ui, this->errorMessages, &this->settings, this->stringManipulator);
 
     //Set the Window Title
     QString nameAndVersion = Common_Strings::STRING_HEXAGON+" "+Version::VERSION;
@@ -45,50 +47,32 @@ Main_Window::Main_Window(QWidget *parent, Hexagon_Interface *hexagonPlugin, Erro
 
 Main_Window::~Main_Window() {
     delete this->ui;
+    delete this->fileDialogManager;
     delete this->settingsFile;
     delete this->stringManipulator;
 }
 
 void Main_Window::on_btnApplyPatch_clicked() {
     //Open the Patch
-    QString patchFileLocation = QFileDialog::getOpenFileName(this, "Open a "+Common_Strings::STRING_HEXAGON+" Patch", this->settings.defaultPatchOpenLocation,
-                                                        Common_Strings::STRING_PATCH_EXTENSION_FILTER);
-    if (patchFileLocation == NULL || patchFileLocation.isEmpty()) return;
-    QFileInfo patchFileInfo(patchFileLocation);
-    if (!patchFileInfo.isReadable()) {
-        this->errorMessages->Show_Read_Error(patchFileInfo.fileName());
-        return;
-    }
-    this->settings.defaultPatchOpenLocation = patchFileInfo.path();
+    QString patchFileLocation = this->fileDialogManager->Get_Open_File_Location(File_Types::PATCH_FILE);
+    if (patchFileLocation.isEmpty()) return;
 
     //Open the Original File to Patch
     QString originalFileLocation = this->ui->leOriginalFile->text();
     QFileInfo originalFileInfo(originalFileLocation);
     if (!originalFileInfo.isReadable()) {
-        originalFileLocation = QFileDialog::getOpenFileName(this, "Open File", this->settings.defaultFileOpenLocation,
-                                                            Common_Strings::STRING_ALL_FILE_EXTENSION_FILTER);
-        if (originalFileLocation == NULL || originalFileLocation.isEmpty()) return;
+        originalFileLocation = this->fileDialogManager->Get_Open_File_Location(Common_Strings::STRING_ORIGINAL);
+        if (originalFileLocation.isEmpty()) return;
         originalFileInfo = QFileInfo(originalFileLocation);
-        if (!originalFileInfo.isReadable()) {
-            this->errorMessages->Show_Read_Error(originalFileInfo.fileName());
-            return;
-        }
     }
-    this->settings.defaultFileOpenLocation = originalFileInfo.path();
-    QString originalFileExtension = this->stringManipulator->Get_Extension(originalFileInfo.fileName());
 
     //Choose Where to Save the New File
     QString outputFileLocation = this->stringManipulator->Get_Output_File_Path_From_Patch_And_Original_Paths(patchFileLocation, originalFileLocation);
     QFileInfo outputFileInfo(outputFileLocation);
     if (this->ui->cbAlwaysAskForSaveLocation->isChecked() || outputFileInfo.exists()) {
-        outputFileLocation = QFileDialog::getSaveFileName(this, "Save File", this->settings.defaultPatchOpenLocation,
-                                                            "(*."+originalFileExtension+")");
-        if (outputFileLocation == NULL || outputFileLocation.isEmpty()) return;
+        outputFileLocation = this->fileDialogManager->Get_Save_File_Location(File_Types::ANY_FILE, this->stringManipulator->Get_Extension(originalFileInfo.fileName()));
+        if (outputFileLocation.isEmpty()) return;
         outputFileInfo = QFileInfo(outputFileLocation);
-    }
-    if (!outputFileInfo.isWritable()) {
-        this->errorMessages->Show_Write_Error(outputFileInfo.fileName());
-        return;
     }
 
     //Run the Command via the Plugin

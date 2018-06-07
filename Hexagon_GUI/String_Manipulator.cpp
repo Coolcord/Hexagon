@@ -33,7 +33,7 @@ QString String_Manipulator::Get_Everything_Before_Last_Character(const QString &
     QString newString = QString();
     for (int i = 0; i < strings.size()-1; ++i) {
         newString += strings.at(i);
-        if (i != strings.size()-2) newString+".";
+        if (i != strings.size()-2) newString += QString(c);
     }
     return newString;
 }
