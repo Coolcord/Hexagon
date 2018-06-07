@@ -5,6 +5,8 @@
 #include <QDialog>
 #include <QString>
 
+class String_Manipulator;
+
 namespace Ui {
 class Main_Window;
 }
@@ -31,6 +33,7 @@ private slots:
 private:
     Ui::Main_Window *ui;
     Hexagon_Interface *hexagonPlugin;
+    String_Manipulator *stringManipulator;
     QString defaultFileOpenLocation;
     QString defaultPatchOpenLocation;
 };

@@ -15,6 +15,7 @@ namespace Common_Strings {
     const static QString STRING_HEXAGON = "Hexagon";
     const static QString STRING_PATCH_EXTENSION = ".hexp";
     const static QString STRING_PATCH_EXTENSION_FILTER = STRING_HEXAGON+" Patches (*."+STRING_PATCH_EXTENSION+")";
+    const static QString STRING_ALL_FILE_EXTENSION_FILTER = "All files (*.*)";
     const static QString STRING_PLUGIN_LOCATION = "./Plugins/"+STRING_HEXAGON+STRING_PLUGIN_EXTENSION;
     const static QString STRING_CONFIG = "Config";
     const static QString STRING_HEXAGON_SETTINGS_FILENAME = STRING_HEXAGON+".cfg";

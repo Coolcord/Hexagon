@@ -27,14 +27,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         Main_Window.cpp \
-    Settings_File.cpp
+    Settings_File.cpp \
+    String_Manipulator.cpp
 
 HEADERS += \
     Common_Strings.h \
     Main_Window.h \
     Version.h \
     Settings_File.h \
-    Settings.h
+    Settings.h \
+    String_Manipulator.h
 
 FORMS += \
         Main_Window.ui
