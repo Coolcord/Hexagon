@@ -9,7 +9,7 @@ public:
     QString Get_Extension(const QString &fileName);
     QString Get_File_Name_Without_Extension(const QString &fileName);
     QString Get_File_Name_Without_Path(const QString &filePath);
-    QString Get_Output_File_Path_From_Patch_And_Original_Paths(const QString &patchFilePath, const QString &originalFilePath);
+    QString Get_Output_File_Path_From_Patch_And_Original_File_Paths(const QString &patchFilePath, const QString &originalFilePath);
     QString Get_Path_Without_File_Name(const QString &path);
 
 private:

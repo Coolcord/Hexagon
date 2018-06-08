@@ -16,7 +16,7 @@ QString String_Manipulator::Get_File_Name_Without_Path(const QString &filePath) 
     return filePath.split('/').last();
 }
 
-QString String_Manipulator::Get_Output_File_Path_From_Patch_And_Original_Paths(const QString &patchFilePath, const QString &originalFilePath) {
+QString String_Manipulator::Get_Output_File_Path_From_Patch_And_Original_File_Paths(const QString &patchFilePath, const QString &originalFilePath) {
     QString patchFileNameWithoutExtension = this->Get_File_Name_Without_Extension(this->Get_File_Name_Without_Path(patchFilePath));
     QString originalFileName = this->Get_File_Name_Without_Path(originalFilePath);
     QString extension = this->Get_Extension(originalFileName);

@@ -67,7 +67,7 @@ void Main_Window::on_btnApplyPatch_clicked() {
     }
 
     //Choose Where to Save the New File
-    QString outputFileLocation = this->stringManipulator->Get_Output_File_Path_From_Patch_And_Original_Paths(patchFileLocation, originalFileLocation);
+    QString outputFileLocation = this->stringManipulator->Get_Output_File_Path_From_Patch_And_Original_File_Paths(patchFileLocation, originalFileLocation);
     QFileInfo outputFileInfo(outputFileLocation);
     if (this->ui->cbAlwaysAskForSaveLocation->isChecked() || outputFileInfo.exists()) {
         outputFileLocation = this->fileDialogManager->Get_Save_File_Location(File_Types::ANY_FILE, this->stringManipulator->Get_Extension(originalFileInfo.fileName()));
@@ -90,17 +90,28 @@ void Main_Window::on_btnApplyPatch_clicked() {
 }
 
 void Main_Window::on_btnCreatePatch_clicked() {
-    QMessageBox::information(this, Common_Strings::STRING_HEXAGON, "Create Patch clicked!", Common_Strings::STRING_OK);
+    //Open the Original File
+    QString originalFileLocation = this->ui->leOriginalFile->text();
+    QFileInfo originalFileInfo(originalFileLocation);
+    if (!originalFileInfo.isReadable()) {
+        originalFileLocation = this->fileDialogManager->Get_Open_File_Location(Common_Strings::STRING_ORIGINAL);
+        if (originalFileLocation.isEmpty()) return;
+        originalFileInfo = QFileInfo(originalFileLocation);
+    }
 
-    //TODO: Write this...
-    //TODO: Abstract Apply so that most of the code can be reused...
+    //Open the Modified File
+    QString modifiedFileLocation = this->fileDialogManager->Get_Open_File_Location(Common_Strings::STRING_MODIFIED);
+    if (modifiedFileLocation.isEmpty()) return;
+    QFileInfo modifiedFileInfo = QFileInfo(modifiedFileLocation);
 
-    QString originalFileLocation;
-    QFileInfo originalFileInfo;
-    QString modifiedFileLocation;
-    QFileInfo modifiedFileInfo;
-    QString outputFileLocation;
-    QFileInfo outputFileInfo;
+    //Choose Where to Save the New File
+    QString outputFileLocation = modifiedFileInfo.path()+"/"+this->stringManipulator->Get_File_Name_Without_Extension(modifiedFileInfo.fileName())+Common_Strings::STRING_PATCH_EXTENSION;
+    QFileInfo outputFileInfo(outputFileLocation);
+    if (this->ui->cbAlwaysAskForSaveLocation->isChecked() || outputFileInfo.exists()) {
+        outputFileLocation = this->fileDialogManager->Get_Save_File_Location(File_Types::ANY_FILE, this->stringManipulator->Get_Extension(originalFileInfo.fileName()));
+        if (outputFileLocation.isEmpty()) return;
+        outputFileInfo = QFileInfo(outputFileLocation);
+    }
 
     //Run the Command via the Plugin
     int lineNum = 0;
