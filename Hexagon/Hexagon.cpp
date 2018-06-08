@@ -18,6 +18,7 @@ void Hexagon::Startup(QWidget *parent, const QString &location) {
 Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QString &patchFileLocation, const QString &originalFileLocation, const QString &outputFileLocation, int &lineNum) {
     qDebug() << "Apply_Hexagon_Patch() called!";
     //TODO: Write this...
+    return Hexagon_Error_Codes::OK;
 }
 
 Hexagon_Error_Codes::Error_Code Hexagon::Create_Hexagon_Patch(const QString &originalFileLocation, const QString &modifiedFileLocation, const QString &outputFileLocation, int &lineNume) {

@@ -1,13 +1,49 @@
 #include "Settings_File.h"
+#include "Common_Strings.h"
+#include <QDir>
+#include <QFile>
+#include <QTextStream>
+
+Settings_File::Settings_File(const QString &applicationLocation) {
+    this->applicationLocation = applicationLocation;
+}
 
 bool Settings_File::Save_Settings(const Settings &settings) {
-    //TODO: Write this...
+    if (!QDir().mkpath(this->applicationLocation + "/" + Common_Strings::STRING_CONFIG)) return false;
+    QFile file(this->applicationLocation + "/" + Common_Strings::STRING_CONFIG + "/" + Common_Strings::STRING_HEXAGON_SETTINGS_FILENAME);
+    if (file.exists() && !file.remove()) return false;
+    if (!file.open(QIODevice::ReadWrite)) return false;
+    QTextStream stream(&file);
+    stream << settings.defaultPatchOpenLocation << Common_Strings::STRING_NEW_LINE;
+    stream << settings.defaultOriginalFileOpenLocation << Common_Strings::STRING_NEW_LINE;
+    stream << settings.defaultFileOpenLocation << Common_Strings::STRING_NEW_LINE;
+    stream << settings.originalFileLocation << Common_Strings::STRING_NEW_LINE;
+    stream << settings.compareSize << Common_Strings::STRING_NEW_LINE;
+    stream << settings.alwaysAskForSaveLocation << Common_Strings::STRING_NEW_LINE;
+    stream.flush();
+    file.close();
+    return true;
 }
 
 bool Settings_File::Load_Settings(Settings &settings) {
-    //TODO: Write this...
+    QFile file(this->applicationLocation + "/" + Common_Strings::STRING_CONFIG + "/" + Common_Strings::STRING_HEXAGON_SETTINGS_FILENAME);
+    if (!file.exists()) return true; //first time running the plugin
+    if (!file.open(QIODevice::ReadWrite)) return false;
+    bool valid = true;
+    settings.defaultPatchOpenLocation = file.readLine().trimmed();
+    settings.defaultOriginalFileOpenLocation = file.readLine().trimmed();
+    settings.defaultFileOpenLocation = file.readLine().trimmed();
+    settings.originalFileLocation = file.readLine().trimmed();
+    settings.compareSize = file.readLine().trimmed().toInt(&valid); if (!valid) return false;
+    settings.alwaysAskForSaveLocation = file.readLine().trimmed().toInt(&valid); if (!valid) return false;
+    return true;
 }
 
-bool Settings_File::Load_Default_Settings(Settings &settings) {
-    //TODO: Write this...
+void Settings_File::Load_Default_Settings(Settings &settings) {
+    settings.defaultPatchOpenLocation = this->applicationLocation;
+    settings.defaultOriginalFileOpenLocation = this->applicationLocation;
+    settings.defaultFileOpenLocation = this->applicationLocation;
+    settings.originalFileLocation = QString();
+    settings.compareSize = 5;
+    settings.alwaysAskForSaveLocation = false;
 }

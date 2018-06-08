@@ -91,15 +91,19 @@ QString File_Dialog_Manager::Get_File_Location(File_Types::File_Type fileType, Q
         }
 
         //Save the path if the file was opened
-        switch (fileType) {
-        default: assert(false);
-        case File_Types::PATCH_FILE:
-            this->settings->defaultPatchOpenLocation = fileInfo.path();
-            break;
-        case File_Types::QT_CODE_FILE:
-        case File_Types::ANY_FILE:
-            this->settings->defaultFileOpenLocation = fileInfo.path();
-            break;
+        if (message == Common_Strings::STRING_ORIGINAL) {
+            this->settings->defaultOriginalFileOpenLocation = fileInfo.path();
+        } else {
+            switch (fileType) {
+            default: assert(false);
+            case File_Types::PATCH_FILE:
+                this->settings->defaultPatchOpenLocation = fileInfo.path();
+                break;
+            case File_Types::QT_CODE_FILE:
+            case File_Types::ANY_FILE:
+                this->settings->defaultFileOpenLocation = fileInfo.path();
+                break;
+            }
         }
     }
     return fileLocation;

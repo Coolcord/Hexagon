@@ -22,8 +22,8 @@ namespace Common_Strings {
     const static QString STRING_HEXAGON_SETTINGS_FILENAME = STRING_HEXAGON+".cfg";
     const static QString STRING_CONFIG_LOCATION = "./"+STRING_CONFIG+"/"+STRING_HEXAGON_SETTINGS_FILENAME;
     const static QString STRING_OK = "OK";
-    const static QString STRING_ORIGINAL = "Original";
-    const static QString STRING_MODIFIED = "Modified";
+    const static QString STRING_ORIGINAL = "ORIGINAL";
+    const static QString STRING_MODIFIED = "MODIFIED";
 
     //About Strings
     const static QString STRING_ABOUT_DESCRIPTION = "A Simple Plain Text Hexadecimal Patcher";

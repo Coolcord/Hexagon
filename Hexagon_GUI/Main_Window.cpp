@@ -19,14 +19,14 @@ Main_Window::Main_Window(QWidget *parent, Hexagon_Interface *hexagonPlugin, Erro
     assert(hexagonPlugin);
     this->hexagonPlugin = hexagonPlugin;
     ui->setupUi(this);
-    hexagonPlugin->Startup(this, QApplication::applicationDirPath());
-    this->settings.defaultFileOpenLocation = QApplication::applicationDirPath();
-    this->settings.defaultPatchOpenLocation = this->settings.defaultFileOpenLocation;
+    QString applicationLocation = QApplication::applicationDirPath();
+    hexagonPlugin->Startup(this, applicationLocation);
 
     //Prepare Classes
     this->errorMessages = errorMessages;
     this->errorMessages->Update_Parent(this);
-    this->settingsFile = new Settings_File();
+    this->settingsFile = new Settings_File(applicationLocation);
+    this->settingsFile->Load_Default_Settings(this->settings);
     this->stringManipulator = new String_Manipulator();
     this->fileDialogManager = new File_Dialog_Manager(this, this->ui, this->errorMessages, &this->settings, this->stringManipulator);
 
@@ -42,7 +42,7 @@ Main_Window::Main_Window(QWidget *parent, Hexagon_Interface *hexagonPlugin, Erro
     this->ui->textAbout->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
     //Load Settings
-    this->settingsFile->Load_Settings(this->settings);
+    this->Load_Settings();
 }
 
 Main_Window::~Main_Window() {
@@ -135,11 +135,25 @@ void Main_Window::on_btnConvertQtCodetoHEXP_clicked() {
 void Main_Window::on_tbOriginalFile_clicked() {
     QString openLocation = QFileInfo(this->ui->leOriginalFile->text()).absolutePath();
     if (!QFileInfo(openLocation).exists()) openLocation = this->settings.defaultFileOpenLocation;
-    QString originalFileLocation = QFileDialog::getOpenFileName(this, "Open File", openLocation, "All files (*.*)");
+    QString originalFileLocation = this->fileDialogManager->Get_Open_File_Location(Common_Strings::STRING_ORIGINAL);
     if (originalFileLocation.isEmpty()) return;
     else this->ui->leOriginalFile->setText(originalFileLocation);
 }
 
 void Main_Window::on_Main_Window_finished(int result) {
+    if (result == 0) this->Save_Settings();
+}
+
+void Main_Window::Load_Settings() {
+    this->settingsFile->Load_Settings(this->settings);
+    this->ui->leOriginalFile->setText(this->settings.originalFileLocation);
+    this->ui->sbCompareSize->setValue(this->settings.compareSize);
+    this->ui->cbAlwaysAskForSaveLocation->setChecked(this->settings.alwaysAskForSaveLocation);
+}
+
+void Main_Window::Save_Settings() {
+    this->settings.originalFileLocation = this->ui->leOriginalFile->text();
+    this->settings.compareSize = this->ui->sbCompareSize->value();
+    this->settings.alwaysAskForSaveLocation = this->ui->cbAlwaysAskForSaveLocation->isChecked();
     this->settingsFile->Save_Settings(this->settings);
 }

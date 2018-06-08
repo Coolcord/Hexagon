@@ -33,6 +33,9 @@ private slots:
     void on_Main_Window_finished(int result);
 
 private:
+    void Load_Settings();
+    void Save_Settings();
+
     Ui::Main_Window *ui;
     Hexagon_Interface *hexagonPlugin;
     Error_Messages *errorMessages;
