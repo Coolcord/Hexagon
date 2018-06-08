@@ -104,11 +104,11 @@ void Main_Window::on_btnCreatePatch_clicked() {
     if (modifiedFileLocation.isEmpty()) return;
     QFileInfo modifiedFileInfo = QFileInfo(modifiedFileLocation);
 
-    //Choose Where to Save the New File
+    //Choose Where to Save the New Patch File
     QString outputFileLocation = modifiedFileInfo.path()+"/"+this->stringManipulator->Get_File_Name_Without_Extension(modifiedFileInfo.fileName())+Common_Strings::STRING_PATCH_EXTENSION;
     QFileInfo outputFileInfo(outputFileLocation);
     if (this->ui->cbAlwaysAskForSaveLocation->isChecked() || outputFileInfo.exists()) {
-        outputFileLocation = this->fileDialogManager->Get_Save_File_Location(File_Types::ANY_FILE, this->stringManipulator->Get_Extension(originalFileInfo.fileName()));
+        outputFileLocation = this->fileDialogManager->Get_Save_File_Location(File_Types::PATCH_FILE);
         if (outputFileLocation.isEmpty()) return;
         outputFileInfo = QFileInfo(outputFileLocation);
     }
@@ -136,11 +136,61 @@ void Main_Window::on_btnCheckAgainstFolder_clicked() {
 }
 
 void Main_Window::on_btnConvertHEXPtoQtCode_clicked() {
-    //TODO: Write this...
+    //Open the Patch File
+    QString patchFileLocation = this->fileDialogManager->Get_Open_File_Location(File_Types::PATCH_FILE);
+    if (patchFileLocation.isEmpty()) return;
+    QFileInfo patchFileInfo = QFileInfo(patchFileLocation);
+
+    //Choose Where to Save the New Patch File
+    QString outputFileLocation = patchFileInfo.path()+"/"+this->stringManipulator->Get_File_Name_Without_Extension(patchFileInfo.fileName())+Common_Strings::STRING_TEXT_EXTENSION;
+    QFileInfo outputFileInfo(outputFileLocation);
+    if (this->ui->cbAlwaysAskForSaveLocation->isChecked() || outputFileInfo.exists()) {
+        outputFileLocation = this->fileDialogManager->Get_Save_File_Location(File_Types::QT_CODE_FILE);
+        if (outputFileLocation.isEmpty()) return;
+        outputFileInfo = QFileInfo(outputFileLocation);
+    }
+
+    //Run the Command via the Plugin
+    int lineNum = 0;
+    Hexagon_Error_Codes::Error_Code errorCode = this->hexagonPlugin->Convert_Hexagon_Patch_To_Qt_Code(patchFileLocation, outputFileLocation, lineNum);
+    switch (errorCode) {
+    default: assert(false); return;
+    case Hexagon_Error_Codes::OK: this->errorMessages->Show_Information(outputFileInfo.fileName()+" created!"); return;
+    case Hexagon_Error_Codes::READ_ERROR: this->errorMessages->Show_Read_Error(patchFileInfo.fileName()); return;
+    case Hexagon_Error_Codes::READ_MODIFIED_ERROR: assert(false); return; //this should never happen
+    case Hexagon_Error_Codes::WRITE_ERROR: this->errorMessages->Show_Write_Error(outputFileInfo.fileName()); return;
+    case Hexagon_Error_Codes::PARSE_ERROR: assert(false); return; //this should never happen
+    case Hexagon_Error_Codes::CONFLICTS_DETECTED: assert(false); return; //this should never happen
+    }
 }
 
 void Main_Window::on_btnConvertQtCodetoHEXP_clicked() {
-    //TODO: Write this...
+    //Open the Qt Code File
+    QString qtCodeFileLocation = this->fileDialogManager->Get_Open_File_Location(File_Types::QT_CODE_FILE);
+    if (qtCodeFileLocation.isEmpty()) return;
+    QFileInfo qtCodeFileInfo = QFileInfo(qtCodeFileLocation);
+
+    //Choose Where to Save the New Patch File
+    QString outputFileLocation = qtCodeFileInfo.path()+"/"+this->stringManipulator->Get_File_Name_Without_Extension(qtCodeFileInfo.fileName())+Common_Strings::STRING_PATCH_EXTENSION;
+    QFileInfo outputFileInfo(outputFileLocation);
+    if (this->ui->cbAlwaysAskForSaveLocation->isChecked() || outputFileInfo.exists()) {
+        outputFileLocation = this->fileDialogManager->Get_Save_File_Location(File_Types::PATCH_FILE);
+        if (outputFileLocation.isEmpty()) return;
+        outputFileInfo = QFileInfo(outputFileLocation);
+    }
+
+    //Run the Command via the Plugin
+    int lineNum = 0;
+    Hexagon_Error_Codes::Error_Code errorCode = this->hexagonPlugin->Convert_Qt_Code_To_Hexagon_Patch(qtCodeFileLocation, outputFileLocation, lineNum);
+    switch (errorCode) {
+    default: assert(false); return;
+    case Hexagon_Error_Codes::OK: this->errorMessages->Show_Information(outputFileInfo.fileName()+" created!"); return;
+    case Hexagon_Error_Codes::READ_ERROR: this->errorMessages->Show_Read_Error(qtCodeFileInfo.fileName()); return;
+    case Hexagon_Error_Codes::READ_MODIFIED_ERROR: assert(false); return; //this should never happen
+    case Hexagon_Error_Codes::WRITE_ERROR: this->errorMessages->Show_Write_Error(outputFileInfo.fileName()); return;
+    case Hexagon_Error_Codes::PARSE_ERROR: assert(false); return; //this should never happen
+    case Hexagon_Error_Codes::CONFLICTS_DETECTED: assert(false); return; //this should never happen
+    }
 }
 
 void Main_Window::on_tbOriginalFile_clicked() {
