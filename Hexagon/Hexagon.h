@@ -13,7 +13,7 @@ class Hexagon : public Hexagon_Interface {
 
 public:
     Hexagon();
-    void Startup(QWidget *parent, const QString &location);
+    void Startup(QWidget *parent, const QString &applicationLocation);
     void Shutdown() {}
 
     //Standard Functions
@@ -34,7 +34,6 @@ private:
     Hexagon& operator=(const Hexagon&);
     QString applicationLocation;
     QWidget *parent;
-    int compareSize;
 };
 
 #endif // HEXAGON_H

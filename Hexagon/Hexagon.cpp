@@ -2,17 +2,14 @@
 #include <assert.h>
 #include <QDebug>
 
-const int DEFAULT_COMPARE_SIZE = 5;
-
 Hexagon::Hexagon() {
     this->applicationLocation = QString();
 }
 
-void Hexagon::Startup(QWidget *parent, const QString &location) {
+void Hexagon::Startup(QWidget *parent, const QString &applicationLocation) {
     assert(parent);
     this->parent = parent;
-    this->applicationLocation = location;
-    this->compareSize = DEFAULT_COMPARE_SIZE;
+    this->applicationLocation = applicationLocation;
 }
 
 Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QString &patchFileLocation, const QString &originalFileLocation,
