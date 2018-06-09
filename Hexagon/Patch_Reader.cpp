@@ -1,20 +1,20 @@
-#include "Parser.h"
+#include "Patch_Reader.h"
 #include "Patch_Strings.h"
 #include <assert.h>
 
-Parser::Parser(const QByteArray &patchBytes) {
+Patch_Reader::Patch_Reader(const QByteArray &patchBytes) {
     this->stream = new QTextStream(patchBytes, QIODevice::ReadOnly);
 }
 
-Parser::~Parser() {
+Patch_Reader::~Patch_Reader() {
     delete this->stream;
 }
 
-int Parser::Get_Current_Line_Num() {
+int Patch_Reader::Get_Current_Line_Num() {
     return this->currentLineNum;
 }
 
-bool Parser::Get_Checksum(QString &checksum) {
+bool Patch_Reader::Get_Checksum(QString &checksum) {
     QString line = this->Get_Next_Line_After_Comments();
     if (!line.startsWith(Patch_Strings::STRING_CHECKSUM)) return false;
     QStringList values = line.split(' ');
@@ -23,7 +23,7 @@ bool Parser::Get_Checksum(QString &checksum) {
     return true;
 }
 
-bool Parser::Get_Next_Offset_And_Value(qint64 &offset, QByteArray &value) {
+bool Patch_Reader::Get_Next_Offset_And_Value(qint64 &offset, QByteArray &value) {
     //Get the Offset
     QString line = this->Get_Next_Line_After_Comments();
     if (!line.startsWith(Patch_Strings::STRING_OFFSET)) return false;
@@ -40,7 +40,7 @@ bool Parser::Get_Next_Offset_And_Value(qint64 &offset, QByteArray &value) {
     return true;
 }
 
-bool Parser::Convert_QString_To_QByteArray(const QString &string, QByteArray &output) {
+bool Patch_Reader::Convert_QString_To_QByteArray(const QString &string, QByteArray &output) {
     if (string.size()%2 == 1) return false;
     output = QByteArray(string.size()/2, 0x00);
     for (int i = 0, j = 0; i < string.size(); i += 2, ++j) {
@@ -55,7 +55,7 @@ bool Parser::Convert_QString_To_QByteArray(const QString &string, QByteArray &ou
     return true;
 }
 
-QString Parser::Get_Next_Line_After_Comments() {
+QString Patch_Reader::Get_Next_Line_After_Comments() {
     QString line = QString();
     while (!this->stream->atEnd()) {
         ++this->currentLineNum;
@@ -67,7 +67,7 @@ QString Parser::Get_Next_Line_After_Comments() {
     return QString(); //nothing left to read
 }
 
-bool Parser::Is_Line_Hex_String(const QString &line) {
+bool Patch_Reader::Is_Line_Hex_String(const QString &line) {
     for (int i = 0; i < line.size(); ++i) {
         switch (line.at(i).toLower().toLatin1()) {
         default: return false;
@@ -78,7 +78,7 @@ bool Parser::Is_Line_Hex_String(const QString &line) {
     return true;
 }
 
-bool Parser::Parse_Value(QByteArray &value) {
+bool Patch_Reader::Parse_Value(QByteArray &value) {
     //Parse the First Line
     QString line = this->Get_Next_Line_After_Comments();
     if (!line.startsWith(Patch_Strings::STRING_VALUE)) return false;
@@ -105,7 +105,7 @@ bool Parser::Parse_Value(QByteArray &value) {
     return this->Convert_QString_To_QByteArray(valueString, value);
 }
 
-QString Parser::Trim_Hex_Identifier(QString &hexString) {
+QString Patch_Reader::Trim_Hex_Identifier(QString &hexString) {
     if (hexString.startsWith(Patch_Strings::STRING_HEX_IDENTIFIER)) {
         int hexIdentifierSize = Patch_Strings::STRING_HEX_IDENTIFIER.size();
         return hexString.remove(hexIdentifierSize, hexString.size()-hexIdentifierSize);

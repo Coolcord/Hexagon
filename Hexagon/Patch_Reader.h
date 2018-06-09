@@ -1,13 +1,13 @@
-#ifndef PARSER_H
-#define PARSER_H
+#ifndef PATCH_READER_H
+#define PATCH_READER_H
 
 #include <QByteArray>
 #include <QTextStream>
 
-class Parser {
+class Patch_Reader {
 public:
-    Parser(const QByteArray &patchBytes);
-    ~Parser();
+    Patch_Reader(const QByteArray &patchBytes);
+    ~Patch_Reader();
     int Get_Current_Line_Num();
     bool Get_Checksum(QString &checksum);
     bool Get_Next_Offset_And_Value(qint64 &offset, QByteArray &value);
@@ -23,4 +23,4 @@ private:
     int currentLineNum;
 };
 
-#endif // PARSER_H
+#endif // PATCH_READER_H

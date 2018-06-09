@@ -25,13 +25,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         Hexagon.cpp \
-    Parser.cpp
+    Patch_Reader.cpp
 
 HEADERS += \
         Hexagon.h \
     Hexagon_Interface.h \
     Patch_Strings.h \
-    Parser.h
+    Patch_Reader.h
 
 unix {
     target.path = /usr/lib
