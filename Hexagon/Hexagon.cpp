@@ -15,13 +15,15 @@ void Hexagon::Startup(QWidget *parent, const QString &location) {
     this->compareSize = DEFAULT_COMPARE_SIZE;
 }
 
-Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QString &patchFileLocation, const QString &originalFileLocation, const QString &outputFileLocation, int &lineNum) {
+Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QString &patchFileLocation, const QString &originalFileLocation,
+                                                             const QString &outputFileLocation, bool useChecksum, int &lineNum) {
     qDebug() << "Apply_Hexagon_Patch() called!";
     //TODO: Write this...
     return Hexagon_Error_Codes::OK;
 }
 
-Hexagon_Error_Codes::Error_Code Hexagon::Create_Hexagon_Patch(const QString &originalFileLocation, const QString &modifiedFileLocation, const QString &outputFileLocation, int &lineNume) {
+Hexagon_Error_Codes::Error_Code Hexagon::Create_Hexagon_Patch(const QString &originalFileLocation, const QString &modifiedFileLocation,
+                                                              const QString &outputFileLocation, bool useChecksum, int &lineNume) {
     qDebug() << "Create_Hexagon_Patch() called!";
     //TODO: Write this...
     return Hexagon_Error_Codes::OK;
@@ -39,7 +41,8 @@ Hexagon_Error_Codes::Error_Code Hexagon::Convert_Qt_Code_To_Hexagon_Patch(const 
     return Hexagon_Error_Codes::OK;
 }
 
-Hexagon_Error_Codes::Error_Code Hexagon::Check_For_Conflicts_Between_Hexagon_Patches(const QString &patchFileLocation, const QStringList &otherPatchFileLocations, QByteArray &output, int &lineNum, int &otherLineNum, int &otherFileNum) {
+Hexagon_Error_Codes::Error_Code Hexagon::Check_For_Conflicts_Between_Hexagon_Patches(const QString &patchFileLocation, const QStringList &otherPatchFileLocations,
+                                                                                     QByteArray &output, int &lineNum, int &otherLineNum, int &otherFileNum) {
     qDebug() << "Check_For_Conflicts_Between_Hexagon_Patches() called!";
     //TODO: Write this...
     output = output.append(QString("This is a test"));

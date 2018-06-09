@@ -73,6 +73,8 @@ QString File_Dialog_Manager::Get_File_Location(File_Types::File_Type fileType, Q
         openLocation = this->settings->defaultFileOpenLocation;
         break;
     }
+    bool isOriginalFile = message == Common_Strings::STRING_ORIGINAL;
+    if (isOriginalFile) openLocation = this->settings->defaultOriginalFileOpenLocation;
     if (!QDir(openLocation).exists()) openLocation = this->applicationLocation;
     if (!extension.isEmpty()) extensionFilter = extension.toUpper()+" Files (*."+extension+")\n"+extensionFilter; //add the custom extension if specified
 
@@ -106,7 +108,7 @@ QString File_Dialog_Manager::Get_File_Location(File_Types::File_Type fileType, Q
         }
 
         //Save the path if the file was opened
-        if (message == Common_Strings::STRING_ORIGINAL) {
+        if (isOriginalFile) {
             this->settings->defaultOriginalFileOpenLocation = fileInfo.path();
         } else {
             switch (fileType) {

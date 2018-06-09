@@ -81,15 +81,18 @@ void Main_Window::on_btnApplyPatch_clicked() {
 
     //Run the Command via the Plugin
     int lineNum = 0;
-    Hexagon_Error_Codes::Error_Code errorCode = this->hexagonPlugin->Apply_Hexagon_Patch(patchFileLocation, originalFileLocation, outputFileLocation, lineNum);
+    Hexagon_Error_Codes::Error_Code errorCode = this->hexagonPlugin->Apply_Hexagon_Patch(patchFileLocation, originalFileLocation, outputFileLocation, true, lineNum);
+    if (errorCode == Hexagon_Error_Codes::BAD_CHECKSUM) {
+        int result = QMessageBox::warning(this, Common_Strings::STRING_HEXAGON, Common_Strings::STRING_CHECKSUM_FAILED_APPLY_ANYWAY, QMessageBox::Yes, QMessageBox::No);
+        if (result != QMessageBox::Yes) return;
+        errorCode = this->hexagonPlugin->Apply_Hexagon_Patch(patchFileLocation, originalFileLocation, outputFileLocation, false, lineNum);
+    }
     switch (errorCode) {
     default: assert(false); return;
     case Hexagon_Error_Codes::OK: this->errorMessages->Show_Information(outputFileInfo.fileName()+" created!"); return;
     case Hexagon_Error_Codes::READ_ERROR: this->errorMessages->Show_Read_Error(originalFileInfo.fileName()); return;
-    case Hexagon_Error_Codes::READ_MODIFIED_ERROR: assert(false); return; //this should never happen
     case Hexagon_Error_Codes::WRITE_ERROR: this->errorMessages->Show_Write_Error(outputFileInfo.fileName()); return;
     case Hexagon_Error_Codes::PARSE_ERROR: this->errorMessages->Show_Parse_Error(lineNum); return;
-    case Hexagon_Error_Codes::CONFLICTS_DETECTED: assert(false); return; //this should never happen
     }
 }
 
@@ -119,15 +122,13 @@ void Main_Window::on_btnCreatePatch_clicked() {
 
     //Run the Command via the Plugin
     int lineNum = 0;
-    Hexagon_Error_Codes::Error_Code errorCode = this->hexagonPlugin->Create_Hexagon_Patch(originalFileLocation, modifiedFileLocation, outputFileLocation, lineNum);
+    Hexagon_Error_Codes::Error_Code errorCode = this->hexagonPlugin->Create_Hexagon_Patch(originalFileLocation, modifiedFileLocation, outputFileLocation, this->ui->cbSkipChecksumWhenCreatingPatch->isChecked(), lineNum);
     switch (errorCode) {
     default: assert(false); return;
     case Hexagon_Error_Codes::OK: this->errorMessages->Show_Information(outputFileInfo.fileName()+" created!"); return;
     case Hexagon_Error_Codes::READ_ERROR: this->errorMessages->Show_Read_Error(originalFileInfo.fileName()); return;
     case Hexagon_Error_Codes::READ_MODIFIED_ERROR: this->errorMessages->Show_Read_Error(modifiedFileInfo.fileName()); return;
     case Hexagon_Error_Codes::WRITE_ERROR: this->errorMessages->Show_Write_Error(outputFileInfo.fileName()); return;
-    case Hexagon_Error_Codes::PARSE_ERROR: assert(false); return; //this should never happen
-    case Hexagon_Error_Codes::CONFLICTS_DETECTED: assert(false); return; //this should never happen
     }
 }
 
@@ -179,10 +180,8 @@ void Main_Window::on_btnConvertHEXPtoQtCode_clicked() {
     default: assert(false); return;
     case Hexagon_Error_Codes::OK: this->errorMessages->Show_Information(outputFileInfo.fileName()+" created!"); return;
     case Hexagon_Error_Codes::READ_ERROR: this->errorMessages->Show_Read_Error(patchFileInfo.fileName()); return;
-    case Hexagon_Error_Codes::READ_MODIFIED_ERROR: assert(false); return; //this should never happen
     case Hexagon_Error_Codes::WRITE_ERROR: this->errorMessages->Show_Write_Error(outputFileInfo.fileName()); return;
     case Hexagon_Error_Codes::PARSE_ERROR: this->errorMessages->Show_Parse_Error(lineNum); return;
-    case Hexagon_Error_Codes::CONFLICTS_DETECTED: assert(false); return; //this should never happen
     }
 }
 
@@ -208,10 +207,8 @@ void Main_Window::on_btnConvertQtCodetoHEXP_clicked() {
     default: assert(false); return;
     case Hexagon_Error_Codes::OK: this->errorMessages->Show_Information(outputFileInfo.fileName()+" created!"); return;
     case Hexagon_Error_Codes::READ_ERROR: this->errorMessages->Show_Read_Error(qtCodeFileInfo.fileName()); return;
-    case Hexagon_Error_Codes::READ_MODIFIED_ERROR: assert(false); return; //this should never happen
     case Hexagon_Error_Codes::WRITE_ERROR: this->errorMessages->Show_Write_Error(outputFileInfo.fileName()); return;
     case Hexagon_Error_Codes::PARSE_ERROR: this->errorMessages->Show_Parse_Error(lineNum); return;
-    case Hexagon_Error_Codes::CONFLICTS_DETECTED: assert(false); return; //this should never happen
     }
 }
 
@@ -240,7 +237,6 @@ void Main_Window::Check_For_Conflicts(const QString &patchFileLocation, const QS
     case Hexagon_Error_Codes::OK: this->errorMessages->Show_Information("No conflicts detected!"); return;
     case Hexagon_Error_Codes::READ_ERROR: this->errorMessages->Show_Read_Error(QFileInfo(patchFileLocation).fileName()); return;
     case Hexagon_Error_Codes::READ_MODIFIED_ERROR: this->errorMessages->Show_Read_Error(QFileInfo(otherPatchFileLocations.at(otherFileNum)).fileName()); return;
-    case Hexagon_Error_Codes::WRITE_ERROR: assert(false); return; //this should never happen
     case Hexagon_Error_Codes::PARSE_ERROR:
         if (lineNum == 0) this->errorMessages->Show_Parse_Error(QFileInfo(otherPatchFileLocations.at(otherFileNum)).fileName(), otherLineNum);
         else this->errorMessages->Show_Parse_Error(QFileInfo(patchFileLocation).fileName(), lineNum);
