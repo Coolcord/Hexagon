@@ -19,17 +19,15 @@ public:
     //Standard Functions
     Hexagon_Error_Codes::Error_Code Apply_Hexagon_Patch(const QString &patchFileLocation, const QString &originalFileLocation,
                                                         const QString &outputFileLocation, bool useChecksum, int &lineNum);
+    Hexagon_Error_Codes::Error_Code Apply_Hexagon_Patch(const QByteArray &patchFileBytes, const QFile *outputFile, bool useChecksum, int &lineNum);
     Hexagon_Error_Codes::Error_Code Create_Hexagon_Patch(const QString &originalFileLocation, const QString &modifiedFileLocation,
-                                                         const QString &outputFileLocation, bool useChecksum, int &lineNume);
+                                                         const QString &outputFileLocation, int compareSize, bool useChecksum, int &lineNume);
 
     //Dev Tools
     Hexagon_Error_Codes::Error_Code Convert_Hexagon_Patch_To_Qt_Code(const QString &patchFileLocation, const QString &outputFileLocation, int &lineNum);
     Hexagon_Error_Codes::Error_Code Convert_Qt_Code_To_Hexagon_Patch(const QString &qtCodeFileLocation, const QString &outputFileLocation, int &lineNum);
     Hexagon_Error_Codes::Error_Code Check_For_Conflicts_Between_Hexagon_Patches(const QString &patchFileLocation, const QStringList &otherPatchFileLocations,
                                                                                 QByteArray &output, int &lineNum, int &otherLineNum, int &otherFileNum);
-
-    //Settings
-    bool Set_Compare_Size(int size);
 
 private:
     Hexagon(const Hexagon&);

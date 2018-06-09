@@ -29,7 +29,7 @@ Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QByteArray &p
 }
 
 Hexagon_Error_Codes::Error_Code Hexagon::Create_Hexagon_Patch(const QString &originalFileLocation, const QString &modifiedFileLocation,
-                                                              const QString &outputFileLocation, bool useChecksum, int &lineNume) {
+                                                              const QString &outputFileLocation, int compareSize, bool useChecksum, int &lineNume) {
     qDebug() << "Create_Hexagon_Patch() called!";
     //TODO: Write this...
     return Hexagon_Error_Codes::OK;
@@ -54,10 +54,3 @@ Hexagon_Error_Codes::Error_Code Hexagon::Check_For_Conflicts_Between_Hexagon_Pat
     output = output.append(QString("This is a test"));
     return Hexagon_Error_Codes::CONFLICTS_DETECTED;
 }
-
-bool Hexagon::Set_Compare_Size(int size) {
-    if (compareSize <= 0) return false;
-    this->compareSize = size;
-    return true;
-}
-
