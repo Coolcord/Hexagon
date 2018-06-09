@@ -45,3 +45,7 @@ HEADERS += \
 
 FORMS += \
         Main_Window.ui
+
+RC_FILE = Hexagon_GUI.rc
+
+OTHER_FILES +=
