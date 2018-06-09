@@ -28,7 +28,7 @@ Main_Window::Main_Window(QWidget *parent, Hexagon_Interface *hexagonPlugin, Erro
     this->settingsFile = new Settings_File(applicationLocation);
     this->settingsFile->Load_Default_Settings(this->settings);
     this->stringManipulator = new String_Manipulator();
-    this->fileDialogManager = new File_Dialog_Manager(this, this->ui, this->errorMessages, &this->settings, this->stringManipulator);
+    this->fileDialogManager = new File_Dialog_Manager(this, this->ui, applicationLocation, this->errorMessages, &this->settings, this->stringManipulator);
 
     //Set the Window Title
     QString nameAndVersion = Common_Strings::STRING_HEXAGON+" "+Version::VERSION;

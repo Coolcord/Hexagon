@@ -4,9 +4,11 @@
 #include <QString>
 
 struct Settings {
-    QString defaultPatchOpenLocation;
     QString defaultOriginalFileOpenLocation;
+    QString defaultPatchOpenLocation;
     QString defaultFileOpenLocation;
+    QString defaultPatchSaveLocation;
+    QString defaultFileSaveLocation;
     QString originalFileLocation;
     int compareSize;
     bool alwaysAskForSaveLocation;

@@ -3,6 +3,7 @@
 
 #include "File_Types.h"
 #include "Settings.h"
+#include <QString>
 #include <QWidget>
 
 class Error_Messages;
@@ -12,7 +13,8 @@ namespace Ui { class Main_Window; }
 class File_Dialog_Manager
 {
 public:
-    File_Dialog_Manager(QWidget *parent, Ui::Main_Window *ui, Error_Messages *errorMessages, Settings *settings, String_Manipulator *stringManipulator);
+    File_Dialog_Manager(QWidget *parent, Ui::Main_Window *ui, const QString &applicationLocation,
+                        Error_Messages *errorMessages, Settings *settings, String_Manipulator *stringManipulator);
     ~File_Dialog_Manager() {}
     QString Get_Open_File_Location(File_Types::File_Type fileType);
     QString Get_Open_File_Location(File_Types::File_Type fileType, QString extension);
@@ -29,6 +31,7 @@ private:
     QWidget *parent;
     Error_Messages *errorMessages;
     Ui::Main_Window *ui;
+    QString applicationLocation;
     Settings *settings;
     String_Manipulator *stringManipulator;
 };

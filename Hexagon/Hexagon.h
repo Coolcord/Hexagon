@@ -24,7 +24,7 @@ public:
     Hexagon_Error_Codes::Error_Code Convert_Hexagon_Patch_To_Qt_Code(const QString &patchFileLocation, const QString &outputFileLocation, int &lineNum);
     Hexagon_Error_Codes::Error_Code Convert_Qt_Code_To_Hexagon_Patch(const QString &qtCodeFileLocation, const QString &outputFileLocation, int &lineNum);
     Hexagon_Error_Codes::Error_Code Check_For_Conflicts_Between_Hexagon_Patches(const QString &patchFileLocation, const QStringList &otherPatchFileLocations,
-                                                                                const QStringList &conflictList, int &lineNum, int &otherLineNum, int &otherFileNum);
+                                                                                const QByteArray &output, int &lineNum, int &otherLineNum, int &otherFileNum);
 
     //Settings
     bool Set_Compare_Size(int size);

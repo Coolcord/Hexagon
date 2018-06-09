@@ -32,10 +32,8 @@ public:
                                                                              int &lineNum)=0;
     virtual Hexagon_Error_Codes::Error_Code Convert_Qt_Code_To_Hexagon_Patch(const QString &qtCodeFileLocation, const QString &outputFileLocation,
                                                                              int &lineNum)=0;
-    virtual Hexagon_Error_Codes::Error_Code Check_For_Conflicts_Between_Hexagon_Patches(const QString &patchFileLocation,
-                                                                                        const QStringList &otherPatchFileLocations,
-                                                                                        const QStringList &conflictList,
-                                                                                        int &lineNum, int &otherLineNum, int &otherFileNum)=0;
+    virtual Hexagon_Error_Codes::Error_Code Check_For_Conflicts_Between_Hexagon_Patches(const QString &patchFileLocation, const QStringList &otherPatchFileLocations,
+                                                                                        const QByteArray &output, int &lineNum, int &otherLineNum, int &otherFileNum)=0;
 
     //Settings
     virtual bool Set_Compare_Size(int size)=0;

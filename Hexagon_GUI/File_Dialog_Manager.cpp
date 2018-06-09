@@ -6,10 +6,12 @@
 #include <QFileDialog>
 #include <QFileInfo>
 
-File_Dialog_Manager::File_Dialog_Manager(QWidget *parent, Ui::Main_Window *ui, Error_Messages *errorMessages, Settings *settings, String_Manipulator *stringManipulator) {
+File_Dialog_Manager::File_Dialog_Manager(QWidget *parent, Ui::Main_Window *ui, const QString &applicationLocation,
+                                         Error_Messages *errorMessages, Settings *settings, String_Manipulator *stringManipulator) {
     assert(parent); assert(ui); assert(errorMessages); assert(settings); assert(stringManipulator);
     this->parent = parent;
     this->ui = ui;
+    this->applicationLocation = applicationLocation;
     this->errorMessages = errorMessages;
     this->settings = settings;
     this->stringManipulator = stringManipulator;
@@ -71,6 +73,7 @@ QString File_Dialog_Manager::Get_File_Location(File_Types::File_Type fileType, Q
         openLocation = this->settings->defaultFileOpenLocation;
         break;
     }
+    if (!QDir(openLocation).exists()) openLocation = this->applicationLocation;
     if (!extension.isEmpty()) extensionFilter = extension.toUpper()+" Files (*."+extension+")\n"+extensionFilter; //add the custom extension if specified
 
     //Open the Dialog Window
@@ -83,6 +86,18 @@ QString File_Dialog_Manager::Get_File_Location(File_Types::File_Type fileType, Q
         if (!fileInfo.isWritable()) {
             this->errorMessages->Show_Write_Error(fileInfo.fileName());
             return QString();
+        }
+
+        //Save the path if the file was saved
+        switch (fileType) {
+        default: assert(false);
+        case File_Types::PATCH_FILE:
+            this->settings->defaultPatchSaveLocation = fileInfo.path();
+            break;
+        case File_Types::QT_CODE_FILE:
+        case File_Types::ANY_FILE:
+            this->settings->defaultFileSaveLocation = fileInfo.path();
+            break;
         }
     } else {
         if (!fileInfo.isReadable()) {
