@@ -28,7 +28,8 @@ SOURCES += \
 
 HEADERS += \
         Hexagon.h \
-    Hexagon_Interface.h
+    Hexagon_Interface.h \
+    Patch_Strings.h
 
 unix {
     target.path = /usr/lib

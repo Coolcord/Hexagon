@@ -1,6 +1,8 @@
 #ifndef HEXAGON_INTERFACE_H
 #define HEXAGON_INTERFACE_H
 
+#include <QByteArray>
+#include <QFile>
 #include <QObject>
 #include <QtPlugin>
 #include <QString>
@@ -25,6 +27,7 @@ public:
     //Standard Functions
     virtual Hexagon_Error_Codes::Error_Code Apply_Hexagon_Patch(const QString &patchFileLocation, const QString &originalFileLocation,
                                                                 const QString &outputFileLocation, bool useChecksum, int &lineNum)=0;
+    virtual Hexagon_Error_Codes::Error_Code Apply_Hexagon_Patch(const QByteArray &patchFileBytes, const QFile *outputFile, bool useChecksum, int &lineNum)=0;
     virtual Hexagon_Error_Codes::Error_Code Create_Hexagon_Patch(const QString &originalFileLocation, const QString &modifiedFileLocation,
                                                                  const QString &outputFileLocation, bool useChecksum, int &lineNume)=0;
 

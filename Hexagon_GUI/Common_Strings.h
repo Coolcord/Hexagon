@@ -25,7 +25,7 @@ namespace Common_Strings {
     const static QString STRING_OK = "OK";
     const static QString STRING_ORIGINAL = "ORIGINAL";
     const static QString STRING_MODIFIED = "MODIFIED";
-    const static QString STRING_CHECKSUM_FAILED_APPLY_ANYWAY = "Checksum does not match! Apply patch anyway?";
+    const static QString STRING_CHECKSUM_FAILED_APPLY_ANYWAY = "This patch was created using a different original file! Apply anyway?";
 
     //About Strings
     const static QString STRING_ABOUT_DESCRIPTION = "A Simple Plain Text Hexadecimal Patcher";
