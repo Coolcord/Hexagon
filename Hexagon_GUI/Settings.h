@@ -12,6 +12,7 @@ struct Settings {
     QString originalFileLocation;
     int compareSize;
     bool alwaysAskForSaveLocation;
+    bool skipChecksumWhenCreatingPatch;
 };
 
 #endif // SETTINGS_H

@@ -21,7 +21,11 @@ void Error_Messages::Show_Error(const QString &message) {
 }
 
 void Error_Messages::Show_Parse_Error(int lineNum) {
-    return this->Show_Error("Parse error in patch on line "+QString::number(lineNum));
+    return this->Show_Parse_Error("patch", lineNum);
+}
+
+void Error_Messages::Show_Parse_Error(const QString &fileName, int lineNum) {
+    return this->Show_Error("Parse error in "+fileName+" on line "+QString::number(lineNum));
 }
 
 void Error_Messages::Show_Read_Error(const QString &fileName) {

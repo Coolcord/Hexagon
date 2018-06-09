@@ -22,6 +22,7 @@ bool Settings_File::Save_Settings(const Settings &settings) {
     stream << settings.originalFileLocation << Common_Strings::STRING_NEW_LINE;
     stream << settings.compareSize << Common_Strings::STRING_NEW_LINE;
     stream << settings.alwaysAskForSaveLocation << Common_Strings::STRING_NEW_LINE;
+    stream << settings.skipChecksumWhenCreatingPatch << Common_Strings::STRING_NEW_LINE;
     stream.flush();
     file.close();
     return true;
@@ -40,6 +41,7 @@ bool Settings_File::Load_Settings(Settings &settings) {
     settings.originalFileLocation = file.readLine().trimmed();
     settings.compareSize = file.readLine().trimmed().toInt(&valid); if (!valid) return false;
     settings.alwaysAskForSaveLocation = file.readLine().trimmed().toInt(&valid); if (!valid) return false;
+    settings.skipChecksumWhenCreatingPatch = file.readLine().trimmed().toInt(&valid); if (!valid) return false;
 
     //Make Sure Settings are Valid
     if (!QDir(settings.defaultOriginalFileOpenLocation).exists()) settings.defaultOriginalFileOpenLocation = this->applicationLocation;
@@ -60,4 +62,5 @@ void Settings_File::Load_Default_Settings(Settings &settings) {
     settings.originalFileLocation = QString();
     settings.compareSize = 5;
     settings.alwaysAskForSaveLocation = false;
+    settings.skipChecksumWhenCreatingPatch = false;
 }

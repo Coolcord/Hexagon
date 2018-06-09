@@ -7,9 +7,13 @@
 #include "String_Manipulator.h"
 #include "Version.h"
 #include <assert.h>
+#include <QDir>
+#include <QDirIterator>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
+
+#include <QDebug>
 
 Main_Window::Main_Window(QWidget *parent, Hexagon_Interface *hexagonPlugin, Error_Messages *errorMessages) :
     QDialog(parent, Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint),
@@ -31,11 +35,10 @@ Main_Window::Main_Window(QWidget *parent, Hexagon_Interface *hexagonPlugin, Erro
     this->fileDialogManager = new File_Dialog_Manager(this, this->ui, applicationLocation, this->errorMessages, &this->settings, this->stringManipulator);
 
     //Set the Window Title
-    QString nameAndVersion = Common_Strings::STRING_HEXAGON+" "+Version::VERSION;
-    this->setWindowTitle(nameAndVersion);
+    this->setWindowTitle(Common_Strings::STRING_HEXAGON);
 
     //Set the About Text
-    this->ui->textAbout->setHtml(nameAndVersion+Common_Strings::STRING_HTML_NEW_LINE+Common_Strings::STRING_ABOUT_DESCRIPTION+Common_Strings::STRING_HTML_NEW_LINE+Common_Strings::STRING_HTML_NEW_LINE+
+    this->ui->textAbout->setHtml(Common_Strings::STRING_HEXAGON+" "+Version::VERSION+Common_Strings::STRING_HTML_NEW_LINE+Common_Strings::STRING_ABOUT_DESCRIPTION+Common_Strings::STRING_HTML_NEW_LINE+Common_Strings::STRING_HTML_NEW_LINE+
                 Common_Strings::STRING_CREATED_BY_COOLCORD+Common_Strings::STRING_HTML_NEW_LINE+Common_Strings::STRING_HTML_NEW_LINE+
                 "<a href="+Common_Strings::STRING_UPDATES_LINK+">"+Common_Strings::STRING_UPDATES+"</a>"+Common_Strings::STRING_HTML_NEW_LINE+Common_Strings::STRING_HTML_NEW_LINE+
                 "<a href="+Common_Strings::STRING_SOURCE_CODE_LINK+">"+Common_Strings::STRING_SOURCE_CODE+"</a>"+Common_Strings::STRING_HTML_NEW_LINE+Common_Strings::STRING_HTML_NEW_LINE);
@@ -127,12 +130,30 @@ void Main_Window::on_btnCreatePatch_clicked() {
     }
 }
 
-void Main_Window::on_btnCheckAgainstPatch_clicked() {
-    //TODO: Write this...
+void Main_Window::on_btnCheckAgainstOtherPatches_clicked() {
+    //Open the Patch
+    QString patchFileLocation = this->fileDialogManager->Get_Open_File_Location(File_Types::PATCH_FILE);
+    if (patchFileLocation.isEmpty()) return;
+
+    //Open the Other Patches to Compare it Against
+    QStringList otherPatchFileLocations = QFileDialog::getOpenFileNames(this, "Open Patch Files", this->settings.defaultPatchOpenLocation, Common_Strings::STRING_PATCH_EXTENSION_FILTER);
+    return this->Check_For_Conflicts(patchFileLocation, otherPatchFileLocations);
 }
 
 void Main_Window::on_btnCheckAgainstFolder_clicked() {
-    //TODO: Write this...
+    //Open the Patch
+    QString patchFileLocation = this->fileDialogManager->Get_Open_File_Location(File_Types::PATCH_FILE);
+    if (patchFileLocation.isEmpty()) return;
+
+    //Open the Folder
+    QString directoryLocation = QFileDialog::getExistingDirectory(this, "Open Folder", this->settings.defaultPatchOpenLocation);
+    if (directoryLocation == NULL || directoryLocation.isEmpty() || !QDir(directoryLocation).isReadable()) return;
+
+    //Get All Files in All Subdirectories
+    QDirIterator it(directoryLocation, QStringList() << "*"+Common_Strings::STRING_PATCH_EXTENSION, QDir::Files, QDirIterator::Subdirectories);
+    QStringList otherPatchFileLocations;
+    while (it.hasNext()) otherPatchFileLocations.append(it.next());
+    return this->Check_For_Conflicts(patchFileLocation, otherPatchFileLocations);
 }
 
 void Main_Window::on_btnConvertHEXPtoQtCode_clicked() {
@@ -159,7 +180,7 @@ void Main_Window::on_btnConvertHEXPtoQtCode_clicked() {
     case Hexagon_Error_Codes::READ_ERROR: this->errorMessages->Show_Read_Error(patchFileInfo.fileName()); return;
     case Hexagon_Error_Codes::READ_MODIFIED_ERROR: assert(false); return; //this should never happen
     case Hexagon_Error_Codes::WRITE_ERROR: this->errorMessages->Show_Write_Error(outputFileInfo.fileName()); return;
-    case Hexagon_Error_Codes::PARSE_ERROR: assert(false); return; //this should never happen
+    case Hexagon_Error_Codes::PARSE_ERROR: this->errorMessages->Show_Parse_Error(lineNum); return;
     case Hexagon_Error_Codes::CONFLICTS_DETECTED: assert(false); return; //this should never happen
     }
 }
@@ -188,7 +209,7 @@ void Main_Window::on_btnConvertQtCodetoHEXP_clicked() {
     case Hexagon_Error_Codes::READ_ERROR: this->errorMessages->Show_Read_Error(qtCodeFileInfo.fileName()); return;
     case Hexagon_Error_Codes::READ_MODIFIED_ERROR: assert(false); return; //this should never happen
     case Hexagon_Error_Codes::WRITE_ERROR: this->errorMessages->Show_Write_Error(outputFileInfo.fileName()); return;
-    case Hexagon_Error_Codes::PARSE_ERROR: assert(false); return; //this should never happen
+    case Hexagon_Error_Codes::PARSE_ERROR: this->errorMessages->Show_Parse_Error(lineNum); return;
     case Hexagon_Error_Codes::CONFLICTS_DETECTED: assert(false); return; //this should never happen
     }
 }
@@ -205,16 +226,42 @@ void Main_Window::on_Main_Window_finished(int result) {
     if (result == 0) this->Save_Settings();
 }
 
+void Main_Window::Check_For_Conflicts(const QString &patchFileLocation, const QStringList &otherPatchFileLocations) {
+    for (int i = 0; i < otherPatchFileLocations.size(); ++i) qDebug() << otherPatchFileLocations.at(i);
+
+    //Run the Command via the Plugin
+    if (otherPatchFileLocations.isEmpty()) return;
+    int lineNum = 0, otherLineNum = 0, otherFileNum = 0;
+    QByteArray output;
+    Hexagon_Error_Codes::Error_Code errorCode = this->hexagonPlugin->Check_For_Conflicts_Between_Hexagon_Patches(patchFileLocation, otherPatchFileLocations, output, lineNum, otherLineNum, otherFileNum);
+    switch (errorCode) {
+    default: assert(false); return;
+    case Hexagon_Error_Codes::OK: this->errorMessages->Show_Information("No conflicts detected!"); return;
+    case Hexagon_Error_Codes::READ_ERROR: this->errorMessages->Show_Read_Error(QFileInfo(patchFileLocation).fileName()); return;
+    case Hexagon_Error_Codes::READ_MODIFIED_ERROR: this->errorMessages->Show_Read_Error(QFileInfo(otherPatchFileLocations.at(otherFileNum)).fileName()); return;
+    case Hexagon_Error_Codes::WRITE_ERROR: assert(false); return; //this should never happen
+    case Hexagon_Error_Codes::PARSE_ERROR:
+        if (lineNum == 0) this->errorMessages->Show_Parse_Error(QFileInfo(otherPatchFileLocations.at(otherFileNum)).fileName(), otherLineNum);
+        else this->errorMessages->Show_Parse_Error(QFileInfo(patchFileLocation).fileName(), lineNum);
+        return;
+    case Hexagon_Error_Codes::CONFLICTS_DETECTED:
+        //TODO: Write this...
+        return;
+    }
+}
+
 void Main_Window::Load_Settings() {
     this->settingsFile->Load_Settings(this->settings);
     this->ui->leOriginalFile->setText(this->settings.originalFileLocation);
     this->ui->sbCompareSize->setValue(this->settings.compareSize);
     this->ui->cbAlwaysAskForSaveLocation->setChecked(this->settings.alwaysAskForSaveLocation);
+    this->ui->cbSkipChecksumWhenCreatingPatch->setChecked(this->settings.skipChecksumWhenCreatingPatch);
 }
 
 void Main_Window::Save_Settings() {
     this->settings.originalFileLocation = this->ui->leOriginalFile->text();
     this->settings.compareSize = this->ui->sbCompareSize->value();
     this->settings.alwaysAskForSaveLocation = this->ui->cbAlwaysAskForSaveLocation->isChecked();
+    this->settings.skipChecksumWhenCreatingPatch = this->ui->cbSkipChecksumWhenCreatingPatch->isChecked();
     this->settingsFile->Save_Settings(this->settings);
 }

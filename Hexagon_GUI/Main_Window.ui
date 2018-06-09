@@ -58,7 +58,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_6">
        <item>
-        <widget class="QPushButton" name="btnCheckAgainstPatch">
+        <widget class="QPushButton" name="btnCheckAgainstOtherPatches">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
            <horstretch>0</horstretch>
@@ -66,7 +66,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Check Against Patch</string>
+          <string>Check Against Other Patches</string>
          </property>
         </widget>
        </item>
@@ -228,6 +228,26 @@
          </property>
         </spacer>
        </item>
+       <item>
+        <widget class="QCheckBox" name="cbSkipChecksumWhenCreatingPatch">
+         <property name="text">
+          <string>Skip checksum when creating patch</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tabAbout">
@@ -290,7 +310,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>tabWidget</tabstop>
   <tabstop>btnApplyPatch</tabstop>
   <tabstop>btnCreatePatch</tabstop>
-  <tabstop>btnCheckAgainstPatch</tabstop>
+  <tabstop>btnCheckAgainstOtherPatches</tabstop>
   <tabstop>btnCheckAgainstFolder</tabstop>
   <tabstop>btnConvertHEXPtoQtCode</tabstop>
   <tabstop>btnConvertQtCodetoHEXP</tabstop>

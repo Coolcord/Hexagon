@@ -12,6 +12,7 @@ public:
     void Show_Information(const QString &message);
     void Show_Error(const QString &message);
     void Show_Parse_Error(int lineNum);
+    void Show_Parse_Error(const QString &fileName, int lineNum);
     void Show_Read_Error(const QString &fileName);
     void Show_Write_Error(const QString &fileName);
     void Show_Read_Write_Error(const QString &fileName);

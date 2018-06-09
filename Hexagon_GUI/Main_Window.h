@@ -25,7 +25,7 @@ public:
 private slots:
     void on_btnApplyPatch_clicked();
     void on_btnCreatePatch_clicked();
-    void on_btnCheckAgainstPatch_clicked();
+    void on_btnCheckAgainstOtherPatches_clicked();
     void on_btnCheckAgainstFolder_clicked();
     void on_btnConvertHEXPtoQtCode_clicked();
     void on_btnConvertQtCodetoHEXP_clicked();
@@ -33,6 +33,7 @@ private slots:
     void on_Main_Window_finished(int result);
 
 private:
+    void Check_For_Conflicts(const QString &patchFileLocation, const QStringList &otherPatchFileLocations);
     void Load_Settings();
     void Save_Settings();
 
