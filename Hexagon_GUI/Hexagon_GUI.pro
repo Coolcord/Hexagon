@@ -30,7 +30,8 @@ SOURCES += \
     Settings_File.cpp \
     String_Manipulator.cpp \
     Error_Messages.cpp \
-    File_Dialog_Manager.cpp
+    File_Dialog_Manager.cpp \
+    Conflicts_Window.cpp
 
 HEADERS += \
     Common_Strings.h \
@@ -41,10 +42,12 @@ HEADERS += \
     String_Manipulator.h \
     Error_Messages.h \
     File_Dialog_Manager.h \
-    File_Types.h
+    File_Types.h \
+    Conflicts_Window.h
 
 FORMS += \
-        Main_Window.ui
+        Main_Window.ui \
+    Conflicts_Window.ui
 
 RC_FILE = Hexagon_GUI.rc
 

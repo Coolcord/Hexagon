@@ -1,6 +1,7 @@
 #include "Main_Window.h"
 #include "ui_Main_Window.h"
 #include "Common_Strings.h"
+#include "Conflicts_Window.h"
 #include "Error_Messages.h"
 #include "File_Dialog_Manager.h"
 #include "Settings_File.h"
@@ -245,7 +246,7 @@ void Main_Window::Check_For_Conflicts(const QString &patchFileLocation, const QS
         else this->errorMessages->Show_Parse_Error(QFileInfo(patchFileLocation).fileName(), lineNum);
         return;
     case Hexagon_Error_Codes::CONFLICTS_DETECTED:
-        //TODO: Write this...
+        Conflicts_Window(this, output).exec();
         return;
     }
 }

@@ -39,10 +39,11 @@ Hexagon_Error_Codes::Error_Code Hexagon::Convert_Qt_Code_To_Hexagon_Patch(const 
     return Hexagon_Error_Codes::OK;
 }
 
-Hexagon_Error_Codes::Error_Code Hexagon::Check_For_Conflicts_Between_Hexagon_Patches(const QString &patchFileLocation, const QStringList &otherPatchFileLocations, const QByteArray &output, int &lineNum, int &otherLineNum, int &otherFileNum) {
+Hexagon_Error_Codes::Error_Code Hexagon::Check_For_Conflicts_Between_Hexagon_Patches(const QString &patchFileLocation, const QStringList &otherPatchFileLocations, QByteArray &output, int &lineNum, int &otherLineNum, int &otherFileNum) {
     qDebug() << "Check_For_Conflicts_Between_Hexagon_Patches() called!";
     //TODO: Write this...
-    return Hexagon_Error_Codes::OK;
+    output = output.append(QString("This is a test"));
+    return Hexagon_Error_Codes::CONFLICTS_DETECTED;
 }
 
 bool Hexagon::Set_Compare_Size(int size) {
