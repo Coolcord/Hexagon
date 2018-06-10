@@ -2,10 +2,12 @@
 #define PATCH_READER_H
 
 #include <QByteArray>
+#include <QFile>
 #include <QTextStream>
 
 class Patch_Reader {
 public:
+    Patch_Reader(QFile *file);
     Patch_Reader(const QByteArray &patchBytes);
     ~Patch_Reader();
     int Get_Current_Line_Num();

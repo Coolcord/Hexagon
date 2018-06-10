@@ -2,7 +2,15 @@
 #include "Patch_Strings.h"
 #include <assert.h>
 
+Patch_Reader::Patch_Reader(QFile *file) {
+    assert(file);
+    assert(file->isOpen() && file->isReadable());
+    this->currentLineNum = 0;
+    this->stream = new QTextStream(file);
+}
+
 Patch_Reader::Patch_Reader(const QByteArray &patchBytes) {
+    this->currentLineNum = 0;
     this->stream = new QTextStream(patchBytes, QIODevice::ReadOnly);
 }
 
