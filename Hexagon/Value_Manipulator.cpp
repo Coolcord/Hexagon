@@ -1,5 +1,6 @@
 #include "Value_Manipulator.h"
 #include "Patch_Strings.h"
+#include <QTextStream>
 
 QString Value_Manipulator::Convert_QByteArray_To_QString(const QByteArray &bytes) {
     QString output = QString();
@@ -52,6 +53,16 @@ QString Value_Manipulator::Trim_Hex_Identifier(QString &hexString) {
         return hexString.remove(hexIdentifierSize, hexString.size()-hexIdentifierSize);
     }
     return hexString;
+}
+
+QString Value_Manipulator::Wrap_QString_With_New_Lines(const QString &string, int width) {
+    QTextStream stream;
+    for (int i = 1; i <= string.size(); ++i) {
+        stream << string.at(i);
+        if (i%width == 0) stream << Patch_Strings::STRING_NEW_LINE;
+    }
+    stream.seek(0);
+    return stream.readAll();
 }
 
 char Value_Manipulator::Get_Char_From_Nibble(unsigned char nibble) {

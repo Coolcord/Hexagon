@@ -6,15 +6,18 @@
 #include <QString>
 #include <QTextStream>
 
+class Value_Manipulator;
+
 class Qt_Code_Reader {
 public:
-    Qt_Code_Reader(QFile *file);
+    Qt_Code_Reader(QFile *file, Value_Manipulator *valueManipulator);
     ~Qt_Code_Reader();
     bool Read_Next_Patch(qint64 &offset, QString &value);
     bool Read_Next_Patch(qint64 &offset, QByteArray &value);
 
 private:
     QTextStream *stream;
+    Value_Manipulator *valueManipulator;
     int currentLineNum;
 };
 

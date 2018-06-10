@@ -6,9 +6,11 @@
 #include <QTextStream>
 #include <QString>
 
+class Value_Manipulator;
+
 class Patch_Writer {
 public:
-    Patch_Writer(QFile *file);
+    Patch_Writer(QFile *file, Value_Manipulator *valueManipulator);
     ~Patch_Writer();
     bool Write_Break_Line();
     bool Write_Checksum(const QString &checksum);
@@ -19,6 +21,8 @@ public:
 
 private:
     QTextStream *stream;
+    Value_Manipulator *valueManipulator;
+    int numDigitsInOffset;
 };
 
 #endif // PATCH_WRITER_H

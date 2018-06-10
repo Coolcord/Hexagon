@@ -6,15 +6,18 @@
 #include <QString>
 #include <QTextStream>
 
+class Value_Manipulator;
+
 class Qt_Code_Writer {
 public:
-    Qt_Code_Writer(QFile *file);
+    Qt_Code_Writer(QFile *file, Value_Manipulator *valueManipulator);
     ~Qt_Code_Writer();
     bool Write_Next_Patch(const qint64 offset, const QString &value);
     bool Write_Next_Patch(const qint64 offset, const QByteArray &value);
 
 private:
     QTextStream *stream;
+    Value_Manipulator *valueManipulator;
 };
 
 #endif // QT_CODE_WRITER_H

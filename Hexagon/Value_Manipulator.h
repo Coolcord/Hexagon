@@ -13,6 +13,7 @@ public:
     bool Convert_QString_To_QByteArray(const QString &string, QByteArray &output);
     bool Is_Line_Hex_String(const QString &line);
     QString Trim_Hex_Identifier(QString &hexString);
+    QString Wrap_QString_With_New_Lines(const QString &string, int width);
 
 private:
     char Get_Char_From_Nibble(unsigned char nibble);
