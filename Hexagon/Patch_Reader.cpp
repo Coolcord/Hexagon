@@ -1,15 +1,20 @@
 #include "Patch_Reader.h"
 #include "Patch_Strings.h"
+#include "Value_Manipulator.h"
 #include <assert.h>
 
-Patch_Reader::Patch_Reader(QFile *file) {
+Patch_Reader::Patch_Reader(QFile *file, Value_Manipulator *valueManipulator) {
     assert(file);
     assert(file->isOpen() && file->isReadable());
+    assert(valueManipulator);
+    this->valueManipulator = valueManipulator;
     this->currentLineNum = 0;
     this->stream = new QTextStream(file);
 }
 
-Patch_Reader::Patch_Reader(const QByteArray &patchBytes) {
+Patch_Reader::Patch_Reader(const QByteArray &patchBytes, Value_Manipulator *valueManipulator) {
+    assert(valueManipulator);
+    this->valueManipulator = valueManipulator;
     this->currentLineNum = 0;
     this->stream = new QTextStream(patchBytes, QIODevice::ReadOnly);
 }
@@ -48,21 +53,6 @@ bool Patch_Reader::Get_Next_Offset_And_Value(qint64 &offset, QByteArray &value) 
     return true;
 }
 
-bool Patch_Reader::Convert_QString_To_QByteArray(const QString &string, QByteArray &output) {
-    if (string.size()%2 == 1) return false;
-    output = QByteArray(string.size()/2, 0x00);
-    for (int i = 0, j = 0; i < string.size(); i += 2, ++j) {
-        assert(j < output.size());
-        QString numberString = QString(string.at(i))+QString(string.at(i+1));
-        bool valid = false;
-        int number = numberString.toInt(&valid, 0x10);
-        if (!valid) return false;
-        assert(numberString >= 0x00 && numberString <= 0xFF);
-        output.data()[j] = static_cast<char>(number);
-    }
-    return true;
-}
-
 QString Patch_Reader::Get_Next_Line_After_Comments() {
     QString line = QString();
     while (!this->stream->atEnd()) {
@@ -73,17 +63,6 @@ QString Patch_Reader::Get_Next_Line_After_Comments() {
         else return line;
     }
     return QString(); //nothing left to read
-}
-
-bool Patch_Reader::Is_Line_Hex_String(const QString &line) {
-    for (int i = 0; i < line.size(); ++i) {
-        switch (line.at(i).toLower().toLatin1()) {
-        default: return false;
-        case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7':
-        case '8': case '9': case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': continue;
-        }
-    }
-    return true;
 }
 
 bool Patch_Reader::Parse_Value(QByteArray &value) {
@@ -110,13 +89,5 @@ bool Patch_Reader::Parse_Value(QByteArray &value) {
             valueString += line;
         }
     }
-    return this->Convert_QString_To_QByteArray(valueString, value);
-}
-
-QString Patch_Reader::Trim_Hex_Identifier(QString &hexString) {
-    if (hexString.startsWith(Patch_Strings::STRING_HEX_IDENTIFIER)) {
-        int hexIdentifierSize = Patch_Strings::STRING_HEX_IDENTIFIER.size();
-        return hexString.remove(hexIdentifierSize, hexString.size()-hexIdentifierSize);
-    }
-    return hexString;
+    return this->valueManipulator->Convert_QString_To_QByteArray(valueString, value);
 }

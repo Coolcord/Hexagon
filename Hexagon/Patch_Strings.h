@@ -12,6 +12,10 @@ namespace Patch_Strings {
     const static QString STRING_VALUE = "V:";
     const static QString STRING_VALUE_TAB = "   ";
 
+    //Header
+    const static QString STRING_HEADER = "Hexagon Patch";
+    const static QString STRING_CREATED = "Created on";
+
     #ifdef Q_OS_WIN32
     const static QString STRING_NEW_LINE = "\r\n";
     #else

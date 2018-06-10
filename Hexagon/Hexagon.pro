@@ -28,7 +28,8 @@ SOURCES += \
     Patch_Reader.cpp \
     Patch_Writer.cpp \
     Qt_Code_Reader.cpp \
-    Qt_Code_Writer.cpp
+    Qt_Code_Writer.cpp \
+    Value_Manipulator.cpp
 
 HEADERS += \
         Hexagon.h \
@@ -38,7 +39,8 @@ HEADERS += \
     Patch_Writer.h \
     Qt_Code_Reader.h \
     Qt_Code_Writer.h \
-    Qt_Code_Strings.h
+    Qt_Code_Strings.h \
+    Value_Manipulator.h
 
 unix {
     target.path = /usr/lib
