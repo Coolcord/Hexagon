@@ -59,7 +59,7 @@ QString Value_Manipulator::Trim_Hex_Identifier(QString &hexString) {
 QString Value_Manipulator::Wrap_QString_With_New_Lines(const QString &string, int width) {
     QTextStream stream;
     for (int i = 1; i <= string.size(); ++i) {
-        stream << string.at(i);
+        stream << string.at(i-1);
         if (i%width == 0) stream << Patch_Strings::STRING_NEW_LINE;
     }
     stream.seek(0);

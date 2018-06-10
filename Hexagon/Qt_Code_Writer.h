@@ -19,7 +19,7 @@ public:
 
 private:
     bool Write_Patch(const qint64 offset, const QString &value, bool lastPatch);
-    bool Write_Value_Lines(const QString &value);
+    bool Write_Value_Lines(const QString &value, int currentLineSize);
 
     QTextStream *stream;
     Value_Manipulator *valueManipulator;
