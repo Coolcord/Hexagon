@@ -43,7 +43,7 @@ bool Patch_Reader::Get_Next_Offset_And_Value(qint64 &offset, QByteArray &value) 
     QStringList values = line.split(' ');
     if (values.size() != 2) return false;
     QString offsetString = values.at(1);
-    offsetString = this->Trim_Hex_Identifier(offsetString);
+    offsetString = this->valueManipulator->Trim_Hex_Identifier(offsetString);
     bool valid = false;
     offset = offsetString.toULongLong(&valid, 0x10);
     if (!valid) return false;
@@ -72,8 +72,8 @@ bool Patch_Reader::Parse_Value(QByteArray &value) {
     QStringList values = line.split(' ');
     if (values.size() != 2) return false;
     QString valueString = values.at(1);
-    valueString = this->Trim_Hex_Identifier(valueString);
-    if (!this->Is_Line_Hex_String(valueString)) return false;
+    valueString = this->valueManipulator->Trim_Hex_Identifier(valueString);
+    if (!this->valueManipulator->Is_Line_Hex_String(valueString)) return false;
 
     //Parse Any Additional Lines
     while (!this->stream->atEnd()) {
@@ -84,8 +84,8 @@ bool Patch_Reader::Parse_Value(QByteArray &value) {
             break;
         } else {
             ++this->currentLineNum;
-            line = this->Trim_Hex_Identifier(line);
-            if (!this->Is_Line_Hex_String(line)) return false;
+            line = this->valueManipulator->Trim_Hex_Identifier(line);
+            if (!this->valueManipulator->Is_Line_Hex_String(line)) return false;
             valueString += line;
         }
     }

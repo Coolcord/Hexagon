@@ -1,5 +1,6 @@
 #include "Value_Manipulator.h"
 #include "Patch_Strings.h"
+#include <assert.h>
 #include <QTextStream>
 
 QString Value_Manipulator::Convert_QByteArray_To_QString(const QByteArray &bytes) {
