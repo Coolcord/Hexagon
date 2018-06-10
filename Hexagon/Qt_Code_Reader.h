@@ -16,6 +16,8 @@ public:
     bool Read_Next_Patch(qint64 &offset, QByteArray &value);
 
 private:
+    bool Get_Offset_From_Line(const QString &line, qint64 &offset);
+
     QTextStream *stream;
     Value_Manipulator *valueManipulator;
     int currentLineNum;
