@@ -75,6 +75,7 @@ bool Qt_Code_Reader::Get_Multi_Value_From_Lines(const QString &firstLine, QStrin
         if (line.isEmpty()) continue;
         if (line.contains(Qt_Code_Strings::STRING_WRITE_BYTES_TO_OFFSET)) { //this line is not part of the value. Roll back
             assert(this->stream->seek(posBefore));
+            --this->currentLineNum;
             return true;
         } else {
             strings = line.split("\"");

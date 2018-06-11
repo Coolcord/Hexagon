@@ -78,12 +78,15 @@ bool Patch_Reader::Parse_Value(QByteArray &value) {
     //Parse Any Additional Lines
     while (!this->stream->atEnd()) {
         qint64 posBefore = this->stream->pos();
+        ++this->currentLineNum;
         line = this->stream->readLine().trimmed();
+        if (line.isEmpty()) continue;
+        if (line.startsWith(Patch_Strings::STRING_COMMENT)) continue;
         if (line.startsWith(Patch_Strings::STRING_OFFSET)) {
             assert(this->stream->seek(posBefore));
+            --this->currentLineNum;
             break;
         } else {
-            ++this->currentLineNum;
             line = this->valueManipulator->Trim_Hex_Identifier(line);
             if (!this->valueManipulator->Is_Line_Hex_String(line)) return false;
             valueString += line;
