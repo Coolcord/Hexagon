@@ -239,10 +239,8 @@ void Main_Window::Check_For_Conflicts(const QString &patchFileLocation, const QS
     switch (errorCode) {
     default: assert(false); return;
     case Hexagon_Error_Codes::OK: this->errorMessages->Show_Information("No conflicts detected!"); return;
-    case Hexagon_Error_Codes::PARSE_ERROR:
-        if (lineNum == 0) this->errorMessages->Show_Parse_Error(QFileInfo(otherPatchFileLocations.at(otherFileNum)).fileName(), otherLineNum);
-        else this->errorMessages->Show_Parse_Error(QFileInfo(patchFileLocation).fileName(), lineNum);
-        return;
+    case Hexagon_Error_Codes::READ_ERROR: this->errorMessages->Show_Parse_Error(QFileInfo(patchFileLocation).fileName(), lineNum); return;
+    case Hexagon_Error_Codes::READ_MODIFIED_ERROR: this->errorMessages->Show_Parse_Error(QFileInfo(otherPatchFileLocations.at(otherFileNum)).fileName(), otherLineNum); return;
     case Hexagon_Error_Codes::CONFLICTS_DETECTED:
         Conflicts_Window(this, output).exec();
         return;

@@ -238,13 +238,13 @@ Hexagon_Error_Codes::Error_Code Hexagon::Check_For_Conflicts_Between_Hexagon_Pat
     //Open the files into the Patch Comparer
     Patch_Comparer patchComparer(&valueManipulator);
     if (!patchComparer.Open_Original_File(patchFileLocation, lineNum)) {
-        return Hexagon_Error_Codes::PARSE_ERROR;
+        return Hexagon_Error_Codes::READ_ERROR;
     }
     lineNum = 0;
     for (int i = 0; i < otherPatchFileLocations.size(); ++i) {
         if (!patchComparer.Open_Additional_File(otherPatchFileLocations.at(i), otherLineNum)) {
             otherFileNum = i;
-            return Hexagon_Error_Codes::PARSE_ERROR;
+            return Hexagon_Error_Codes::READ_MODIFIED_ERROR;
         }
     }
 
