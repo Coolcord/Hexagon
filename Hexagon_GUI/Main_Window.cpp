@@ -125,7 +125,7 @@ void Main_Window::on_btnCreatePatch_clicked() {
 
     //Run the Command via the Plugin
     Hexagon_Error_Codes::Error_Code errorCode = this->hexagonPlugin->Create_Hexagon_Patch(originalFileLocation, modifiedFileLocation, outputFileLocation,
-                                                                                          this->ui->sbCompareSize->value(), !this->ui->cbSkipChecksumWhenCreatingPatch->isChecked());
+                                                                                          this->ui->sbCompareSize->value(), !this->ui->cbSkipChecksumWhenCreatingPatch->isChecked(), !this->ui->cbSkipCommentsWhenCreatingPatch->isChecked());
     switch (errorCode) {
     default: assert(false); return;
     case Hexagon_Error_Codes::OK: this->errorMessages->Show_Information(outputFileInfo.fileName()+" created!"); return;
@@ -206,7 +206,7 @@ void Main_Window::on_btnConvertQtCodetoHEXP_clicked() {
 
     //Run the Command via the Plugin
     int lineNum = 0;
-    Hexagon_Error_Codes::Error_Code errorCode = this->hexagonPlugin->Convert_Qt_Code_To_Hexagon_Patch(qtCodeFileLocation, outputFileLocation, lineNum);
+    Hexagon_Error_Codes::Error_Code errorCode = this->hexagonPlugin->Convert_Qt_Code_To_Hexagon_Patch(qtCodeFileLocation, outputFileLocation, lineNum, !this->ui->cbSkipCommentsWhenCreatingPatch->isChecked());
     switch (errorCode) {
     default: assert(false); return;
     case Hexagon_Error_Codes::OK: this->errorMessages->Show_Information(outputFileInfo.fileName()+" created!"); return;
@@ -235,7 +235,7 @@ void Main_Window::Check_For_Conflicts(const QString &patchFileLocation, const QS
     if (otherPatchFileLocations.isEmpty()) return;
     int lineNum = 0, otherLineNum = 0, otherFileNum = 0;
     QByteArray output;
-    Hexagon_Error_Codes::Error_Code errorCode = this->hexagonPlugin->Check_For_Conflicts_Between_Hexagon_Patches(patchFileLocation, otherPatchFileLocations, output, lineNum, otherLineNum, otherFileNum);
+    Hexagon_Error_Codes::Error_Code errorCode = this->hexagonPlugin->Check_For_Conflicts_Between_Hexagon_Patches(patchFileLocation, otherPatchFileLocations, output, lineNum, otherLineNum, otherFileNum, this->ui->cbVerboseConflictOutput->isChecked());
     switch (errorCode) {
     default: assert(false); return;
     case Hexagon_Error_Codes::OK: this->errorMessages->Show_Information("No conflicts detected!"); return;
@@ -256,13 +256,17 @@ void Main_Window::Load_Settings() {
     this->ui->leOriginalFile->setText(this->settings.originalFileLocation);
     this->ui->sbCompareSize->setValue(this->settings.compareSize);
     this->ui->cbAlwaysAskForSaveLocation->setChecked(this->settings.alwaysAskForSaveLocation);
+    this->ui->cbVerboseConflictOutput->setChecked(this->settings.verboseConflictOutput);
     this->ui->cbSkipChecksumWhenCreatingPatch->setChecked(this->settings.skipChecksumWhenCreatingPatch);
+    this->ui->cbSkipCommentsWhenCreatingPatch->setChecked(this->settings.skipCommentsWhenCreatingPatch);
 }
 
 void Main_Window::Save_Settings() {
     this->settings.originalFileLocation = this->ui->leOriginalFile->text();
     this->settings.compareSize = this->ui->sbCompareSize->value();
     this->settings.alwaysAskForSaveLocation = this->ui->cbAlwaysAskForSaveLocation->isChecked();
+    this->settings.verboseConflictOutput = this->ui->cbVerboseConflictOutput->isChecked();
     this->settings.skipChecksumWhenCreatingPatch = this->ui->cbSkipChecksumWhenCreatingPatch->isChecked();
+    this->settings.skipCommentsWhenCreatingPatch = this->ui->cbSkipCommentsWhenCreatingPatch->isChecked();
     this->settingsFile->Save_Settings(this->settings);
 }

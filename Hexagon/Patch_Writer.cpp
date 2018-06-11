@@ -7,20 +7,20 @@
 const int DEFAULT_OFFSET_SIZE = 4;
 const int PATCH_TEXT_WIDTH = 75;
 
-Patch_Writer::Patch_Writer(QFile *file, Value_Manipulator *valueManipulator) {
-    this->Initialize(file, valueManipulator, DEFAULT_OFFSET_SIZE, QString());
+Patch_Writer::Patch_Writer(QFile *file, Value_Manipulator *valueManipulator, bool useComments) {
+    this->Initialize(file, valueManipulator, useComments, DEFAULT_OFFSET_SIZE, QString());
 }
 
-Patch_Writer::Patch_Writer(QFile *file, Value_Manipulator *valueManipulator, const QString &originalFileName) {
-    this->Initialize(file, valueManipulator, DEFAULT_OFFSET_SIZE, originalFileName);
+Patch_Writer::Patch_Writer(QFile *file, Value_Manipulator *valueManipulator, bool useComments, const QString &originalFileName) {
+    this->Initialize(file, valueManipulator, useComments, DEFAULT_OFFSET_SIZE, originalFileName);
 }
 
-Patch_Writer::Patch_Writer(QFile *file, Value_Manipulator *valueManipulator, int numDigitsInOffset) {
-    this->Initialize(file, valueManipulator, numDigitsInOffset, QString());
+Patch_Writer::Patch_Writer(QFile *file, Value_Manipulator *valueManipulator, bool useComments, int numDigitsInOffset) {
+    this->Initialize(file, valueManipulator, useComments, numDigitsInOffset, QString());
 }
 
-Patch_Writer::Patch_Writer(QFile *file, Value_Manipulator *valueManipulator, int numDigitsInOffset, const QString &originalFileName) {
-    this->Initialize(file, valueManipulator, numDigitsInOffset, originalFileName);
+Patch_Writer::Patch_Writer(QFile *file, Value_Manipulator *valueManipulator, bool useComments, int numDigitsInOffset, const QString &originalFileName) {
+    this->Initialize(file, valueManipulator, useComments, numDigitsInOffset, originalFileName);
 }
 
 Patch_Writer::~Patch_Writer() {
@@ -39,6 +39,7 @@ bool Patch_Writer::Write_Checksum(const QString &checksum) {
 }
 
 bool Patch_Writer::Write_Comment(const QString &comment) {
+    if (!this->useComments) return true; //nothing to do
     *this->stream << Patch_Strings::STRING_COMMENT << " " << comment << Patch_Strings::STRING_NEW_LINE;
     return this->stream->status() == QTextStream::Ok;
 }
@@ -64,13 +65,14 @@ bool Patch_Writer::Write_Next_Patch(const qint64 offset, const QByteArray &value
     return this->Write_Next_Patch(offset, this->valueManipulator->Convert_QByteArray_To_QString(value));
 }
 
-void Patch_Writer::Initialize(QFile *file, Value_Manipulator *valueManipulator, int numDigitsInOffset, const QString &originalFileName) {
+void Patch_Writer::Initialize(QFile *file, Value_Manipulator *valueManipulator, bool useComments, int numDigitsInOffset, const QString &originalFileName) {
     assert(file);
     assert(file->isOpen() && file->isWritable());
     assert(valueManipulator);
     this->valueManipulator = valueManipulator;
     this->numDigitsInOffset = numDigitsInOffset;
     this->originalFileName = originalFileName;
+    this->useComments = useComments;
     this->stream = new QTextStream(file);
     this->breakString = QByteArray(PATCH_TEXT_WIDTH-1, Patch_Strings::CHAR_BREAK); //create the break string
 }
