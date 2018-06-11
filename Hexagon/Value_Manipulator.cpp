@@ -8,7 +8,7 @@ QString Value_Manipulator::Convert_QByteArray_To_QString(const QByteArray &bytes
     QString output = QString();
     for (int i = 0; i < bytes.size(); ++i) {
         unsigned char c = static_cast<unsigned char>(bytes.at(i));
-        unsigned char firstNibble = c&0xF0;
+        unsigned char firstNibble = c>>4;
         unsigned char secondNibble = c&0x0F;
         output += QString(this->Get_Char_From_Nibble(firstNibble))+QString(this->Get_Char_From_Nibble(secondNibble));
     }

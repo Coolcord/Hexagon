@@ -22,6 +22,7 @@ public:
 private:
     QTextStream *stream;
     Value_Manipulator *valueManipulator;
+    QString breakString;
     int numDigitsInOffset;
 };
 

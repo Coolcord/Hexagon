@@ -13,6 +13,12 @@ Patch_Writer::Patch_Writer(QFile *file, Value_Manipulator *valueManipulator) {
     this->valueManipulator = valueManipulator;
     this->numDigitsInOffset = QString::number(file->size(), 0x10).size();
     this->stream = new QTextStream(file);
+
+    //Create the break string
+    QTextStream breakStream;
+    for (int i = 0; i < PATCH_TEXT_WIDTH; ++i) breakStream << Patch_Strings::STRING_BREAK;
+    assert(breakStream.seek(0));
+    this->breakString = breakStream.readAll();
 }
 
 Patch_Writer::~Patch_Writer() {
@@ -21,7 +27,7 @@ Patch_Writer::~Patch_Writer() {
 }
 
 bool Patch_Writer::Write_Break_Line() {
-    *this->stream << Patch_Strings::STRING_COMMENT << QByteArray('=', PATCH_TEXT_WIDTH-1) << Patch_Strings::STRING_NEW_LINE;
+    *this->stream << Patch_Strings::STRING_COMMENT << this->breakString << Patch_Strings::STRING_NEW_LINE;
     return this->stream->status() == QTextStream::Ok;
 }
 

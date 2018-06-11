@@ -125,7 +125,7 @@ void Main_Window::on_btnCreatePatch_clicked() {
 
     //Run the Command via the Plugin
     Hexagon_Error_Codes::Error_Code errorCode = this->hexagonPlugin->Create_Hexagon_Patch(originalFileLocation, modifiedFileLocation, outputFileLocation,
-                                                                                          this->ui->sbCompareSize->value(), this->ui->cbSkipChecksumWhenCreatingPatch->isChecked());
+                                                                                          this->ui->sbCompareSize->value(), !this->ui->cbSkipChecksumWhenCreatingPatch->isChecked());
     switch (errorCode) {
     default: assert(false); return;
     case Hexagon_Error_Codes::OK: this->errorMessages->Show_Information(outputFileInfo.fileName()+" created!"); return;

@@ -39,7 +39,7 @@ Hexagon_Error_Codes::Error_Code File_Comparer::Scan_For_Differences(QVector<QPai
         //Search for differences in the buffer
         for (int i = 0; i < originalBytes.size(); ++i) {
             if (originalBytes.at(i) == modifiedBytes.at(i)) {
-                assert(localCompareCount > 0);
+                assert(localCompareCount >= 0);
                 if (localCompareCount == 0) {
                     if (difference) {
                         differences.append(QPair<qint64, QByteArray*>(offset, difference));
@@ -52,7 +52,7 @@ Hexagon_Error_Codes::Error_Code File_Comparer::Scan_For_Differences(QVector<QPai
                 }
             } else {
                 if (originalBytes.at(i) != modifiedBytes.at(i)) { //difference found!
-                    localCompareCount = this->compareSize;
+                    localCompareCount = this->compareSize-1;
                     if (!difference) difference = new QByteArray();
                     difference->append(modifiedBytes.at(i));
                 }
