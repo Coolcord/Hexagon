@@ -16,7 +16,7 @@ QString Value_Manipulator::Convert_QByteArray_To_QString(const QByteArray &bytes
 }
 
 QString Value_Manipulator::Convert_Offset_To_QString_With_Padding(qint64 offset, int numberOfDigits) {
-    QString offsetString = QString::number(offset);
+    QString offsetString = QString::number(offset, 0x10).toUpper();
     if (offsetString.size() >= numberOfDigits) return offsetString;
     QString padding = QString(QByteArray(numberOfDigits-offsetString.size(), '0'));
     offsetString = padding+offsetString;
@@ -69,11 +69,17 @@ QString Value_Manipulator::Trim_Hex_Identifier(QString &hexString) {
 }
 
 QString Value_Manipulator::Wrap_QString_With_New_Lines(const QString &string, int width) {
+    assert(width >= 5);
     QString newString = QString();
     QTextStream stream(&newString);
+    int indentSize = Patch_Strings::STRING_VALUE.size()+1; //account for the space
+    int properWidth = width-indentSize;
     for (int i = 1; i <= string.size(); ++i) {
         stream << string.at(i-1);
-        if (i%width == 0) stream << Patch_Strings::STRING_NEW_LINE;
+        if (i%properWidth == 0) {
+            stream << Patch_Strings::STRING_NEW_LINE;
+            if (i != string.size()) stream << QByteArray(indentSize, ' ');
+        }
     }
     stream.flush();
     return newString;

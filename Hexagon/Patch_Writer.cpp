@@ -4,8 +4,8 @@
 #include <assert.h>
 #include <QDate>
 
-const static int DEFAULT_OFFSET_SIZE = 4;
-const static int PATCH_TEXT_WIDTH = 100;
+const int DEFAULT_OFFSET_SIZE = 4;
+const int PATCH_TEXT_WIDTH = 75;
 
 Patch_Writer::Patch_Writer(QFile *file, Value_Manipulator *valueManipulator) {
     assert(file);
