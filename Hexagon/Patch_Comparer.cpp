@@ -29,7 +29,7 @@ bool Patch_Comparer::Open_Additional_File(const QString &fileLocation, int &line
 QVector<QVector<qint64>*> Patch_Comparer::Get_Conflicts() {
     QVector<QVector<qint64>*> conflicts(this->otherValues->size());
     for (int i = 0; i < conflicts.size(); ++i) conflicts.replace(i, NULL);
-    if (this->otherValues->size() < 2) return conflicts;
+    if (this->otherValues->isEmpty()) return conflicts;
 
     //Start looking for conflicts
     for (int i = 0; i < this->otherValues->size(); ++i) {
@@ -91,5 +91,5 @@ bool Patch_Comparer::Open_File(const QString &fileLocation, int &lineNum, bool i
             this->otherValues->pop_back();
         }
     }
-    return parseError;
+    return !parseError;
 }

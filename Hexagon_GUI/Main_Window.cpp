@@ -234,13 +234,11 @@ void Main_Window::Check_For_Conflicts(const QString &patchFileLocation, const QS
     //Run the Command via the Plugin
     if (otherPatchFileLocations.isEmpty()) return;
     int lineNum = 0, otherLineNum = 0, otherFileNum = 0;
-    QByteArray output;
+    QString output = QString();
     Hexagon_Error_Codes::Error_Code errorCode = this->hexagonPlugin->Check_For_Conflicts_Between_Hexagon_Patches(patchFileLocation, otherPatchFileLocations, output, lineNum, otherLineNum, otherFileNum, this->ui->cbVerboseConflictOutput->isChecked());
     switch (errorCode) {
     default: assert(false); return;
     case Hexagon_Error_Codes::OK: this->errorMessages->Show_Information("No conflicts detected!"); return;
-    case Hexagon_Error_Codes::READ_ERROR: this->errorMessages->Show_Read_Error(QFileInfo(patchFileLocation).fileName()); return;
-    case Hexagon_Error_Codes::READ_MODIFIED_ERROR: this->errorMessages->Show_Read_Error(QFileInfo(otherPatchFileLocations.at(otherFileNum)).fileName()); return;
     case Hexagon_Error_Codes::PARSE_ERROR:
         if (lineNum == 0) this->errorMessages->Show_Parse_Error(QFileInfo(otherPatchFileLocations.at(otherFileNum)).fileName(), otherLineNum);
         else this->errorMessages->Show_Parse_Error(QFileInfo(patchFileLocation).fileName(), lineNum);

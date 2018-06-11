@@ -40,6 +40,10 @@ bool Patch_Reader::Get_Next_Offset_And_Value(qint64 &offset, QByteArray &value, 
     //Get the Offset
     parseError = true;
     QString line = this->Get_Next_Line_After_Comments();
+    if (line.isEmpty()) { //nothing left to read
+        parseError = false;
+        return false;
+    }
     if (!line.startsWith(Patch_Strings::STRING_OFFSET)) return false;
     QStringList values = line.split(' ');
     if (values.size() != 2) return false;

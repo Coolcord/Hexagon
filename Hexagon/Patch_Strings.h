@@ -18,6 +18,9 @@ namespace Patch_Strings {
     const static QString STRING_CREATED = "Created on";
     const static QString STRING_ORIGINAL_FILE_NAME = "Original File Name: ";
 
+    //Conflicts
+    const static QString STRING_THE_FOLLOWING_PATCHES_ARE_INCOMPATIBLE_WITH = "The following patches are incompatible with ";
+
     #ifdef Q_OS_WIN32
     const static QString STRING_NEW_LINE = "\r\n";
     #else

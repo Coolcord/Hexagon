@@ -1,6 +1,7 @@
 #include "Hexagon.h"
 #include "File_Comparer.h"
 #include "File_Writer.h"
+#include "Patch_Comparer.h"
 #include "Patch_Reader.h"
 #include "Patch_Strings.h"
 #include "Patch_Writer.h"
@@ -9,8 +10,6 @@
 #include "Value_Manipulator.h"
 #include <assert.h>
 #include <QFileInfo>
-
-#include <QDebug>
 
 Hexagon::Hexagon() {
     this->applicationLocation = QString();
@@ -232,9 +231,48 @@ Hexagon_Error_Codes::Error_Code Hexagon::Convert_Qt_Code_To_Hexagon_Patch(const 
 }
 
 Hexagon_Error_Codes::Error_Code Hexagon::Check_For_Conflicts_Between_Hexagon_Patches(const QString &patchFileLocation, const QStringList &otherPatchFileLocations,
-                                                                                     QByteArray &output, int &lineNum, int &otherLineNum, int &otherFileNum, bool verbose) {
-    qDebug() << "Check_For_Conflicts_Between_Hexagon_Patches() called!";
-    //TODO: Write this...
-    output = output.append(QString("This is a test"));
-    return Hexagon_Error_Codes::CONFLICTS_DETECTED;
+                                                                                     QString &output, int &lineNum, int &otherLineNum, int &otherFileNum, bool verbose) {
+    lineNum = 0; otherLineNum = 0; otherFileNum = 0;
+    Value_Manipulator valueManipulator;
+
+    //Open the files into the Patch Comparer
+    Patch_Comparer patchComparer(&valueManipulator);
+    if (!patchComparer.Open_Original_File(patchFileLocation, lineNum)) {
+        return Hexagon_Error_Codes::PARSE_ERROR;
+    }
+    lineNum = 0;
+    for (int i = 0; i < otherPatchFileLocations.size(); ++i) {
+        if (!patchComparer.Open_Additional_File(otherPatchFileLocations.at(i), otherLineNum)) {
+            otherFileNum = i;
+            return Hexagon_Error_Codes::PARSE_ERROR;
+        }
+    }
+
+    //Write all of the conflicts to a string
+    QVector<QVector<qint64>*> conflictsAgainstAllFiles = patchComparer.Get_Conflicts();
+    output = QString();
+    bool conflictsExist = false;
+    QTextStream stream(&output);
+    for (int i = 0; i < conflictsAgainstAllFiles.size(); ++i) {
+        QVector<qint64> *conflictsAgainstFile = conflictsAgainstAllFiles.at(i);
+        if (!conflictsAgainstFile) continue;
+        if (!conflictsExist) {
+            conflictsExist = true;
+            QFileInfo patchFileInfo(patchFileLocation);
+            stream << Patch_Strings::STRING_THE_FOLLOWING_PATCHES_ARE_INCOMPATIBLE_WITH << patchFileInfo.fileName() << ":" << Patch_Strings::STRING_NEW_LINE << Patch_Strings::STRING_NEW_LINE;
+        }
+        QFileInfo otherPatchFileInfo(otherPatchFileLocations.at(i));
+        stream << otherPatchFileInfo.fileName() << Patch_Strings::STRING_NEW_LINE;
+        if (verbose) {
+            for (int j = 0; j < conflictsAgainstFile->size(); ++j) {
+                stream << Patch_Strings::STRING_HEX_IDENTIFIER << QString::number(conflictsAgainstFile->at(j), 0x10) << Patch_Strings::STRING_NEW_LINE;
+            }
+            stream << Patch_Strings::STRING_NEW_LINE;
+        }
+    }
+
+    patchComparer.Deallocate_Conflicts(conflictsAgainstAllFiles);
+    stream.flush();
+    if (output.isEmpty()) return Hexagon_Error_Codes::OK;
+    else return Hexagon_Error_Codes::CONFLICTS_DETECTED;
 }

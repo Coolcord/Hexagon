@@ -26,7 +26,7 @@ public:
     virtual Hexagon_Error_Codes::Error_Code Convert_Qt_Code_To_Hexagon_Patch(const QString &qtCodeFileLocation, const QString &outputFileLocation,
                                                                              int &lineNum, bool useComments)=0;
     virtual Hexagon_Error_Codes::Error_Code Check_For_Conflicts_Between_Hexagon_Patches(const QString &patchFileLocation, const QStringList &otherPatchFileLocations,
-                                                                                        QByteArray &output, int &lineNum, int &otherLineNum, int &otherFileNum, bool verbose)=0;
+                                                                                        QString &output, int &lineNum, int &otherLineNum, int &otherFileNum, bool verbose)=0;
 };
 
 Q_DECLARE_INTERFACE(Hexagon_Interface, "Hexagon_Interface")
