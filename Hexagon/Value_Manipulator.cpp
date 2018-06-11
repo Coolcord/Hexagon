@@ -46,7 +46,7 @@ QString Value_Manipulator::Get_Checksum_From_File(QFile *file) {
     if (!file->reset()) return QString();
 
     //Calculate the Checksum
-    return QString(QCryptographicHash::hash(buffer, QCryptographicHash::Sha512).toHex().toUpper());
+    return QString(QCryptographicHash::hash(buffer, QCryptographicHash::Sha256).toHex().toUpper());
 }
 
 bool Value_Manipulator::Is_Line_Hex_String(const QString &line) {
