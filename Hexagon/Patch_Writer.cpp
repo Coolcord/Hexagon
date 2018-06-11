@@ -29,6 +29,7 @@ Patch_Writer::~Patch_Writer() {
 }
 
 bool Patch_Writer::Write_Break_Line() {
+    if (!this->useComments) return true; //nothing to do
     *this->stream << Patch_Strings::STRING_COMMENT << this->breakString << Patch_Strings::STRING_NEW_LINE;
     return this->stream->status() == QTextStream::Ok;
 }
@@ -45,6 +46,7 @@ bool Patch_Writer::Write_Comment(const QString &comment) {
 }
 
 bool Patch_Writer::Write_Header() {
+    if (!this->useComments) return true; //nothing to do
     *this->stream << Patch_Strings::STRING_COMMENT << " " << Patch_Strings::STRING_HEADER << Patch_Strings::STRING_NEW_LINE;
     *this->stream << Patch_Strings::STRING_COMMENT << " " << Patch_Strings::STRING_CREATED + " " + QDate::currentDate().toString("dddd, MMMM dd, yyyy") + ", at " + QTime::currentTime().toString("hh:mm:ss A") + "." + Patch_Strings::STRING_NEW_LINE;
     if (!this->originalFileName.isEmpty()) *this->stream << Patch_Strings::STRING_COMMENT << " " << Patch_Strings::STRING_ORIGINAL_FILE_NAME + this->originalFileName << Patch_Strings::STRING_NEW_LINE;

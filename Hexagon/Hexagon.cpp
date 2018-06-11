@@ -60,7 +60,7 @@ Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QByteArray &p
     if (!outputFile->open(QIODevice::ReadWrite)) return Hexagon_Error_Codes::WRITE_ERROR;
     if (useChecksum) {
         actualChecksum = valueManipulator.Get_Checksum_From_File(outputFile);
-        if (actualChecksum != Patch_Strings::STRING_SKIP_CHECKSUM) {
+        if (expectedChecksum != Patch_Strings::STRING_SKIP_CHECKSUM) {
             if (expectedChecksum != actualChecksum) {
                 outputFile->close();
                 lineNum = patchReader.Get_Current_Line_Num();
