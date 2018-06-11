@@ -11,7 +11,7 @@ namespace Patch_Strings {
     const static QString STRING_SKIP_CHECKSUM = "SKIP";
     const static QString STRING_VALUE = "V:";
     const static QString STRING_VALUE_TAB = "   ";
-    const static QString STRING_BREAK = "=";
+    const static char CHAR_BREAK = '=';
 
     //Header
     const static QString STRING_HEADER = "Hexagon Patch";

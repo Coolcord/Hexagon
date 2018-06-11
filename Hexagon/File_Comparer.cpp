@@ -29,6 +29,7 @@ Hexagon_Error_Codes::Error_Code File_Comparer::Scan_For_Differences(QVector<QPai
 
     //Scan both files for differences
     qint64 offset = 0;
+    qint64 currentAddress = 0;
     QByteArray *difference = NULL;
     int localCompareCount = 0;
     while (!originalFile.atEnd()) {
@@ -37,23 +38,28 @@ Hexagon_Error_Codes::Error_Code File_Comparer::Scan_For_Differences(QVector<QPai
         assert(originalBytes.size() == modifiedBytes.size());
 
         //Search for differences in the buffer
-        for (int i = 0; i < originalBytes.size(); ++i) {
+        QByteArray tmpBuffer;
+        for (int i = 0; i < originalBytes.size(); ++i, ++currentAddress) {
             if (originalBytes.at(i) == modifiedBytes.at(i)) {
                 assert(localCompareCount >= 0);
                 if (localCompareCount == 0) {
                     if (difference) {
-                        differences.append(QPair<qint64, QByteArray*>(offset, difference));
+                        differences.append(QPair<qint64, QByteArray*>(currentAddress, difference));
                         difference = NULL;
+                        tmpBuffer.clear();
                     }
                 } else {
-                    assert(difference);
-                    difference->append(modifiedBytes.at(i));
+                    tmpBuffer.append(modifiedBytes.at(i));
                     --localCompareCount;
                 }
             } else {
                 if (originalBytes.at(i) != modifiedBytes.at(i)) { //difference found!
                     localCompareCount = this->compareSize-1;
                     if (!difference) difference = new QByteArray();
+                    if (!tmpBuffer.isEmpty()) {
+                        difference->append(tmpBuffer);
+                        tmpBuffer.clear();
+                    }
                     difference->append(modifiedBytes.at(i));
                 }
             }

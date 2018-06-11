@@ -103,9 +103,10 @@ Hexagon_Error_Codes::Error_Code Hexagon::Create_Hexagon_Patch(const QString &ori
     }
 
     //Write the header
+    QFileInfo originalFileInfo(originalFileLocation);
     QFile outputFile(outputFileLocation);
     if (!outputFile.open(QIODevice::ReadWrite)) return Hexagon_Error_Codes::WRITE_ERROR;
-    Patch_Writer patchWriter(&outputFile, &valueManipulator);
+    Patch_Writer patchWriter(&outputFile, &valueManipulator, QString::number(originalFileInfo.size(), 0x10).size());
     if (!patchWriter.Write_Header()) {
         outputFile.close();
         return Hexagon_Error_Codes::WRITE_ERROR;

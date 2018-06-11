@@ -11,6 +11,7 @@ class Value_Manipulator;
 class Patch_Writer {
 public:
     Patch_Writer(QFile *file, Value_Manipulator *valueManipulator);
+    Patch_Writer(QFile *file, Value_Manipulator *valueManipulator, int numDigitsInOffset);
     ~Patch_Writer();
     bool Write_Break_Line();
     bool Write_Checksum(const QString &checksum);

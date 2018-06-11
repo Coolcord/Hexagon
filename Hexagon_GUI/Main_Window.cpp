@@ -91,7 +91,7 @@ void Main_Window::on_btnApplyPatch_clicked() {
     switch (errorCode) {
     default: assert(false); return;
     case Hexagon_Error_Codes::OK: this->errorMessages->Show_Information(outputFileInfo.fileName()+" created!"); return;
-    case Hexagon_Error_Codes::READ_PATCH_ERROR: this->errorMessages->Show_Read_Error(patchFileInfo.fileName());
+    case Hexagon_Error_Codes::READ_PATCH_ERROR: this->errorMessages->Show_Read_Error(patchFileInfo.fileName()); return;
     case Hexagon_Error_Codes::READ_ERROR: this->errorMessages->Show_Read_Error(originalFileInfo.fileName()); return;
     case Hexagon_Error_Codes::WRITE_ERROR: this->errorMessages->Show_Write_Error(outputFileInfo.fileName()); return;
     case Hexagon_Error_Codes::PARSE_ERROR: this->errorMessages->Show_Parse_Error(lineNum); return;

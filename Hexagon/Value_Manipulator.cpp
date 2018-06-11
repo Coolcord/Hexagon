@@ -69,13 +69,14 @@ QString Value_Manipulator::Trim_Hex_Identifier(QString &hexString) {
 }
 
 QString Value_Manipulator::Wrap_QString_With_New_Lines(const QString &string, int width) {
-    QTextStream stream;
+    QString newString = QString();
+    QTextStream stream(&newString);
     for (int i = 1; i <= string.size(); ++i) {
         stream << string.at(i-1);
         if (i%width == 0) stream << Patch_Strings::STRING_NEW_LINE;
     }
-    stream.seek(0);
-    return stream.readAll();
+    stream.flush();
+    return newString;
 }
 
 char Value_Manipulator::Get_Char_From_Nibble(unsigned char nibble) {
