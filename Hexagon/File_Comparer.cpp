@@ -16,7 +16,10 @@ Hexagon_Error_Codes::Error_Code File_Comparer::Scan_For_Differences(QVector<QPai
     QFile modifiedFile(this->modifiedFileLocation);
     if (originalFile.size() != modifiedFile.size()) return Hexagon_Error_Codes::SIZE_DIFFERENCE;
     if (!originalFile.exists() || !originalFile.open(QIODevice::ReadOnly)) return Hexagon_Error_Codes::READ_ERROR;
-    if (!modifiedFile.exists() || !modifiedFile.open(QIODevice::ReadOnly)) return Hexagon_Error_Codes::READ_MODIFIED_ERROR;
+    if (!modifiedFile.exists() || !modifiedFile.open(QIODevice::ReadOnly)) {
+        originalFile.close();
+        return Hexagon_Error_Codes::READ_MODIFIED_ERROR;
+    }
 
     //Scan both files for differences
     qint64 offset = 0;
@@ -55,6 +58,8 @@ Hexagon_Error_Codes::Error_Code File_Comparer::Scan_For_Differences(QVector<QPai
         differences.append(QPair<qint64, QByteArray*>(offset, difference));
         difference = NULL;
     }
+    originalFile.close();
+    modifiedFile.close();
     return Hexagon_Error_Codes::OK;
 }
 
