@@ -16,9 +16,9 @@ public:
     //Standard Functions
     virtual Hexagon_Error_Codes::Error_Code Apply_Hexagon_Patch(const QString &patchFileLocation, const QString &originalFileLocation,
                                                                 const QString &outputFileLocation, bool useChecksum, int &lineNum)=0;
-    virtual Hexagon_Error_Codes::Error_Code Apply_Hexagon_Patch(const QByteArray &patchFileBytes, const QFile *outputFile, bool useChecksum, int &lineNum)=0;
+    virtual Hexagon_Error_Codes::Error_Code Apply_Hexagon_Patch(const QByteArray &patchFileBytes, QFile *outputFile, bool useChecksum, int &lineNum)=0;
     virtual Hexagon_Error_Codes::Error_Code Create_Hexagon_Patch(const QString &originalFileLocation, const QString &modifiedFileLocation,
-                                                                 const QString &outputFileLocation, int compareSize, bool useChecksum, int &lineNume)=0;
+                                                                 const QString &outputFileLocation, int compareSize, bool useChecksum)=0;
 
     //Dev Tools
     virtual Hexagon_Error_Codes::Error_Code Convert_Hexagon_Patch_To_Qt_Code(const QString &patchFileLocation, const QString &outputFileLocation,

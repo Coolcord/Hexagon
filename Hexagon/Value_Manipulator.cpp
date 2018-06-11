@@ -1,6 +1,7 @@
 #include "Value_Manipulator.h"
 #include "Patch_Strings.h"
 #include <assert.h>
+#include <QCryptographicHash>
 #include <QTextStream>
 
 QString Value_Manipulator::Convert_QByteArray_To_QString(const QByteArray &bytes) {
@@ -35,6 +36,17 @@ bool Value_Manipulator::Convert_QString_To_QByteArray(const QString &string, QBy
         output.data()[j] = static_cast<char>(number);
     }
     return true;
+}
+
+QString Value_Manipulator::Get_Checksum_From_File(QFile *file) {
+    if (!file || !file->isOpen() || !file->isReadable()) return QString();
+    if (!file->seek(0)) return QString();
+    QByteArray buffer = file->readAll();
+    if (buffer.size() == 0) return QString();
+    if (!file->reset()) return QString();
+
+    //Calculate the Checksum
+    return QString(QCryptographicHash::hash(buffer, QCryptographicHash::Sha512).toHex().toUpper());
 }
 
 bool Value_Manipulator::Is_Line_Hex_String(const QString &line) {

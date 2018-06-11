@@ -11,6 +11,7 @@ namespace Hexagon_Error_Codes {
         PARSE_ERROR,
         CONFLICTS_DETECTED,
         SIZE_DIFFERENCE,
+        OFFSET_OUT_OF_RANGE,
         BAD_CHECKSUM
     };
 }

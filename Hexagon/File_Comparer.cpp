@@ -1,10 +1,12 @@
 #include "File_Comparer.h"
+#include "Value_Manipulator.h"
 #include <assert.h>
-#include <QCryptographicHash>
 
 const static qint64 BUFFER_SIZE = 51200; //50MB
 
-File_Comparer::File_Comparer(const QString &originalFileLocation, const QString &modifiedFileLocation, int compareSize) {
+File_Comparer::File_Comparer(const QString &originalFileLocation, const QString &modifiedFileLocation, int compareSize, Value_Manipulator *valueManipulator) {
+    assert(valueManipulator);
+    this->valueManipulator = valueManipulator;
     this->originalFileLocation = originalFileLocation;
     this->modifiedFileLocation = modifiedFileLocation;
     this->compareSize = compareSize;
@@ -22,7 +24,7 @@ Hexagon_Error_Codes::Error_Code File_Comparer::Scan_For_Differences(QVector<QPai
     }
 
     //Get the checksum of the original file first
-    originalChecksum = this->Get_Checksum(&originalFile);
+    originalChecksum = this->valueManipulator->Get_Checksum_From_File(&originalFile);
     if (originalChecksum.isEmpty()) return Hexagon_Error_Codes::READ_ERROR;
 
     //Scan both files for differences
@@ -71,15 +73,4 @@ Hexagon_Error_Codes::Error_Code File_Comparer::Scan_For_Differences(QVector<QPai
 void File_Comparer::Deallocate_Differences(QVector<QPair<qint64, QByteArray*>> &differences) {
     for (int i = 0; i < differences.size(); ++i) delete differences.at(i).second;
     differences.clear();
-}
-
-QString File_Comparer::Get_Checksum(QFile *file) {
-    if (!file || !file->isOpen() || !file->isReadable()) return QString();
-    if (!file->seek(0)) return QString();
-    QByteArray buffer = file->readAll();
-    if (buffer.size() == 0) return QString();
-    if (!file->reset()) return QString();
-
-    //Calculate the Checksum
-    return QString(QCryptographicHash::hash(buffer, QCryptographicHash::Sha512).toHex().toUpper());
 }

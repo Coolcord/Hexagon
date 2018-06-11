@@ -1,6 +1,10 @@
 #include "Hexagon.h"
+#include "File_Comparer.h"
 #include "File_Writer.h"
 #include "Patch_Reader.h"
+#include "Patch_Strings.h"
+#include "Patch_Writer.h"
+#include "Value_Manipulator.h"
 #include <assert.h>
 #include <QFileInfo>
 
@@ -18,6 +22,10 @@ void Hexagon::Startup(QWidget *parent, const QString &applicationLocation) {
 
 Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QString &patchFileLocation, const QString &originalFileLocation,
                                                              const QString &outputFileLocation, bool useChecksum, int &lineNum) {
+    if (patchFileLocation.isEmpty()) return Hexagon_Error_Codes::READ_PATCH_ERROR;
+    if (originalFileLocation.isEmpty()) return Hexagon_Error_Codes::READ_ERROR;
+    if (outputFileLocation.isEmpty()) return Hexagon_Error_Codes::WRITE_ERROR;
+
     //Read the patch file into memory
     QFile patchFile(patchFileLocation);
     if (!patchFile.exists() || !patchFile.open(QIODevice::ReadOnly)) return Hexagon_Error_Codes::READ_PATCH_ERROR;
@@ -31,7 +39,6 @@ Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QString &patc
     QFile outputFile(outputFileLocation);
     if (outputFile.exists() && !outputFile.remove()) return Hexagon_Error_Codes::WRITE_ERROR;
     if (!QFile::copy(originalFileLocation, outputFileLocation)) return Hexagon_Error_Codes::WRITE_ERROR;
-    if (!outputFile.open(QIODevice::ReadWrite)) return Hexagon_Error_Codes::WRITE_ERROR;
 
     //Apply the patch
     Hexagon_Error_Codes::Error_Code errorCode = this->Apply_Hexagon_Patch(patchFileBytes, &outputFile, useChecksum, lineNum);
@@ -39,16 +46,90 @@ Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QString &patc
     return errorCode;
 }
 
-Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QByteArray &patchFileBytes, const QFile *outputFile, bool useChecksum, int &lineNum) {
-    qDebug() << "Apply_Hexagon_Patch() called!";
-    //TODO: Write this...
+Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QByteArray &patchFileBytes, QFile *outputFile, bool useChecksum, int &lineNum) {
+    lineNum = 0;
+    if (!outputFile) return Hexagon_Error_Codes::WRITE_ERROR;
+    Value_Manipulator valueManipulator;
+    Patch_Reader patchReader(patchFileBytes, &valueManipulator);
+
+    //Read the checksum
+    QString expectedChecksum = QString();
+    if (!patchReader.Get_Checksum(expectedChecksum)) return Hexagon_Error_Codes::PARSE_ERROR;
+    QString actualChecksum = QString();
+    if (!outputFile->open(QIODevice::ReadWrite)) return Hexagon_Error_Codes::WRITE_ERROR;
+    if (useChecksum) {
+        actualChecksum = valueManipulator.Get_Checksum_From_File(outputFile);
+        if (actualChecksum != Patch_Strings::STRING_SKIP_CHECKSUM) {
+            if (expectedChecksum != actualChecksum) {
+                outputFile->close();
+                lineNum = patchReader.Get_Current_Line_Num();
+                return Hexagon_Error_Codes::BAD_CHECKSUM;
+            }
+        }
+    }
+
+    //Parse the patch file
+    bool parseError = false, seekError = false;
+    qint64 offset = 0;
+    QByteArray value;
+    File_Writer fileWriter(outputFile, &valueManipulator);
+    while (!parseError && patchReader.Get_Next_Offset_And_Value(offset, value, parseError)) {
+        if (!fileWriter.Write_Bytes_To_Offset(offset, value, seekError)) {
+            outputFile->close();
+            lineNum = patchReader.Get_Current_Line_Num();
+            if (seekError) return Hexagon_Error_Codes::OFFSET_OUT_OF_RANGE;
+            else return Hexagon_Error_Codes::WRITE_ERROR;
+        }
+    }
+    outputFile->close();
     return Hexagon_Error_Codes::OK;
 }
 
 Hexagon_Error_Codes::Error_Code Hexagon::Create_Hexagon_Patch(const QString &originalFileLocation, const QString &modifiedFileLocation,
-                                                              const QString &outputFileLocation, int compareSize, bool useChecksum, int &lineNume) {
-    qDebug() << "Create_Hexagon_Patch() called!";
-    //TODO: Write this...
+                                                              const QString &outputFileLocation, int compareSize, bool useChecksum) {
+    if (originalFileLocation.isEmpty()) return Hexagon_Error_Codes::READ_ERROR;
+    if (modifiedFileLocation.isEmpty()) return Hexagon_Error_Codes::READ_MODIFIED_ERROR;
+    if (outputFileLocation.isEmpty()) return Hexagon_Error_Codes::WRITE_ERROR;
+    Value_Manipulator valueManipulator;
+    File_Comparer fileComparer(originalFileLocation, modifiedFileLocation, compareSize, &valueManipulator);
+
+    //Run the scan for differences
+    QVector<QPair<qint64, QByteArray*>> differences;
+    QString checksum = QString();
+    Hexagon_Error_Codes::Error_Code errorCode = fileComparer.Scan_For_Differences(differences, checksum);
+    if (errorCode != Hexagon_Error_Codes::OK) {
+        fileComparer.Deallocate_Differences(differences);
+        return errorCode;
+    }
+
+    //Write the header
+    QFile outputFile(outputFileLocation);
+    if (!outputFile.open(QIODevice::ReadWrite)) return Hexagon_Error_Codes::WRITE_ERROR;
+    Patch_Writer patchWriter(&outputFile, &valueManipulator);
+    if (!patchWriter.Write_Header()) {
+        outputFile.close();
+        return Hexagon_Error_Codes::WRITE_ERROR;
+    }
+
+    //Write the checksum
+    if (!useChecksum) checksum = Patch_Strings::STRING_SKIP_CHECKSUM;
+    if (!patchWriter.Write_Checksum(checksum) || !patchWriter.Write_Break_Line()) {
+        outputFile.close();
+        return Hexagon_Error_Codes::WRITE_ERROR;
+    }
+
+    //Write the patches to the output file
+    for (int i = 0; i < differences.size(); ++i) {
+        QByteArray *bytes = differences.at(i).second;
+        if (!bytes) continue;
+        qint64 offset = differences.at(i).first;
+        if (!patchWriter.Write_Next_Patch(offset, *bytes) || !patchWriter.Write_Break_Line()) {
+            outputFile.close();
+            fileComparer.Deallocate_Differences(differences);
+            return Hexagon_Error_Codes::WRITE_ERROR;
+        }
+    }
+    fileComparer.Deallocate_Differences(differences);
     return Hexagon_Error_Codes::OK;
 }
 

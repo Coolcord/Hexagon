@@ -9,8 +9,8 @@ class File_Writer {
 public:
     File_Writer(QFile *file, Value_Manipulator *valueManipulator);
     ~File_Writer() {}
-    bool Write_Bytes_To_Offset(qint64 offset, const QByteArray &bytes);
-    bool Write_Bytes_To_Offset(qint64 offset, const QString &value);
+    bool Write_Bytes_To_Offset(qint64 offset, const QByteArray &bytes, bool &seekValid);
+    bool Write_Bytes_To_Offset(qint64 offset, const QString &value, bool &seekValid);
 
 private:
     QFile *file;
