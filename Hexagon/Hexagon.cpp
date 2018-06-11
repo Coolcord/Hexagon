@@ -4,6 +4,8 @@
 #include "Patch_Reader.h"
 #include "Patch_Strings.h"
 #include "Patch_Writer.h"
+#include "Qt_Code_Reader.h"
+#include "Qt_Code_Writer.h"
 #include "Value_Manipulator.h"
 #include <assert.h>
 #include <QFileInfo>
@@ -73,7 +75,7 @@ Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QByteArray &p
     qint64 offset = 0;
     QByteArray value;
     File_Writer fileWriter(outputFile, &valueManipulator);
-    while (!parseError && patchReader.Get_Next_Offset_And_Value(offset, value, parseError)) {
+    while (patchReader.Get_Next_Offset_And_Value(offset, value, parseError) && !parseError) {
         if (!fileWriter.Write_Bytes_To_Offset(offset, value, seekError)) {
             outputFile->close();
             lineNum = patchReader.Get_Current_Line_Num();
@@ -82,7 +84,9 @@ Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QByteArray &p
         }
     }
     outputFile->close();
-    return Hexagon_Error_Codes::OK;
+    lineNum = patchReader.Get_Current_Line_Num();
+    if (parseError) return Hexagon_Error_Codes::PARSE_ERROR;
+    else return Hexagon_Error_Codes::OK;
 }
 
 Hexagon_Error_Codes::Error_Code Hexagon::Create_Hexagon_Patch(const QString &originalFileLocation, const QString &modifiedFileLocation,
@@ -142,9 +146,45 @@ Hexagon_Error_Codes::Error_Code Hexagon::Convert_Hexagon_Patch_To_Qt_Code(const 
 }
 
 Hexagon_Error_Codes::Error_Code Hexagon::Convert_Qt_Code_To_Hexagon_Patch(const QString &qtCodeFileLocation, const QString &outputFileLocation, int &lineNum) {
-    qDebug() << "Convert_Qt_Code_To_Hexagon_Patch() called!";
-    //TODO: Write this...
-    return Hexagon_Error_Codes::OK;
+    lineNum = 0;
+    if (qtCodeFileLocation.isEmpty()) return Hexagon_Error_Codes::READ_ERROR;
+    if (outputFileLocation.isEmpty()) return Hexagon_Error_Codes::WRITE_ERROR;
+
+    //Open the Qt Code File
+    QFile qtCodeFile(qtCodeFileLocation);
+    if (!qtCodeFile.exists() || !qtCodeFile.open(QIODevice::ReadOnly)) return Hexagon_Error_Codes::READ_ERROR;
+    Value_Manipulator valueManipulator;
+    Qt_Code_Reader qtCodeReader(&qtCodeFile, &valueManipulator);
+
+    //Write the header
+    QFile outputFile(outputFileLocation);
+    if (outputFile.exists() && !outputFile.remove()) return Hexagon_Error_Codes::WRITE_ERROR;
+    if (!outputFile.open(QIODevice::ReadWrite)) return Hexagon_Error_Codes::WRITE_ERROR;
+    Patch_Writer patchWriter(&outputFile, &valueManipulator);
+    if (!patchWriter.Write_Header() || !patchWriter.Write_Checksum(Patch_Strings::STRING_SKIP_CHECKSUM)
+            || !patchWriter.Write_Break_Line()) {
+        qtCodeFile.close();
+        outputFile.close();
+        return Hexagon_Error_Codes::WRITE_ERROR;
+    }
+
+    //Read each patch from the Qt Code file and write it to the patch file
+    qint64 offset = 0;
+    QString value = QString();
+    bool parseError = false;
+    while (qtCodeReader.Read_Next_Patch(offset, value, parseError) && !parseError) {
+        if (!patchWriter.Write_Next_Patch(offset, value) || !patchWriter.Write_Break_Line()) {
+            qtCodeFile.close();
+            outputFile.close();
+            lineNum = qtCodeReader.Get_Current_Line_Num();
+            return Hexagon_Error_Codes::WRITE_ERROR;
+        }
+    }
+    qtCodeFile.close();
+    outputFile.close();
+    lineNum = qtCodeReader.Get_Current_Line_Num();
+    if (parseError) return Hexagon_Error_Codes::PARSE_ERROR;
+    else return Hexagon_Error_Codes::OK;
 }
 
 Hexagon_Error_Codes::Error_Code Hexagon::Check_For_Conflicts_Between_Hexagon_Patches(const QString &patchFileLocation, const QStringList &otherPatchFileLocations,
