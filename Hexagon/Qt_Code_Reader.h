@@ -12,8 +12,9 @@ class Qt_Code_Reader {
 public:
     Qt_Code_Reader(QFile *file, Value_Manipulator *valueManipulator);
     ~Qt_Code_Reader();
-    bool Read_Next_Patch(qint64 &offset, QString &value);
-    bool Read_Next_Patch(qint64 &offset, QByteArray &value);
+    int Get_Current_Line_Num();
+    bool Read_Next_Patch(qint64 &offset, QString &value, bool &parseError);
+    bool Read_Next_Patch(qint64 &offset, QByteArray &value, bool &parseError);
 
 private:
     bool Get_Offset_From_Line(const QString &line, qint64 &offset);

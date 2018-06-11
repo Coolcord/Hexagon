@@ -14,7 +14,7 @@ public:
     ~Patch_Reader();
     int Get_Current_Line_Num();
     bool Get_Checksum(QString &checksum);
-    bool Get_Next_Offset_And_Value(qint64 &offset, QByteArray &value);
+    bool Get_Next_Offset_And_Value(qint64 &offset, QByteArray &value, bool &parseError);
 
 private:
     QString Get_Next_Line_After_Comments();

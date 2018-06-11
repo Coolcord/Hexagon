@@ -21,7 +21,8 @@ int Qt_Code_Reader::Get_Current_Line_Num() {
     return this->currentLineNum;
 }
 
-bool Qt_Code_Reader::Read_Next_Patch(qint64 &offset, QString &value) {
+bool Qt_Code_Reader::Read_Next_Patch(qint64 &offset, QString &value, bool &parseError) {
+    parseError = true;
     bool atEnd = false;
     while (!this->stream->atEnd() && !atEnd) {
         ++this->currentLineNum;
@@ -36,12 +37,14 @@ bool Qt_Code_Reader::Read_Next_Patch(qint64 &offset, QString &value) {
         if (singleValue && !this->Get_Single_Value_From_Line(line, value)) return false;
         if (multiValue && !this->Get_Multi_Value_From_Lines(line, value)) return false;
     }
+    parseError = false;
     return true;
 }
 
-bool Qt_Code_Reader::Read_Next_Patch(qint64 &offset, QByteArray &value) {
+bool Qt_Code_Reader::Read_Next_Patch(qint64 &offset, QByteArray &value, bool &parseError) {
+    parseError = true;
     QString valueString = this->valueManipulator->Convert_QByteArray_To_QString(value);
-    if (!this->Read_Next_Patch(offset, valueString)) return false;
+    if (!this->Read_Next_Patch(offset, valueString, parseError)) return false;
     return this->valueManipulator->Convert_QString_To_QByteArray(valueString, value);
 }
 
