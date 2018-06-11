@@ -42,6 +42,7 @@ Hexagon_Error_Codes::Error_Code File_Comparer::Scan_For_Differences(QVector<QPai
                 } else {
                     assert(difference);
                     difference->append(modifiedBytes.at(i));
+                    --localCompareCount;
                 }
             } else {
                 if (originalBytes.at(i) != modifiedBytes.at(i)) { //difference found!
