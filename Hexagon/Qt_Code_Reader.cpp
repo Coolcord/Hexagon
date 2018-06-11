@@ -17,6 +17,10 @@ Qt_Code_Reader::~Qt_Code_Reader() {
     delete this->stream;
 }
 
+int Qt_Code_Reader::Get_Current_Line_Num() {
+    return this->currentLineNum;
+}
+
 bool Qt_Code_Reader::Read_Next_Patch(qint64 &offset, QString &value) {
     bool atEnd = false;
     while (!this->stream->atEnd() && !atEnd) {

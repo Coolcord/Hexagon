@@ -29,7 +29,10 @@ SOURCES += \
     Patch_Writer.cpp \
     Qt_Code_Reader.cpp \
     Qt_Code_Writer.cpp \
-    Value_Manipulator.cpp
+    Value_Manipulator.cpp \
+    File_Writer.cpp \
+    Patch_Comparer.cpp \
+    File_Comparer.cpp
 
 HEADERS += \
         Hexagon.h \
@@ -40,7 +43,10 @@ HEADERS += \
     Qt_Code_Reader.h \
     Qt_Code_Writer.h \
     Qt_Code_Strings.h \
-    Value_Manipulator.h
+    Value_Manipulator.h \
+    File_Writer.h \
+    Patch_Comparer.h \
+    File_Comparer.h
 
 unix {
     target.path = /usr/lib
