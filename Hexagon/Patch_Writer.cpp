@@ -8,27 +8,19 @@ const int DEFAULT_OFFSET_SIZE = 4;
 const int PATCH_TEXT_WIDTH = 75;
 
 Patch_Writer::Patch_Writer(QFile *file, Value_Manipulator *valueManipulator) {
-    assert(file);
-    assert(file->isOpen() && file->isWritable());
-    assert(valueManipulator);
-    this->valueManipulator = valueManipulator;
-    this->numDigitsInOffset = DEFAULT_OFFSET_SIZE;
-    this->stream = new QTextStream(file);
+    this->Initialize(file, valueManipulator, DEFAULT_OFFSET_SIZE, QString());
+}
 
-    //Create the break string
-    this->breakString = QByteArray(PATCH_TEXT_WIDTH-1, Patch_Strings::CHAR_BREAK);
+Patch_Writer::Patch_Writer(QFile *file, Value_Manipulator *valueManipulator, const QString &originalFileName) {
+    this->Initialize(file, valueManipulator, DEFAULT_OFFSET_SIZE, originalFileName);
 }
 
 Patch_Writer::Patch_Writer(QFile *file, Value_Manipulator *valueManipulator, int numDigitsInOffset) {
-    assert(file);
-    assert(file->isOpen() && file->isWritable());
-    assert(valueManipulator);
-    this->valueManipulator = valueManipulator;
-    this->numDigitsInOffset = numDigitsInOffset;
-    this->stream = new QTextStream(file);
+    this->Initialize(file, valueManipulator, numDigitsInOffset, QString());
+}
 
-    //Create the break string
-    this->breakString = QByteArray(PATCH_TEXT_WIDTH-1, Patch_Strings::CHAR_BREAK);
+Patch_Writer::Patch_Writer(QFile *file, Value_Manipulator *valueManipulator, int numDigitsInOffset, const QString &originalFileName) {
+    this->Initialize(file, valueManipulator, numDigitsInOffset, originalFileName);
 }
 
 Patch_Writer::~Patch_Writer() {
@@ -54,6 +46,7 @@ bool Patch_Writer::Write_Comment(const QString &comment) {
 bool Patch_Writer::Write_Header() {
     *this->stream << Patch_Strings::STRING_COMMENT << " " << Patch_Strings::STRING_HEADER << Patch_Strings::STRING_NEW_LINE;
     *this->stream << Patch_Strings::STRING_COMMENT << " " << Patch_Strings::STRING_CREATED + " " + QDate::currentDate().toString("dddd, MMMM dd, yyyy") + ", at " + QTime::currentTime().toString("hh:mm:ss A") + "." + Patch_Strings::STRING_NEW_LINE;
+    if (!this->originalFileName.isEmpty()) *this->stream << Patch_Strings::STRING_COMMENT << " " << Patch_Strings::STRING_ORIGINAL_FILE_NAME + this->originalFileName << Patch_Strings::STRING_NEW_LINE;
     return this->stream->status() == QTextStream::Ok;
 }
 
@@ -69,4 +62,15 @@ bool Patch_Writer::Write_Next_Patch(const qint64 offset, const QString &value) {
 
 bool Patch_Writer::Write_Next_Patch(const qint64 offset, const QByteArray &value) {
     return this->Write_Next_Patch(offset, this->valueManipulator->Convert_QByteArray_To_QString(value));
+}
+
+void Patch_Writer::Initialize(QFile *file, Value_Manipulator *valueManipulator, int numDigitsInOffset, const QString &originalFileName) {
+    assert(file);
+    assert(file->isOpen() && file->isWritable());
+    assert(valueManipulator);
+    this->valueManipulator = valueManipulator;
+    this->numDigitsInOffset = numDigitsInOffset;
+    this->originalFileName = originalFileName;
+    this->stream = new QTextStream(file);
+    this->breakString = QByteArray(PATCH_TEXT_WIDTH-1, Patch_Strings::CHAR_BREAK); //create the break string
 }

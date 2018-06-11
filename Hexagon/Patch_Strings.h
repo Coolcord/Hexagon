@@ -16,6 +16,7 @@ namespace Patch_Strings {
     //Header
     const static QString STRING_HEADER = "Hexagon Patch";
     const static QString STRING_CREATED = "Created on";
+    const static QString STRING_ORIGINAL_FILE_NAME = "Original File Name: ";
 
     #ifdef Q_OS_WIN32
     const static QString STRING_NEW_LINE = "\r\n";
