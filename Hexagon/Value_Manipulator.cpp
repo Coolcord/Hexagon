@@ -63,7 +63,7 @@ bool Value_Manipulator::Is_Line_Hex_String(const QString &line) {
 QString Value_Manipulator::Trim_Hex_Identifier(QString &hexString) {
     if (hexString.startsWith(Patch_Strings::STRING_HEX_IDENTIFIER)) {
         int hexIdentifierSize = Patch_Strings::STRING_HEX_IDENTIFIER.size();
-        return hexString.remove(hexIdentifierSize, hexString.size()-hexIdentifierSize);
+        return hexString.remove(0, hexIdentifierSize);
     }
     return hexString;
 }
