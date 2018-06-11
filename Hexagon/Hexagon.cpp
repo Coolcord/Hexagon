@@ -28,8 +28,9 @@ Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QString &patc
     //Copy the original file to the output location
     QFileInfo originalFileInfo(originalFileLocation);
     if (!originalFileInfo.exists() || !originalFileInfo.isReadable()) return Hexagon_Error_Codes::READ_ERROR;
-    if (!QFile::copy(originalFileLocation, outputFileLocation)) return Hexagon_Error_Codes::WRITE_ERROR;
     QFile outputFile(outputFileLocation);
+    if (outputFile.exists() && !outputFile.remove()) return Hexagon_Error_Codes::WRITE_ERROR;
+    if (!QFile::copy(originalFileLocation, outputFileLocation)) return Hexagon_Error_Codes::WRITE_ERROR;
     if (!outputFile.open(QIODevice::ReadWrite)) return Hexagon_Error_Codes::WRITE_ERROR;
 
     //Apply the patch
