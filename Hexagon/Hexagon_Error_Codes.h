@@ -5,6 +5,7 @@ namespace Hexagon_Error_Codes {
     enum Error_Code {
         OK,
         READ_ERROR,
+        READ_PATCH_ERROR,
         READ_MODIFIED_ERROR,
         WRITE_ERROR,
         PARSE_ERROR,
