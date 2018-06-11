@@ -5,15 +5,17 @@
 Patch_Comparer::Patch_Comparer(Value_Manipulator *valueManipulator) {
     assert(valueManipulator);
     this->valueManipulator = valueManipulator;
-    this->usedValues = new QVector<QMap<qint64, unsigned char>*>();
+    this->originalValues = new QVector<QPair<qint64, unsigned char>>();
+    this->otherValues = new QVector<QMap<qint64, unsigned char>*>();
 }
 
 Patch_Comparer::~Patch_Comparer() {
-    for (int i = 0; i < this->usedValues->size(); ++i) {
-        delete this->usedValues->at(i);
-        this->usedValues->replace(i, NULL);
+    delete this->originalValues;
+    for (int i = 0; i < this->otherValues->size(); ++i) {
+        delete this->otherValues->at(i);
+        this->otherValues->replace(i, NULL);
     }
-    delete this->usedValues;
+    delete this->otherValues;
 }
 
 bool Patch_Comparer::Open_Original_File(const QString &fileLocation, int &lineNum) {
@@ -22,6 +24,37 @@ bool Patch_Comparer::Open_Original_File(const QString &fileLocation, int &lineNu
 
 bool Patch_Comparer::Open_Additional_File(const QString &fileLocation, int &lineNum) {
     return this->Open_File(fileLocation, lineNum, false);
+}
+
+QVector<QVector<qint64>*> Patch_Comparer::Get_Conflicts() {
+    QVector<QVector<qint64>*> conflicts(this->otherValues->size());
+    for (int i = 0; i < conflicts.size(); ++i) conflicts.replace(i, NULL);
+    if (this->otherValues->size() < 2) return conflicts;
+
+    //Start looking for conflicts
+    for (int i = 0; i < this->otherValues->size(); ++i) {
+        QMap<qint64, unsigned char> *map = this->otherValues->at(i);
+        if (!map) continue;
+        for (int j = 0; j < this->originalValues->size(); ++j) {
+            qint64 offset = this->originalValues->at(j).first;
+            QMap<qint64, unsigned char>::const_iterator iter = map->find(offset);
+            if (iter == map->end()) continue; //no element found at that offset
+            unsigned char value = iter.value();
+            if (value != this->originalValues->at(j).second) { //conflict detected!
+                if (!conflicts.at(i)) conflicts.replace(i, new QVector<qint64>());
+                QVector<qint64> *vector = conflicts.at(i);
+                vector->push_back(offset);
+            }
+        }
+    }
+    return conflicts;
+}
+
+void Patch_Comparer::Deallocate_Conflicts(QVector<QVector<qint64>*> &conflicts) {
+    for (int i = 0; i < conflicts.size(); ++i) {
+        delete conflicts.at(i);
+        conflicts.replace(i, NULL);
+    }
 }
 
 bool Patch_Comparer::Open_File(const QString &fileLocation, int &lineNum, bool isOriginal) {
@@ -34,12 +67,9 @@ bool Patch_Comparer::Open_File(const QString &fileLocation, int &lineNum, bool i
     if (!patchReader.Get_Checksum(checksum)) return false;
 
     int index = 0;
-    if (isOriginal && !this->usedValues->isEmpty()) {
-        this->usedValues->replace(0, new QMap<qint64, unsigned char>());
-        index = 0;
-    } else {
-        this->usedValues->push_back(new QMap<qint64, unsigned char>());
-        index = this->usedValues->size()-1;
+    if (!isOriginal) {
+        this->otherValues->push_back(new QMap<qint64, unsigned char>());
+        index = this->otherValues->size()-1;
     }
 
     //Insert all of the values of the patch into the map
@@ -48,7 +78,8 @@ bool Patch_Comparer::Open_File(const QString &fileLocation, int &lineNum, bool i
     QByteArray value;
     while (patchReader.Get_Next_Offset_And_Value(offset, value, parseError)) {
         for (qint64 i = 0; i < value.size(); ++i) {
-            this->usedValues->at(index)->insert(offset+i, static_cast<unsigned char>(value.at(i)));
+            if (isOriginal) this->originalValues->push_back(QPair<qint64, unsigned char>(offset+i, static_cast<unsigned char>(value.at(i))));
+            else this->otherValues->at(index)->insert(offset+i, static_cast<unsigned char>(value.at(i)));
         }
     }
 
@@ -56,10 +87,10 @@ bool Patch_Comparer::Open_File(const QString &fileLocation, int &lineNum, bool i
     if (parseError) {
         lineNum = patchReader.Get_Current_Line_Num();
         if (isOriginal) {
-            delete this->usedValues->at(0);
+            this->originalValues->clear();
         } else {
-            delete this->usedValues->last();
-            this->usedValues->pop_back();
+            delete this->otherValues->last();
+            this->otherValues->pop_back();
         }
     }
     return parseError;

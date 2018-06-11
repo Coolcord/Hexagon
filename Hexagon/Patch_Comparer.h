@@ -1,8 +1,8 @@
 #ifndef PATCH_COMPARER_H
 #define PATCH_COMPARER_H
 
-#include <QMap>
 #include <QVector>
+#include <QMap>
 
 class Value_Manipulator;
 
@@ -12,12 +12,14 @@ public:
     ~Patch_Comparer();
     bool Open_Original_File(const QString &fileLocation, int &lineNum);
     bool Open_Additional_File(const QString &fileLocation, int &lineNum);
-    //QMap<qint64, unsigned char> Get_Conflicts(); //TODO: Don't return a map... you need something more efficient to iterate though...
+    QVector<QVector<qint64>*> Get_Conflicts(); //the returned structure needs to be manually deallocated
+    void Deallocate_Conflicts(QVector<QVector<qint64>*> &conflicts);
 
 private:
     bool Open_File(const QString &fileLocation, int &lineNum, bool isOriginal);
 
-    QVector<QMap<qint64, unsigned char>*> *usedValues;
+    QVector<QPair<qint64, unsigned char>> *originalValues;
+    QVector<QMap<qint64, unsigned char>*> *otherValues;
     Value_Manipulator *valueManipulator;
 };
 
