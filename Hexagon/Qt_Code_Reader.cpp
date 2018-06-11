@@ -61,8 +61,29 @@ bool Qt_Code_Reader::Get_Offset_From_Line(const QString &line, qint64 &offset) {
     return true;
 }
 
-bool Qt_Code_Reader::Get_Multi_Value_From_Lines(const QString &line, QString &value) {
-    //TODO: Write this...
+bool Qt_Code_Reader::Get_Multi_Value_From_Lines(const QString &firstLine, QString &value) {
+    QStringList strings = firstLine.split("\"");
+    if (strings.size() != 3) return false;
+    if (!this->valueManipulator->Is_Line_Hex_String(strings.at(1))) return false;
+    value = strings.at(1);
+
+    //Pull any additional lines
+    while (!this->stream->atEnd()) {
+        qint64 posBefore = this->stream->pos();
+        ++this->currentLineNum;
+        QString line = this->stream->readLine().trimmed();
+        if (line.isEmpty()) continue;
+        if (line.contains(Qt_Code_Strings::STRING_WRITE_BYTES_TO_OFFSET)) { //this line is not part of the value. Roll back
+            assert(this->stream->seek(posBefore));
+            return true;
+        } else {
+            strings = line.split("\"");
+            if (strings.size() != 3) return false;
+            if (!this->valueManipulator->Is_Line_Hex_String(strings.at(1))) return false;
+            value += strings.at(1);
+        }
+    }
+    return true;
 }
 
 bool Qt_Code_Reader::Get_Single_Value_From_Line(const QString &line, QString &value) {

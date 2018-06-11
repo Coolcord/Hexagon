@@ -17,6 +17,8 @@ public:
 
 private:
     bool Get_Offset_From_Line(const QString &line, qint64 &offset);
+    bool Get_Multi_Value_From_Lines(const QString &firstLine, QString &value);
+    bool Get_Single_Value_From_Line(const QString &line, QString &value);
 
     QTextStream *stream;
     Value_Manipulator *valueManipulator;
