@@ -130,6 +130,7 @@ void Main_Window::on_btnCreatePatch_clicked() {
     case Hexagon_Error_Codes::READ_ERROR: this->errorMessages->Show_Read_Error(originalFileInfo.fileName()); return;
     case Hexagon_Error_Codes::READ_MODIFIED_ERROR: this->errorMessages->Show_Read_Error(modifiedFileInfo.fileName()); return;
     case Hexagon_Error_Codes::WRITE_ERROR: this->errorMessages->Show_Write_Error(outputFileInfo.fileName()); return;
+    case Hexagon_Error_Codes::SIZE_DIFFERENCE: this->errorMessages->Show_Error(Common_Strings::STRING_FILES_ARE_DIFFERENT_SIZES);
     }
 }
 

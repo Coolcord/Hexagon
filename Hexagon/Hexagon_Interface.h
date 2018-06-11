@@ -6,18 +6,7 @@
 #include <QObject>
 #include <QtPlugin>
 #include <QString>
-
-namespace Hexagon_Error_Codes {
-    enum Error_Code {
-        OK,
-        READ_ERROR,
-        READ_MODIFIED_ERROR,
-        WRITE_ERROR,
-        PARSE_ERROR,
-        CONFLICTS_DETECTED,
-        BAD_CHECKSUM
-    };
-}
+#include "Hexagon_Error_Codes.h"
 
 class Hexagon_Interface : public QObject {
 public:

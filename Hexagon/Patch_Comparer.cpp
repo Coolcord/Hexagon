@@ -51,10 +51,8 @@ QVector<QVector<qint64>*> Patch_Comparer::Get_Conflicts() {
 }
 
 void Patch_Comparer::Deallocate_Conflicts(QVector<QVector<qint64>*> &conflicts) {
-    for (int i = 0; i < conflicts.size(); ++i) {
-        delete conflicts.at(i);
-        conflicts.replace(i, NULL);
-    }
+    for (int i = 0; i < conflicts.size(); ++i) delete conflicts.at(i);
+    conflicts.clear();
 }
 
 bool Patch_Comparer::Open_File(const QString &fileLocation, int &lineNum, bool isOriginal) {

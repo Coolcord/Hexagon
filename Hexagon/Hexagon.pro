@@ -46,7 +46,8 @@ HEADERS += \
     Value_Manipulator.h \
     File_Writer.h \
     Patch_Comparer.h \
-    File_Comparer.h
+    File_Comparer.h \
+    Hexagon_Error_Codes.h
 
 unix {
     target.path = /usr/lib
