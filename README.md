@@ -19,7 +19,7 @@ A: Those patch file formats are great for distributing hacks. However, I wanted 
 
 A: For distributing hacks, I'd say no. Hexagon patches tend to be larger than other formats, as they emphasize readability over compression. However, if you modify a lot of binary files via hex editors and you want a patch format that is easy to modify on the fly, Hexagon may be worth checking out.
 
-## Syntax
+## Sample Hexagon Patch File
 ```
 # This is a comment
 # Below is the checksum of the file. It is a SHA-256 checksum based on the original file.

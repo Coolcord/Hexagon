@@ -77,7 +77,7 @@ QString File_Dialog_Manager::Get_File_Location(File_Types::File_Type fileType, Q
         else openLocation = this->settings->defaultFileOpenLocation;
         break;
     }
-    qDebug() << windowTitle;
+    qDebug().noquote() << windowTitle;
     bool isOriginalFile = message == Common_Strings::STRING_ORIGINAL;
     if (isOriginalFile) openLocation = this->settings->defaultOriginalFileOpenLocation;
     if (!QDir(openLocation).exists()) openLocation = this->applicationLocation;
