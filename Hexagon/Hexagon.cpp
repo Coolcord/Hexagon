@@ -11,16 +11,6 @@
 #include <assert.h>
 #include <QFileInfo>
 
-Hexagon::Hexagon() {
-    this->applicationLocation = QString();
-}
-
-void Hexagon::Startup(QWidget *parent, const QString &applicationLocation) {
-    assert(parent);
-    this->parent = parent;
-    this->applicationLocation = applicationLocation;
-}
-
 Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QString &patchFileLocation, const QString &originalFileLocation,
                                                              const QString &outputFileLocation, bool useChecksum, int &lineNum) {
     if (patchFileLocation.isEmpty()) return Hexagon_Error_Codes::READ_PATCH_ERROR;
@@ -39,11 +29,15 @@ Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QString &patc
     if (!originalFileInfo.exists() || !originalFileInfo.isReadable()) return Hexagon_Error_Codes::READ_ERROR;
     QFile outputFile(outputFileLocation);
     if (outputFile.exists() && !outputFile.remove()) return Hexagon_Error_Codes::WRITE_ERROR;
-    if (!QFile::copy(originalFileLocation, outputFileLocation)) return Hexagon_Error_Codes::WRITE_ERROR;
+    if (!QFile::copy(originalFileLocation, outputFileLocation)) {
+        outputFile.remove();
+        return Hexagon_Error_Codes::WRITE_ERROR;
+    }
 
     //Apply the patch
     Hexagon_Error_Codes::Error_Code errorCode = this->Apply_Hexagon_Patch(patchFileBytes, &outputFile, useChecksum, lineNum);
     outputFile.close();
+    if (errorCode != Hexagon_Error_Codes::OK) outputFile.remove();
     return errorCode;
 }
 
@@ -112,14 +106,14 @@ Hexagon_Error_Codes::Error_Code Hexagon::Create_Hexagon_Patch(const QString &ori
     if (!outputFile.open(QIODevice::ReadWrite)) return Hexagon_Error_Codes::WRITE_ERROR;
     Patch_Writer patchWriter(&outputFile, &valueManipulator, useComments, QString::number(originalFileInfo.size(), 0x10).size(), originalFileInfo.fileName());
     if (!patchWriter.Write_Header()) {
-        outputFile.close();
+        outputFile.remove();
         return Hexagon_Error_Codes::WRITE_ERROR;
     }
 
     //Write the checksum
     if (!useChecksum) checksum = Patch_Strings::STRING_SKIP_CHECKSUM;
     if (!patchWriter.Write_Checksum(checksum) || !patchWriter.Write_Break_Line()) {
-        outputFile.close();
+        outputFile.remove();
         return Hexagon_Error_Codes::WRITE_ERROR;
     }
 
@@ -129,7 +123,7 @@ Hexagon_Error_Codes::Error_Code Hexagon::Create_Hexagon_Patch(const QString &ori
         if (!bytes) continue;
         qint64 offset = differences.at(i).first;
         if (!patchWriter.Write_Next_Patch(offset, *bytes) || !patchWriter.Write_Break_Line()) {
-            outputFile.close();
+            outputFile.remove();
             fileComparer.Deallocate_Differences(differences);
             return Hexagon_Error_Codes::WRITE_ERROR;
         }
@@ -178,7 +172,7 @@ Hexagon_Error_Codes::Error_Code Hexagon::Convert_Hexagon_Patch_To_Qt_Code(const 
         if (!writeError) {
             lineNum = patchReader.Get_Current_Line_Num();
             patchFile.close();
-            outputFile.close();
+            outputFile.remove();
             return Hexagon_Error_Codes::WRITE_ERROR;
         }
 
@@ -186,8 +180,12 @@ Hexagon_Error_Codes::Error_Code Hexagon::Convert_Hexagon_Patch_To_Qt_Code(const 
     patchFile.close();
     outputFile.close();
     lineNum = patchReader.Get_Current_Line_Num();
-    if (parseError) return Hexagon_Error_Codes::PARSE_ERROR;
-    else return Hexagon_Error_Codes::OK;
+    if (parseError) {
+        outputFile.remove();
+        return Hexagon_Error_Codes::PARSE_ERROR;
+    } else {
+        return Hexagon_Error_Codes::OK;
+    }
 }
 
 Hexagon_Error_Codes::Error_Code Hexagon::Convert_Qt_Code_To_Hexagon_Patch(const QString &qtCodeFileLocation, const QString &outputFileLocation, int &lineNum, bool useComments) {
@@ -209,7 +207,7 @@ Hexagon_Error_Codes::Error_Code Hexagon::Convert_Qt_Code_To_Hexagon_Patch(const 
     if (!patchWriter.Write_Header() || !patchWriter.Write_Checksum(Patch_Strings::STRING_SKIP_CHECKSUM)
             || !patchWriter.Write_Break_Line()) {
         qtCodeFile.close();
-        outputFile.close();
+        outputFile.remove();
         return Hexagon_Error_Codes::WRITE_ERROR;
     }
 
@@ -220,7 +218,7 @@ Hexagon_Error_Codes::Error_Code Hexagon::Convert_Qt_Code_To_Hexagon_Patch(const 
     while (qtCodeReader.Read_Next_Patch(offset, value, parseError) && !parseError) {
         if (!patchWriter.Write_Next_Patch(offset, value) || !patchWriter.Write_Break_Line()) {
             qtCodeFile.close();
-            outputFile.close();
+            outputFile.remove();
             lineNum = qtCodeReader.Get_Current_Line_Num();
             return Hexagon_Error_Codes::WRITE_ERROR;
         }
@@ -228,8 +226,12 @@ Hexagon_Error_Codes::Error_Code Hexagon::Convert_Qt_Code_To_Hexagon_Patch(const 
     qtCodeFile.close();
     outputFile.close();
     lineNum = qtCodeReader.Get_Current_Line_Num();
-    if (parseError) return Hexagon_Error_Codes::PARSE_ERROR;
-    else return Hexagon_Error_Codes::OK;
+    if (parseError) {
+        outputFile.remove();
+        return Hexagon_Error_Codes::PARSE_ERROR;
+    } else {
+        return Hexagon_Error_Codes::OK;
+    }
 }
 
 Hexagon_Error_Codes::Error_Code Hexagon::Check_For_Conflicts_Between_Hexagon_Patches(const QString &patchFileLocation, const QStringList &otherPatchFileLocations,

@@ -10,9 +10,6 @@
 
 class Hexagon_Interface : public QObject {
 public:
-    virtual void Startup(QWidget *parent, const QString &location)=0;
-    virtual void Shutdown()=0;
-
     //Standard Functions
     virtual Hexagon_Error_Codes::Error_Code Apply_Hexagon_Patch(const QString &patchFileLocation, const QString &originalFileLocation,
                                                                 const QString &outputFileLocation, bool useChecksum, int &lineNum)=0;

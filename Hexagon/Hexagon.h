@@ -12,9 +12,7 @@ class Hexagon : public Hexagon_Interface {
     Q_INTERFACES(Hexagon_Interface)
 
 public:
-    Hexagon();
-    void Startup(QWidget *parent, const QString &applicationLocation);
-    void Shutdown() {}
+    Hexagon() {}
 
     //Standard Functions
     Hexagon_Error_Codes::Error_Code Apply_Hexagon_Patch(const QString &patchFileLocation, const QString &originalFileLocation,
@@ -32,8 +30,6 @@ public:
 private:
     Hexagon(const Hexagon&);
     Hexagon& operator=(const Hexagon&);
-    QString applicationLocation;
-    QWidget *parent;
 };
 
 #endif // HEXAGON_H

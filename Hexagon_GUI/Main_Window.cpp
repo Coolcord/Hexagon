@@ -25,7 +25,6 @@ Main_Window::Main_Window(QWidget *parent, Hexagon_Interface *hexagonPlugin, Erro
     this->hexagonPlugin = hexagonPlugin;
     ui->setupUi(this);
     QString applicationLocation = QApplication::applicationDirPath();
-    hexagonPlugin->Startup(this, applicationLocation);
 
     //Prepare Classes
     this->errorMessages = errorMessages;
