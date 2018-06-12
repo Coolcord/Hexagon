@@ -29,8 +29,13 @@ Patch_Writer::~Patch_Writer() {
 }
 
 bool Patch_Writer::Write_Break_Line() {
-    if (!this->useComments) return true; //nothing to do
+    if (!this->useComments) return this->Write_Break_Line_No_Comment();
     *this->stream << Patch_Strings::STRING_COMMENT << this->breakString << Patch_Strings::STRING_NEW_LINE;
+    return this->stream->status() == QTextStream::Ok;
+}
+
+bool Patch_Writer::Write_Break_Line_No_Comment() {
+    *this->stream << Patch_Strings::STRING_NEW_LINE;
     return this->stream->status() == QTextStream::Ok;
 }
 

@@ -16,6 +16,7 @@ public:
     Patch_Writer(QFile *file, Value_Manipulator *valueManipulator, bool useComments, int numDigitsInOffset, const QString &originalFileName);
     ~Patch_Writer();
     bool Write_Break_Line();
+    bool Write_Break_Line_No_Comment();
     bool Write_Checksum(const QString &checksum);
     bool Write_Comment(const QString &comment);
     bool Write_Header();
