@@ -164,22 +164,24 @@ Hexagon_Error_Codes::Error_Code Hexagon::Convert_Hexagon_Patch_To_Qt_Code(const 
     Qt_Code_Writer qtCodeWriter(&outputFile, &valueManipulator);
 
     //Read each patch from the Patch file and write it to the Qt Code file
-    qint64 offset = 0;
-    QByteArray value;
+    qint64 offset = 0, tmpOffset = 0;
+    QByteArray value, tmpValue;
     bool parseError = false, doneReading = false, writeError = false;
-    bool success = patchReader.Get_Next_Offset_And_Value(offset, value, parseError);
+    bool success = patchReader.Get_Next_Offset_And_Value(tmpOffset, tmpValue, parseError);
     do {
-        if (!success || parseError) break;
+        offset = tmpOffset;
+        value = tmpValue;
+        success = patchReader.Get_Next_Offset_And_Value(tmpOffset, tmpValue, parseError);
         doneReading = !success && !parseError;
         if (doneReading) writeError = qtCodeWriter.Write_Last_Patch(offset, value);
         else writeError = qtCodeWriter.Write_Next_Patch(offset, value);
-        if (writeError) {
+        if (!writeError) {
             lineNum = patchReader.Get_Current_Line_Num();
             patchFile.close();
             outputFile.close();
             return Hexagon_Error_Codes::WRITE_ERROR;
         }
-        success = patchReader.Get_Next_Offset_And_Value(offset, value, parseError);
+
     } while (!doneReading && !parseError);
     patchFile.close();
     outputFile.close();

@@ -54,7 +54,7 @@ bool Qt_Code_Writer::Write_Patch(const qint64 offset, const QString &value, bool
         if (!this->Write_Value_Lines(value, currentLineSize)) return false;
         *this->stream << Qt_Code_Strings::STRING_TO_LATIN;
     }
-    if (lastPatch) *this->stream << Qt_Code_Strings::STRING_RETURN << Patch_Strings::STRING_NEW_LINE;
+    if (lastPatch) *this->stream << Qt_Code_Strings::STRING_SEMI_COLON << Patch_Strings::STRING_NEW_LINE;
     else *this->stream << Qt_Code_Strings::STRING_RETURN_FALSE << Patch_Strings::STRING_NEW_LINE;
     return this->stream->status() == QTextStream::Ok;
 }
