@@ -61,17 +61,20 @@ QString File_Dialog_Manager::Get_File_Location(File_Types::File_Type fileType, Q
     case File_Types::PATCH_FILE:
         windowTitle += "Patch File";
         extensionFilter = Common_Strings::STRING_PATCH_EXTENSION_FILTER+"\n"+Common_Strings::STRING_ALL_FILE_EXTENSION_FILTER;
-        openLocation = this->settings->defaultPatchOpenLocation;
+        if (save) openLocation = this->settings->defaultPatchSaveLocation;
+        else openLocation = this->settings->defaultPatchOpenLocation;
         break;
     case File_Types::QT_CODE_FILE:
         windowTitle += "Qt Code File";
         extensionFilter = Common_Strings::STRING_TEXT_EXTENSION_FILTER+"\n"+Common_Strings::STRING_ALL_FILE_EXTENSION_FILTER;
-        openLocation = this->settings->defaultFileOpenLocation;
+        if (save) openLocation = this->settings->defaultFileSaveLocation;
+        else openLocation = this->settings->defaultFileOpenLocation;
         break;
     case File_Types::ANY_FILE:
         windowTitle += "File";
         extensionFilter = Common_Strings::STRING_ALL_FILE_EXTENSION_FILTER;
-        openLocation = this->settings->defaultFileOpenLocation;
+        if (save) openLocation = this->settings->defaultFileSaveLocation;
+        else openLocation = this->settings->defaultFileOpenLocation;
         break;
     }
     qDebug() << windowTitle;
