@@ -27,7 +27,10 @@ bool Qt_Code_Reader::Read_Next_Patch(qint64 &offset, QString &value, bool &parse
     QString line = QString();
     do {
         line = this->Get_Next_Line_After_Comments();
-        if (line.isEmpty()) return false;
+        if (line.isEmpty()) {
+            parseError = false;
+            return false;
+        }
         singleValue = line.contains(Qt_Code_Strings::STRING_BYTE_ARRAY);
         multiValue = line.contains(Qt_Code_Strings::STRING_FROM_HEX);
     } while (!singleValue && !multiValue);
@@ -35,9 +38,12 @@ bool Qt_Code_Reader::Read_Next_Patch(qint64 &offset, QString &value, bool &parse
         if (!this->Get_Offset_From_Line(line, offset)) return false;
         if (singleValue && !this->Get_Single_Value_From_Line(line, value)) return false;
         if (multiValue && !this->Get_Multi_Value_From_Lines(line, value)) return false;
+        parseError = false;
+        return true;
+    } else {
+        parseError = true;
+        return false;
     }
-    parseError = false;
-    return true;
 }
 
 bool Qt_Code_Reader::Read_Next_Patch(qint64 &offset, QByteArray &value, bool &parseError) {
@@ -49,7 +55,7 @@ bool Qt_Code_Reader::Read_Next_Patch(qint64 &offset, QByteArray &value, bool &pa
 
 QString Qt_Code_Reader::Get_Next_Line_After_Comments() {
     QString line = QString();
-    while (line.isEmpty() && line.startsWith(Qt_Code_Strings::STRING_COMMENT)) {
+    while (line.isEmpty() && !line.startsWith(Qt_Code_Strings::STRING_COMMENT)) {
         if (this->stream->atEnd()) return QString();
         ++this->currentLineNum;
         line = this->stream->readLine().trimmed();
@@ -60,8 +66,7 @@ QString Qt_Code_Reader::Get_Next_Line_After_Comments() {
 bool Qt_Code_Reader::Get_Offset_From_Line(const QString &line, qint64 &offset) {
     QStringList strings = line.split(',');
     if (strings.size() < 2) return false;
-    strings = strings.at(0).split('(');
-    if (strings.size() < 2) return false;
+    strings = strings.at(0).split(Qt_Code_Strings::STRING_WRITE_BYTES_TO_OFFSET);
     QString numString = strings.last();
     bool valid = false;
     bool hex = false;
@@ -70,8 +75,8 @@ bool Qt_Code_Reader::Get_Offset_From_Line(const QString &line, qint64 &offset) {
         numString = numString.split('x').last();
     }
     qint64 tmpOffset = 0;
-    if (hex) numString.toULongLong(&valid, 0x10);
-    else numString.toULongLong(&valid, 10);
+    if (hex) tmpOffset = numString.toULongLong(&valid, 0x10);
+    else tmpOffset = numString.toULongLong(&valid, 10);
     if (!valid) return false;
     offset = tmpOffset;
     return true;
