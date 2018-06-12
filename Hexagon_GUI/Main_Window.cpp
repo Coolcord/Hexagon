@@ -71,7 +71,7 @@ void Main_Window::on_btnApplyPatch_clicked() {
     }
 
     //Choose Where to Save the New File
-    QString outputFileLocation = this->stringManipulator->Get_Output_File_Path_From_Patch_And_Original_File_Paths(patchFileLocation, originalFileLocation);
+    QString outputFileLocation = patchFileInfo.path()+this->stringManipulator->Get_File_Name_Without_Extension(patchFileInfo.fileName())+this->stringManipulator->Get_Extension(originalFileInfo.fileName());
     QFileInfo outputFileInfo(outputFileLocation);
     if (this->ui->cbAlwaysAskForSaveLocation->isChecked() || outputFileInfo.exists()) {
         outputFileLocation = this->fileDialogManager->Get_Save_File_Location(File_Types::ANY_FILE, this->stringManipulator->Get_Extension(originalFileInfo.fileName()));
