@@ -17,6 +17,7 @@ public:
     bool Read_Next_Patch(qint64 &offset, QByteArray &value, bool &parseError);
 
 private:
+    QString Get_Next_Line_After_Comments();
     bool Get_Offset_From_Line(const QString &line, qint64 &offset);
     bool Get_Multi_Value_From_Lines(const QString &firstLine, QString &value);
     bool Get_Single_Value_From_Line(const QString &line, QString &value);

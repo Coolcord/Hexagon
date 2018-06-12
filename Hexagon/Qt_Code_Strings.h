@@ -10,6 +10,7 @@ namespace Qt_Code_Strings {
     const static QString STRING_RETURN_FALSE = ") return false;";
     const static QString STRING_SEMI_COLON = ";";
     const static QString STRING_RETURN = "return ";
+    const static QString STRING_COMMENT = "//";
 
     //Standard Qt From Hex
     const static QString STRING_FROM_HEX = ", QByteArray::fromHex(QString(";

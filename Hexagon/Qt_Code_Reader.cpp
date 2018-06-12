@@ -23,16 +23,15 @@ int Qt_Code_Reader::Get_Current_Line_Num() {
 
 bool Qt_Code_Reader::Read_Next_Patch(qint64 &offset, QString &value, bool &parseError) {
     parseError = true;
-    bool atEnd = false;
-    while (!this->stream->atEnd() && !atEnd) {
-        ++this->currentLineNum;
-        QString line = this->stream->readLine().trimmed();
-        if (line.isEmpty()) continue;
-        if (line.startsWith(Qt_Code_Strings::STRING_RETURN)) atEnd = true;
-        bool singleValue = line.contains(Qt_Code_Strings::STRING_BYTE_ARRAY);
-        bool multiValue = line.contains(Qt_Code_Strings::STRING_FROM_HEX);
-        if (!singleValue && !multiValue) continue; //just ignore this line
-        assert(singleValue != multiValue);
+    bool singleValue = false, multiValue = false;
+    QString line = QString();
+    do {
+        line = this->Get_Next_Line_After_Comments();
+        if (line.isEmpty()) return false;
+        singleValue = line.contains(Qt_Code_Strings::STRING_BYTE_ARRAY);
+        multiValue = line.contains(Qt_Code_Strings::STRING_FROM_HEX);
+    } while (!singleValue && !multiValue);
+    if (singleValue || multiValue) {
         if (!this->Get_Offset_From_Line(line, offset)) return false;
         if (singleValue && !this->Get_Single_Value_From_Line(line, value)) return false;
         if (multiValue && !this->Get_Multi_Value_From_Lines(line, value)) return false;
@@ -46,6 +45,16 @@ bool Qt_Code_Reader::Read_Next_Patch(qint64 &offset, QByteArray &value, bool &pa
     QString valueString = this->valueManipulator->Convert_QByteArray_To_QString(value);
     if (!this->Read_Next_Patch(offset, valueString, parseError)) return false;
     return this->valueManipulator->Convert_QString_To_QByteArray(valueString, value);
+}
+
+QString Qt_Code_Reader::Get_Next_Line_After_Comments() {
+    QString line = QString();
+    while (line.isEmpty() && line.startsWith(Qt_Code_Strings::STRING_COMMENT)) {
+        if (this->stream->atEnd()) return QString();
+        ++this->currentLineNum;
+        line = this->stream->readLine().trimmed();
+    }
+    return line;
 }
 
 bool Qt_Code_Reader::Get_Offset_From_Line(const QString &line, qint64 &offset) {
