@@ -87,7 +87,7 @@ QString File_Dialog_Manager::Get_File_Location(File_Types::File_Type fileType, Q
     if (fileLocation == NULL || fileLocation.isEmpty()) return QString();
     QFileInfo fileInfo(fileLocation);
     if (save) {
-        if (!fileInfo.isWritable()) {
+        if (fileInfo.exists() && !fileInfo.isWritable()) {
             this->errorMessages->Show_Write_Error(fileInfo.fileName());
             return QString();
         }
