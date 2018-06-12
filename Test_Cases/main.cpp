@@ -22,6 +22,6 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    Test_Cases(hexagonPlugin).Run_Test_Cases();
-    return a.exec();
+    Test_Cases(hexagonPlugin, QCoreApplication::applicationDirPath()).Run_Test_Cases();
+    return 0;
 }

@@ -4,7 +4,7 @@
 #include "Value_Manipulator.h"
 #include <assert.h>
 
-const static int QT_CODE_TEXT_WIDTH = 50;
+const static int CODE_TEXT_WIDTH = 75;
 
 Qt_Code_Writer::Qt_Code_Writer(QFile *file, Value_Manipulator *valueManipulator) {
     assert(file);
@@ -62,15 +62,15 @@ bool Qt_Code_Writer::Write_Patch(const qint64 offset, const QString &value, bool
 bool Qt_Code_Writer::Write_Value_Lines(const QString &value, int currentLineSize) {
     //Write the First Line
     *this->stream << "\"";
-    int numChars = QT_CODE_TEXT_WIDTH-currentLineSize;
-    for (int i = 0; i < QT_CODE_TEXT_WIDTH-currentLineSize; ++i) {
+    int numChars = CODE_TEXT_WIDTH-currentLineSize;
+    for (int i = 0; i < numChars && i < value.size(); ++i) {
         *this->stream << value.at(i);
     }
 
     //Write the Remaining Lines
     for (int i = numChars; i < value.size(); ++i) {
         if (i == numChars) *this->stream << "\"" << Patch_Strings::STRING_NEW_LINE << "\"";
-        else if (i%QT_CODE_TEXT_WIDTH == 0) *this->stream << "\"" << Patch_Strings::STRING_NEW_LINE << QString(QByteArray(' ', 8)) << "\"";
+        else if (i%CODE_TEXT_WIDTH == 0) *this->stream << "\"" << Patch_Strings::STRING_NEW_LINE << QString(QByteArray(' ', 8)) << "\"";
         *this->stream << value.at(i);
     }
     *this->stream << "\"";

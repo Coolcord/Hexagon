@@ -1,15 +1,22 @@
 #include "Test_Cases.h"
 #include "../Hexagon/Hexagon_Interface.h"
+#include "Data_Generator.h"
 #include <assert.h>
 #include <QDebug>
 
-Test_Cases::Test_Cases(Hexagon_Interface *hexagonPlugin) {
+Test_Cases::Test_Cases(Hexagon_Interface *hexagonPlugin, const QString &applicationLocation) {
     this->hexagonPlugin = hexagonPlugin;
+    this->applicationLocation = applicationLocation;
 }
 
 void Test_Cases::Run_Test_Cases() {
     int passed = 0;
     int failed = 0;
+    Data_Generator dataGenerator(this->applicationLocation);
+    if (!dataGenerator.Generate_Data()) {
+        qDebug() << "Unable to generate test case data!";
+        return;
+    }
 
     qDebug() << "Running test cases...";
     qDebug() << "";
@@ -167,83 +174,85 @@ void Test_Cases::Run_Test_Cases() {
     }
 
     qDebug() << "";
-    qDebug() << "Passed: " << QString::number(passed);
-    qDebug() << "Failed: " << QString::number(failed);
-    qDebug() << " Total: " << QString::number(passed+failed);
+    qDebug().noquote() << "Passed: " << QString::number(passed);
+    qDebug().noquote() << "Failed: " << QString::number(failed);
+    qDebug().noquote() << " Total: " << QString::number(passed+failed);
+
+    if (!dataGenerator.Clean_Up()) qDebug() << "Unable to clean up generated test case data!";
 }
 
 bool Test_Cases::Create_Test_Case_1() {
-
+    return false;
 }
 
 bool Test_Cases::Create_Test_Case_2() {
-
+    return false;
 }
 
 bool Test_Cases::Create_Test_Case_3() {
-
+    return false;
 }
 
 bool Test_Cases::Create_Test_Case_4() {
-
+    return false;
 }
 
 bool Test_Cases::Apply_Test_Case_1() {
-
+    return false;
 }
 
 bool Test_Cases::Apply_Test_Case_2() {
-
+    return false;
 }
 
 bool Test_Cases::Apply_Test_Case_3() {
-
+    return false;
 }
 
 bool Test_Cases::Apply_Test_Case_4() {
-
+    return false;
 }
 
 bool Test_Cases::Apply_Test_Case_5() {
-
+    return false;
 }
 
 bool Test_Cases::Apply_Test_Case_6() {
-
+    return false;
 }
 
 bool Test_Cases::Apply_Test_Case_7() {
-
+    return false;
 }
 
 bool Test_Cases::Convert_To_Qt_Code_Test_Case_1() {
-
+    return false;
 }
 
 bool Test_Cases::Convert_To_Qt_Code_Test_Case_2() {
-
+    return false;
 }
 
 bool Test_Cases::Convert_To_Qt_Code_Test_Case_3() {
-
+    return false;
 }
 
 bool Test_Cases::Convert_To_Hexp_Test_Case_1() {
-
+    return false;
 }
 
 bool Test_Cases::Convert_To_Hexp_Test_Case_2() {
-
+    return false;
 }
 
 bool Test_Cases::Check_For_Conflicts_Test_Case_1() {
-
+    return false;
 }
 
 bool Test_Cases::Check_For_Conflicts_Test_Case_2() {
-
+    return false;
 }
 
 bool Test_Cases::Check_For_Conflicts_Test_Case_3() {
-
+    return false;
 }

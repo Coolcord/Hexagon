@@ -1,11 +1,13 @@
 #ifndef TEST_CASES_H
 #define TEST_CASES_H
 
+#include <QString>
+
 class Hexagon_Interface;
 
 class Test_Cases {
 public:
-    Test_Cases(Hexagon_Interface *hexagonPlugin);
+    Test_Cases(Hexagon_Interface *hexagonPlugin, const QString &applicationLocation);
     ~Test_Cases() {}
     void Run_Test_Cases();
 
@@ -31,6 +33,7 @@ public:
 
 private:
     Hexagon_Interface *hexagonPlugin;
+    QString applicationLocation;
 };
 
 #endif // TEST_CASES_H

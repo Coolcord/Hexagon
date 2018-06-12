@@ -15,7 +15,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += main.cpp \
-    Test_Cases.cpp
+    Test_Cases.cpp \
+    Data_Generator.cpp
 
 HEADERS += \
-    Test_Cases.h
+    Test_Cases.h \
+    Data_Generator.h
