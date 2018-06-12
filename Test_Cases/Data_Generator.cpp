@@ -1,4 +1,5 @@
 #include "Data_Generator.h"
+#include "../Hexagon/Patch_Strings.h"
 #include <QFile>
 #include <QTextStream>
 
@@ -27,17 +28,17 @@ bool Data_Generator::Clean_Up() {
 bool Data_Generator::Generate_Patch_1() {
     QFile file(this->applicationLocation+PATCH_1);
     QTextStream stream(&file);
-    stream << "C: B0C07D627AE12D5815395437381E65B15BE050C7CFA8FC4EAFBA30B817BC9251" << endl;
-    stream << "A: 0x016" << endl;
-    stream << "V: ABCD" << endl;
-    stream << "A: 0x07A" << endl;
-    stream << "V: FFFFFFFFFF" << endl;
-    stream << "A: 0x522" << endl;
-    stream << "V: 2346243566" << endl;
-    stream << "A: 0xAB6" << endl;
-    stream << "V: 19827346521389075460" << endl;
-    stream << "A: 0xC45" << endl;
-    stream << "V: 12352334526A" << endl;
+    stream << "C: B0C07D627AE12D5815395437381E65B15BE050C7CFA8FC4EAFBA30B817BC9251" << Patch_Strings::STRING_NEW_LINE;
+    stream << "A: 0x016" << Patch_Strings::STRING_NEW_LINE;
+    stream << "V: ABCD" << Patch_Strings::STRING_NEW_LINE;
+    stream << "A: 0x07A" << Patch_Strings::STRING_NEW_LINE;
+    stream << "V: FFFFFFFFFF" << Patch_Strings::STRING_NEW_LINE;
+    stream << "A: 0x522" << Patch_Strings::STRING_NEW_LINE;
+    stream << "V: 2346243566" << Patch_Strings::STRING_NEW_LINE;
+    stream << "A: 0xAB6" << Patch_Strings::STRING_NEW_LINE;
+    stream << "V: 19827346521389075460" << Patch_Strings::STRING_NEW_LINE;
+    stream << "A: 0xC45" << Patch_Strings::STRING_NEW_LINE;
+    stream << "V: 12352334526A" << Patch_Strings::STRING_NEW_LINE;
     stream.flush();
     file.close();
     return true;
@@ -46,13 +47,13 @@ bool Data_Generator::Generate_Patch_1() {
 bool Data_Generator::Generate_Patch_2() {
     QFile file(this->applicationLocation+PATCH_2);
     QTextStream stream(&file);
-    stream << "C: B0C07D627AE12D5815395437381E65B15BE050C7CFA8FC4EAFBA30B817BC9251" << endl;
-    stream << "A: 0x8DF" << endl;
-    stream << "V: 34523647565476" << endl;
-    stream << "A: 0xC10" << endl;
-    stream << "V: 4356754637" << endl;
-    stream << "A: 0xD0F" << endl;
-    stream << "V: FFFFFF" << endl;
+    stream << "C: B0C07D627AE12D5815395437381E65B15BE050C7CFA8FC4EAFBA30B817BC9251" << Patch_Strings::STRING_NEW_LINE;
+    stream << "A: 0x8DF" << Patch_Strings::STRING_NEW_LINE;
+    stream << "V: 34523647565476" << Patch_Strings::STRING_NEW_LINE;
+    stream << "A: 0xC10" << Patch_Strings::STRING_NEW_LINE;
+    stream << "V: 4356754637" << Patch_Strings::STRING_NEW_LINE;
+    stream << "A: 0xD0F" << Patch_Strings::STRING_NEW_LINE;
+    stream << "V: FFFFFF" << Patch_Strings::STRING_NEW_LINE;
     stream.flush();
     file.close();
     return true;
