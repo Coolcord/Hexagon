@@ -120,7 +120,7 @@ bool Qt_Code_Reader::Get_Single_Value_From_Line(const QString &line, QString &va
     bool isHex = false;
     if (valueNumber.startsWith(Patch_Strings::STRING_HEX_IDENTIFIER)) {
         isHex = true;
-        valueNumber = valueNumber.remove(Patch_Strings::STRING_HEX_IDENTIFIER.size(), valueNumber.size()-Patch_Strings::STRING_HEADER.size());
+        valueNumber = valueNumber.remove(0, Patch_Strings::STRING_HEX_IDENTIFIER.size());
     }
     bool valid = false;
     int num = 0;
