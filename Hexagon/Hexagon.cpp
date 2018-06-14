@@ -29,7 +29,7 @@ Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QString &patc
     if (!originalFileInfo.exists() || !originalFileInfo.isReadable()) return Hexagon_Error_Codes::READ_ERROR;
     QFile outputFile(outputFileLocation);
     if (outputFile.exists() && !outputFile.remove()) return Hexagon_Error_Codes::WRITE_ERROR;
-    if (!QFile::copy(originalFileLocation, outputFileLocation)) {
+    if (!QFile::copy(originalFileLocation, outputFileLocation) || !outputFile.open(QIODevice::ReadWrite)) {
         outputFile.remove();
         return Hexagon_Error_Codes::WRITE_ERROR;
     }
@@ -49,14 +49,12 @@ Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QByteArray &p
 
     //Read the checksum
     QString expectedChecksum = QString();
-    if (!patchReader.Get_Checksum(expectedChecksum)) return Hexagon_Error_Codes::PARSE_ERROR;
     QString actualChecksum = QString();
-    if (!outputFile->open(QIODevice::ReadWrite)) return Hexagon_Error_Codes::WRITE_ERROR;
+    if (!patchReader.Get_Checksum(expectedChecksum)) return Hexagon_Error_Codes::PARSE_ERROR;
     if (useChecksum) {
         actualChecksum = valueManipulator.Get_Checksum_From_File(outputFile);
         if (expectedChecksum != Patch_Strings::STRING_SKIP_CHECKSUM) {
             if (expectedChecksum != actualChecksum) {
-                outputFile->close();
                 lineNum = patchReader.Get_Current_Line_Num();
                 return Hexagon_Error_Codes::BAD_CHECKSUM;
             }
@@ -70,13 +68,11 @@ Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QByteArray &p
     File_Writer fileWriter(outputFile, &valueManipulator);
     while (patchReader.Get_Next_Offset_And_Value(offset, value, parseError) && !parseError) {
         if (!fileWriter.Write_Bytes_To_Offset(offset, value, seekError)) {
-            outputFile->close();
             lineNum = patchReader.Get_Current_Line_Num();
             if (seekError) return Hexagon_Error_Codes::OFFSET_OUT_OF_RANGE;
             else return Hexagon_Error_Codes::WRITE_ERROR;
         }
     }
-    outputFile->close();
     lineNum = patchReader.Get_Current_Line_Num();
     if (parseError) return Hexagon_Error_Codes::PARSE_ERROR;
     else return Hexagon_Error_Codes::OK;
