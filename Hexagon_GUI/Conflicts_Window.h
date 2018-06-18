@@ -12,7 +12,7 @@ class Conflicts_Window : public QDialog {
     Q_OBJECT
 
 public:
-    Conflicts_Window(QWidget *parent, const QString &conflicts);
+    Conflicts_Window(QWidget *parent, const QString &conflictsString, bool conflicts);
     ~Conflicts_Window();
 
 private slots:

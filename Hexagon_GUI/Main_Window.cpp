@@ -135,17 +135,17 @@ void Main_Window::on_btnCreatePatch_clicked() {
     }
 }
 
-void Main_Window::on_btnCheckAgainstOtherPatches_clicked() {
+void Main_Window::on_btnCompatibilityCheckAgainstOtherPatches_clicked() {
     //Open the Patch
     QString patchFileLocation = this->fileDialogManager->Get_Open_File_Location(File_Types::PATCH_FILE);
     if (patchFileLocation.isEmpty()) return;
 
     //Open the Other Patches to Compare it Against
     QStringList otherPatchFileLocations = QFileDialog::getOpenFileNames(this, "Open Patch Files", this->settings.defaultPatchOpenLocation, Common_Strings::STRING_PATCH_EXTENSION_FILTER);
-    return this->Check_For_Conflicts(patchFileLocation, otherPatchFileLocations);
+    return this->Check_For_Conflicts(patchFileLocation, otherPatchFileLocations, false);
 }
 
-void Main_Window::on_btnCheckAgainstFolder_clicked() {
+void Main_Window::on_btnCompatibilityCheckAgainstFolder_clicked() {
     //Open the Patch
     QString patchFileLocation = this->fileDialogManager->Get_Open_File_Location(File_Types::PATCH_FILE);
     if (patchFileLocation.isEmpty()) return;
@@ -158,8 +158,35 @@ void Main_Window::on_btnCheckAgainstFolder_clicked() {
     QDirIterator it(directoryLocation, QStringList() << "*"+Common_Strings::STRING_PATCH_EXTENSION, QDir::Files, QDirIterator::Subdirectories);
     QStringList otherPatchFileLocations;
     while (it.hasNext()) otherPatchFileLocations.append(it.next());
-    return this->Check_For_Conflicts(patchFileLocation, otherPatchFileLocations);
+    return this->Check_For_Conflicts(patchFileLocation, otherPatchFileLocations, false);
 }
+
+void Main_Window::on_btnConflictsCheckAgainstOtherPatches_clicked() {
+    //Open the Patch
+    QString patchFileLocation = this->fileDialogManager->Get_Open_File_Location(File_Types::PATCH_FILE);
+    if (patchFileLocation.isEmpty()) return;
+
+    //Open the Other Patches to Compare it Against
+    QStringList otherPatchFileLocations = QFileDialog::getOpenFileNames(this, "Open Patch Files", this->settings.defaultPatchOpenLocation, Common_Strings::STRING_PATCH_EXTENSION_FILTER);
+    return this->Check_For_Conflicts(patchFileLocation, otherPatchFileLocations, true);
+}
+
+void Main_Window::on_btnConflictsCheckAgainstFolder_clicked() {
+    //Open the Patch
+    QString patchFileLocation = this->fileDialogManager->Get_Open_File_Location(File_Types::PATCH_FILE);
+    if (patchFileLocation.isEmpty()) return;
+
+    //Open the Folder
+    QString directoryLocation = QFileDialog::getExistingDirectory(this, "Open Folder", this->settings.defaultPatchOpenLocation);
+    if (directoryLocation == NULL || directoryLocation.isEmpty() || !QDir(directoryLocation).isReadable()) return;
+
+    //Get All Files in All Subdirectories
+    QDirIterator it(directoryLocation, QStringList() << "*"+Common_Strings::STRING_PATCH_EXTENSION, QDir::Files, QDirIterator::Subdirectories);
+    QStringList otherPatchFileLocations;
+    while (it.hasNext()) otherPatchFileLocations.append(it.next());
+    return this->Check_For_Conflicts(patchFileLocation, otherPatchFileLocations, true);
+}
+
 
 void Main_Window::on_btnConvertHEXPtoQtCode_clicked() {
     //Open the Patch File
@@ -227,21 +254,26 @@ void Main_Window::on_Main_Window_finished(int result) {
     if (result == 0) this->Save_Settings();
 }
 
-void Main_Window::Check_For_Conflicts(const QString &patchFileLocation, const QStringList &otherPatchFileLocations) {
+void Main_Window::Check_For_Conflicts(const QString &patchFileLocation, const QStringList &otherPatchFileLocations, bool conflicts) {
     for (int i = 0; i < otherPatchFileLocations.size(); ++i) qDebug() << otherPatchFileLocations.at(i);
 
     //Run the Command via the Plugin
     if (otherPatchFileLocations.isEmpty()) return;
     int lineNum = 0, otherLineNum = 0, otherFileNum = 0;
     QString output = QString();
-    Hexagon_Error_Codes::Error_Code errorCode = this->hexagonPlugin->Check_For_Conflicts_Between_Hexagon_Patches(patchFileLocation, otherPatchFileLocations, output, lineNum, otherLineNum, otherFileNum, this->ui->cbVerboseConflictOutput->isChecked());
+    Hexagon_Error_Codes::Error_Code errorCode = Hexagon_Error_Codes::OK;
+    if (conflicts) errorCode = this->hexagonPlugin->Check_For_Conflicts_Between_Hexagon_Patches(patchFileLocation, otherPatchFileLocations, output, lineNum, otherLineNum, otherFileNum, this->ui->cbVerboseConflictOutput->isChecked());
+    else errorCode = this->hexagonPlugin->Check_For_Compatibility_Between_Hexagon_Patches(patchFileLocation, otherPatchFileLocations, output, lineNum, otherLineNum, otherFileNum);
     switch (errorCode) {
     default: assert(false); return;
-    case Hexagon_Error_Codes::OK: this->errorMessages->Show_Information("No conflicts detected!"); return;
+    case Hexagon_Error_Codes::OK:
+        if (conflicts) this->errorMessages->Show_Information("No conflicts detected!");
+        else this->errorMessages->Show_Error("No compatible patches detected!");
+        return;
     case Hexagon_Error_Codes::READ_ERROR: this->errorMessages->Show_Parse_Error(QFileInfo(patchFileLocation).fileName(), lineNum); return;
     case Hexagon_Error_Codes::READ_MODIFIED_ERROR: this->errorMessages->Show_Parse_Error(QFileInfo(otherPatchFileLocations.at(otherFileNum)).fileName(), otherLineNum); return;
-    case Hexagon_Error_Codes::CONFLICTS_DETECTED:
-        Conflicts_Window(this, output).exec();
+    case Hexagon_Error_Codes::FINDINGS_DETECTED:
+        Conflicts_Window(this, output, conflicts).exec();
         return;
     }
 }

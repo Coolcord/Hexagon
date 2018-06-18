@@ -13,7 +13,7 @@ public:
     bool Open_Original_File(const QString &fileLocation, int &lineNum);
     bool Open_Additional_File(const QString &fileLocation, int &lineNum);
     QVector<QVector<qint64>*> Get_Conflicts(); //the returned structure needs to be manually deallocated
-    void Deallocate_Conflicts(QVector<QVector<qint64>*> &conflicts);
+    void Deallocate_Findings(QVector<QVector<qint64>*> &conflicts);
 
 private:
     bool Open_File(const QString &fileLocation, int &lineNum, bool isOriginal);

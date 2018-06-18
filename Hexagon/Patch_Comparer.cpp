@@ -50,7 +50,7 @@ QVector<QVector<qint64>*> Patch_Comparer::Get_Conflicts() {
     return conflicts;
 }
 
-void Patch_Comparer::Deallocate_Conflicts(QVector<QVector<qint64>*> &conflicts) {
+void Patch_Comparer::Deallocate_Findings(QVector<QVector<qint64>*> &conflicts) {
     for (int i = 0; i < conflicts.size(); ++i) delete conflicts.at(i);
     conflicts.clear();
 }

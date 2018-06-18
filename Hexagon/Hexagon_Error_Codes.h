@@ -9,7 +9,7 @@ namespace Hexagon_Error_Codes {
         READ_MODIFIED_ERROR,
         WRITE_ERROR,
         PARSE_ERROR,
-        CONFLICTS_DETECTED,
+        FINDINGS_DETECTED,
         SIZE_DIFFERENCE,
         OFFSET_OUT_OF_RANGE,
         BAD_CHECKSUM

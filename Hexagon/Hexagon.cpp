@@ -230,8 +230,18 @@ Hexagon_Error_Codes::Error_Code Hexagon::Convert_Qt_Code_To_Hexagon_Patch(const 
     }
 }
 
+Hexagon_Error_Codes::Error_Code Hexagon::Check_For_Compatibility_Between_Hexagon_Patches(const QString &patchFileLocation, const QStringList &otherPatchFileLocations,
+                                                                                         QString &output, int &lineNum, int &otherLineNum, int &otherFileNum) {
+    return this->Check_For_Conflicts(patchFileLocation, otherPatchFileLocations, output, lineNum, otherLineNum, otherFileNum, false, false);
+}
+
 Hexagon_Error_Codes::Error_Code Hexagon::Check_For_Conflicts_Between_Hexagon_Patches(const QString &patchFileLocation, const QStringList &otherPatchFileLocations,
                                                                                      QString &output, int &lineNum, int &otherLineNum, int &otherFileNum, bool verbose) {
+    return this->Check_For_Conflicts(patchFileLocation, otherPatchFileLocations, output, lineNum, otherLineNum, otherFileNum, verbose, true);
+}
+
+Hexagon_Error_Codes::Error_Code Hexagon::Check_For_Conflicts(const QString &patchFileLocation, const QStringList &otherPatchFileLocations,
+                                                             QString &output, int &lineNum, int &otherLineNum, int &otherFileNum, bool verbose, bool conflicts) {
     lineNum = 0; otherLineNum = 0; otherFileNum = 0;
     Value_Manipulator valueManipulator;
 
@@ -251,28 +261,43 @@ Hexagon_Error_Codes::Error_Code Hexagon::Check_For_Conflicts_Between_Hexagon_Pat
     //Write all of the conflicts to a string
     QVector<QVector<qint64>*> conflictsAgainstAllFiles = patchComparer.Get_Conflicts();
     output = QString();
-    bool conflictsExist = false;
+    bool findingsExist = false;
     QTextStream stream(&output);
-    for (int i = 0; i < conflictsAgainstAllFiles.size(); ++i) {
-        QVector<qint64> *conflictsAgainstFile = conflictsAgainstAllFiles.at(i);
-        if (!conflictsAgainstFile) continue;
-        if (!conflictsExist) {
-            conflictsExist = true;
-            QFileInfo patchFileInfo(patchFileLocation);
-            stream << Patch_Strings::STRING_THE_FOLLOWING_PATCHES_ARE_INCOMPATIBLE_WITH << patchFileInfo.fileName() << ":" << Patch_Strings::STRING_NEW_LINE << Patch_Strings::STRING_NEW_LINE;
-        }
-        QFileInfo otherPatchFileInfo(otherPatchFileLocations.at(i));
-        stream << otherPatchFileInfo.fileName() << Patch_Strings::STRING_NEW_LINE;
-        if (verbose) {
-            for (int j = 0; j < conflictsAgainstFile->size(); ++j) {
-                stream << Patch_Strings::STRING_HEX_IDENTIFIER << QString::number(conflictsAgainstFile->at(j), 0x10) << Patch_Strings::STRING_NEW_LINE;
+    if (conflicts) {
+        for (int i = 0; i < conflictsAgainstAllFiles.size(); ++i) {
+            QVector<qint64> *conflictsAgainstFile = conflictsAgainstAllFiles.at(i);
+            if (!conflictsAgainstFile) continue;
+            if (!findingsExist) {
+                findingsExist = true;
+                QFileInfo patchFileInfo(patchFileLocation);
+                stream << Patch_Strings::STRING_THE_FOLLOWING_PATCHES_ARE_INCOMPATIBLE_WITH << patchFileInfo.fileName() << ":" << Patch_Strings::STRING_NEW_LINE << Patch_Strings::STRING_NEW_LINE;
             }
-            stream << Patch_Strings::STRING_NEW_LINE;
+            QFileInfo otherPatchFileInfo(otherPatchFileLocations.at(i));
+            stream << otherPatchFileInfo.fileName() << Patch_Strings::STRING_NEW_LINE;
+            if (verbose) {
+                for (int j = 0; j < conflictsAgainstFile->size(); ++j) {
+                    stream << Patch_Strings::STRING_HEX_IDENTIFIER << QString::number(conflictsAgainstFile->at(j), 0x10) << Patch_Strings::STRING_NEW_LINE;
+                }
+                stream << Patch_Strings::STRING_NEW_LINE;
+            }
+        }
+    } else {
+        for (int i = 0; i < conflictsAgainstAllFiles.size(); ++i) {
+            QVector<qint64> *conflictsAgainstFile = conflictsAgainstAllFiles.at(i);
+            if (!conflictsAgainstFile || conflictsAgainstFile->isEmpty()) {
+                if (!findingsExist) {
+                    findingsExist = true;
+                    QFileInfo patchFileInfo(patchFileLocation);
+                    stream << Patch_Strings::STRING_THE_FOLLOWING_PATCHES_ARE_COMPATIBLE_WITH << patchFileInfo.fileName() << ":" << Patch_Strings::STRING_NEW_LINE << Patch_Strings::STRING_NEW_LINE;
+                }
+                QFileInfo otherPatchFileInfo(otherPatchFileLocations.at(i));
+                stream << otherPatchFileInfo.fileName() << Patch_Strings::STRING_NEW_LINE;
+            }
         }
     }
 
-    patchComparer.Deallocate_Conflicts(conflictsAgainstAllFiles);
+    patchComparer.Deallocate_Findings(conflictsAgainstAllFiles);
     stream.flush();
     if (output.isEmpty()) return Hexagon_Error_Codes::OK;
-    else return Hexagon_Error_Codes::CONFLICTS_DETECTED;
+    else return Hexagon_Error_Codes::FINDINGS_DETECTED;
 }
