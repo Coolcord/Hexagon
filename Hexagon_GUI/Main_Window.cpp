@@ -13,6 +13,7 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
+#include <QRadioButton>
 
 #include <QDebug>
 
@@ -135,32 +136,6 @@ void Main_Window::on_btnCreatePatch_clicked() {
     }
 }
 
-void Main_Window::on_btnCompatibilityCheckAgainstOtherPatches_clicked() {
-    //Open the Patch
-    QString patchFileLocation = this->fileDialogManager->Get_Open_File_Location(File_Types::PATCH_FILE);
-    if (patchFileLocation.isEmpty()) return;
-
-    //Open the Other Patches to Compare it Against
-    QStringList otherPatchFileLocations = QFileDialog::getOpenFileNames(this, "Open Patch Files", this->settings.defaultPatchOpenLocation, Common_Strings::STRING_PATCH_EXTENSION_FILTER);
-    return this->Check_For_Conflicts(patchFileLocation, otherPatchFileLocations, false);
-}
-
-void Main_Window::on_btnCompatibilityCheckAgainstFolder_clicked() {
-    //Open the Patch
-    QString patchFileLocation = this->fileDialogManager->Get_Open_File_Location(File_Types::PATCH_FILE);
-    if (patchFileLocation.isEmpty()) return;
-
-    //Open the Folder
-    QString directoryLocation = QFileDialog::getExistingDirectory(this, "Open Folder", this->settings.defaultPatchOpenLocation);
-    if (directoryLocation == NULL || directoryLocation.isEmpty() || !QDir(directoryLocation).isReadable()) return;
-
-    //Get All Files in All Subdirectories
-    QDirIterator it(directoryLocation, QStringList() << "*"+Common_Strings::STRING_PATCH_EXTENSION, QDir::Files, QDirIterator::Subdirectories);
-    QStringList otherPatchFileLocations;
-    while (it.hasNext()) otherPatchFileLocations.append(it.next());
-    return this->Check_For_Conflicts(patchFileLocation, otherPatchFileLocations, false);
-}
-
 void Main_Window::on_btnConflictsCheckAgainstOtherPatches_clicked() {
     //Open the Patch
     QString patchFileLocation = this->fileDialogManager->Get_Open_File_Location(File_Types::PATCH_FILE);
@@ -168,7 +143,7 @@ void Main_Window::on_btnConflictsCheckAgainstOtherPatches_clicked() {
 
     //Open the Other Patches to Compare it Against
     QStringList otherPatchFileLocations = QFileDialog::getOpenFileNames(this, "Open Patch Files", this->settings.defaultPatchOpenLocation, Common_Strings::STRING_PATCH_EXTENSION_FILTER);
-    return this->Check_For_Conflicts(patchFileLocation, otherPatchFileLocations, true);
+    return this->Check_For_Conflicts(patchFileLocation, otherPatchFileLocations, this->ui->raConflicts->isChecked());
 }
 
 void Main_Window::on_btnConflictsCheckAgainstFolder_clicked() {
@@ -184,7 +159,7 @@ void Main_Window::on_btnConflictsCheckAgainstFolder_clicked() {
     QDirIterator it(directoryLocation, QStringList() << "*"+Common_Strings::STRING_PATCH_EXTENSION, QDir::Files, QDirIterator::Subdirectories);
     QStringList otherPatchFileLocations;
     while (it.hasNext()) otherPatchFileLocations.append(it.next());
-    return this->Check_For_Conflicts(patchFileLocation, otherPatchFileLocations, true);
+    return this->Check_For_Conflicts(patchFileLocation, otherPatchFileLocations, this->ui->raConflicts->isChecked());
 }
 
 
@@ -240,6 +215,14 @@ void Main_Window::on_btnConvertQtCodetoHEXP_clicked() {
     case Hexagon_Error_Codes::WRITE_ERROR: this->errorMessages->Show_Write_Error(outputFileInfo.fileName()); return;
     case Hexagon_Error_Codes::PARSE_ERROR: this->errorMessages->Show_Parse_Error(lineNum); return;
     }
+}
+
+void Main_Window::on_btnMergeHEXP_clicked() {
+    //TODO: Write this...
+}
+
+void Main_Window::on_btnMergeAllPossibleHEXP_clicked() {
+    //TODO: Write this...
 }
 
 void Main_Window::on_tbOriginalFile_clicked() {
