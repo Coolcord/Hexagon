@@ -41,7 +41,7 @@ bool Qt_Code_Writer::Write_Patch(const qint64 offset, const QString &value, bool
     QString line = QString();
     if (lastPatch) line = Qt_Code_Strings::STRING_RETURN;
     else line = Qt_Code_Strings::STRING_IF_NOT;
-    line += Qt_Code_Strings::STRING_WRITE_BYTES_TO_OFFSET+Patch_Strings::STRING_HEX_IDENTIFIER+QString::number(offset, 0x10);
+    line += Qt_Code_Strings::STRING_WRITE_BYTES_TO_OFFSET+Patch_Strings::STRING_HEX_IDENTIFIER+QString::number(offset, 0x10).toUpper();
     *this->stream << line;
     if (oneByte) {
         line = QString();

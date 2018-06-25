@@ -29,8 +29,6 @@ private slots:
     void on_btnConflictsCheckAgainstFolder_clicked();
     void on_btnConvertHEXPtoQtCode_clicked();
     void on_btnConvertQtCodetoHEXP_clicked();
-    void on_btnMergeHEXP_clicked();
-    void on_btnMergeAllPossibleHEXP_clicked();
     void on_tbOriginalFile_clicked();
     void on_Main_Window_finished(int result);
 

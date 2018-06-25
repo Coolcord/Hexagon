@@ -217,14 +217,6 @@ void Main_Window::on_btnConvertQtCodetoHEXP_clicked() {
     }
 }
 
-void Main_Window::on_btnMergeHEXP_clicked() {
-    //TODO: Write this...
-}
-
-void Main_Window::on_btnMergeAllPossibleHEXP_clicked() {
-    //TODO: Write this...
-}
-
 void Main_Window::on_tbOriginalFile_clicked() {
     QString openLocation = QFileInfo(this->ui->leOriginalFile->text()).absolutePath();
     if (!QFileInfo(openLocation).exists()) openLocation = this->settings.defaultFileOpenLocation;
