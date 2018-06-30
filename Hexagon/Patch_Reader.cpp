@@ -80,6 +80,7 @@ bool Patch_Reader::Parse_Value(QByteArray &value) {
     QString valueString = values.at(1);
     valueString = this->valueManipulator->Trim_Hex_Identifier(valueString);
     if (!this->valueManipulator->Is_Line_Hex_String(valueString)) return false;
+    QTextStream valueStream(&valueString);
 
     //Parse Any Additional Lines
     while (!this->stream->atEnd()) {
@@ -95,8 +96,9 @@ bool Patch_Reader::Parse_Value(QByteArray &value) {
         } else {
             line = this->valueManipulator->Trim_Hex_Identifier(line);
             if (!this->valueManipulator->Is_Line_Hex_String(line)) return false;
-            valueString += line;
+            valueStream << line;
         }
     }
+    valueStream.flush();
     return this->valueManipulator->Convert_QString_To_QByteArray(valueString, value);
 }

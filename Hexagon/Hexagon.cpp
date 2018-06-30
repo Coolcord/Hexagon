@@ -11,6 +11,9 @@
 #include <assert.h>
 #include <QFileInfo>
 
+#include <QDebug>
+#include <QElapsedTimer>
+
 Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QString &patchFileLocation, const QString &originalFileLocation,
                                                              const QString &outputFileLocation, bool useChecksum, int &lineNum) {
     if (patchFileLocation.isEmpty()) return Hexagon_Error_Codes::READ_PATCH_ERROR;
@@ -61,6 +64,11 @@ Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QByteArray &p
         }
     }
 
+    qDebug() << "Starting run...";
+    QElapsedTimer timer;
+    timer.start();
+    int i = 0;
+
     //Parse the patch file
     bool parseError = false, seekError = false;
     qint64 offset = 0;
@@ -72,7 +80,10 @@ Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QByteArray &p
             if (seekError) return Hexagon_Error_Codes::OFFSET_OUT_OF_RANGE;
             else return Hexagon_Error_Codes::WRITE_ERROR;
         }
+        qDebug().noquote() << ++i;
     }
+    qDebug().noquote() << "Run finished in " << timer.elapsed() << " milliseconds";
+
     lineNum = patchReader.Get_Current_Line_Num();
     if (parseError) return Hexagon_Error_Codes::PARSE_ERROR;
     else return Hexagon_Error_Codes::OK;

@@ -50,12 +50,18 @@ QString Value_Manipulator::Get_Checksum_From_File(QFile *file) {
 }
 
 bool Value_Manipulator::Is_Line_Hex_String(const QString &line) {
-    for (int i = 0; i < line.size(); ++i) {
-        switch (line.at(i).toLower().toLatin1()) {
-        default: return false;
-        case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7':
-        case '8': case '9': case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': continue;
-        }
+    const int MAX_DIGITS = 9;
+    bool valid = false;
+    int start = 0;
+    int size = MAX_DIGITS;
+    if (line.size() < MAX_DIGITS) size = line.size();
+    while (size > 0) {
+        QStringRef subString(&line, start, size);
+        subString.toULongLong(&valid, 0x10);
+        if (!valid) return false;
+        start += size;
+        size = MAX_DIGITS;
+        if (start+size > line.size()) size = line.size()-start;
     }
     return true;
 }
