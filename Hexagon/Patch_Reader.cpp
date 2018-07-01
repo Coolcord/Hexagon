@@ -9,6 +9,7 @@ Patch_Reader::Patch_Reader(QFile *file, Value_Manipulator *valueManipulator) {
     assert(valueManipulator);
     this->valueManipulator = valueManipulator;
     this->currentLineNum = 0;
+    this->currentLine = QString();
     this->stream = new QTextStream(file);
 }
 
@@ -16,6 +17,7 @@ Patch_Reader::Patch_Reader(const QByteArray &patchBytes, Value_Manipulator *valu
     assert(valueManipulator);
     this->valueManipulator = valueManipulator;
     this->currentLineNum = 0;
+    this->currentLine = QString();
     this->stream = new QTextStream(patchBytes, QIODevice::ReadOnly);
 }
 
@@ -60,6 +62,14 @@ bool Patch_Reader::Get_Next_Offset_And_Value(qint64 &offset, QByteArray &value, 
 }
 
 QString Patch_Reader::Get_Next_Line_After_Comments() {
+    //Check the buffer first
+    if (!this->currentLine.isEmpty()) {
+        QString line = this->currentLine;
+        this->currentLine.clear();
+        return line;
+    }
+
+    //Start searching
     QString line = QString();
     while (!this->stream->atEnd()) {
         ++this->currentLineNum;
@@ -84,14 +94,12 @@ bool Patch_Reader::Parse_Value(QByteArray &value) {
 
     //Parse Any Additional Lines
     while (!this->stream->atEnd()) {
-        qint64 posBefore = this->stream->pos();
         ++this->currentLineNum;
         line = this->stream->readLine().trimmed();
         if (line.isEmpty()) continue;
         if (line.startsWith(Patch_Strings::STRING_COMMENT)) continue;
         if (line.startsWith(Patch_Strings::STRING_OFFSET)) {
-            assert(this->stream->seek(posBefore));
-            --this->currentLineNum;
+            this->currentLine = line; //throw the line in a buffer and access it later
             break;
         } else {
             line = this->valueManipulator->Trim_Hex_Identifier(line);
