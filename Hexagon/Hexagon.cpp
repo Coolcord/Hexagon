@@ -11,9 +11,6 @@
 #include <assert.h>
 #include <QFileInfo>
 
-#include <QDebug>
-#include <QElapsedTimer>
-
 Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QString &patchFileLocation, const QString &originalFileLocation,
                                                              const QString &outputFileLocation, bool useChecksum, int &lineNum) {
     if (patchFileLocation.isEmpty()) return Hexagon_Error_Codes::READ_PATCH_ERROR;
@@ -64,32 +61,18 @@ Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QByteArray &p
         }
     }
 
-    qDebug() << "Starting run...";
-    QElapsedTimer timer, readTimer, writeTimer;
-    qint64 writeTime = 0, readTime = 0;
-    timer.start();
-
     //Parse the patch file
     bool parseError = false, seekError = false;
     qint64 offset = 0;
     QByteArray value;
     File_Writer fileWriter(outputFile, &valueManipulator);
-    readTimer.start();
     while (patchReader.Get_Next_Offset_And_Value(offset, value, parseError) && !parseError) {
-        readTime += readTimer.elapsed();
-        writeTimer.start();
         if (!fileWriter.Write_Bytes_To_Offset(offset, value, seekError)) {
             lineNum = patchReader.Get_Current_Line_Num();
             if (seekError) return Hexagon_Error_Codes::OFFSET_OUT_OF_RANGE;
             else return Hexagon_Error_Codes::WRITE_ERROR;
         }
-        writeTime += writeTimer.elapsed();
-        readTimer.start();
     }
-    qDebug().noquote() << "Run finished in " << timer.elapsed() << " milliseconds";
-    qDebug().noquote() << "Read Time:  " << readTime << " milliseconds";
-    qDebug().noquote() << "Write Time: " << writeTime << " milliseconds";
-
     lineNum = patchReader.Get_Current_Line_Num();
     if (parseError) return Hexagon_Error_Codes::PARSE_ERROR;
     else return Hexagon_Error_Codes::OK;
