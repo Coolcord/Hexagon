@@ -10,6 +10,7 @@ Qt_Code_Reader::Qt_Code_Reader(QFile *file, Value_Manipulator *valueManipulator)
     assert(valueManipulator);
     this->valueManipulator = valueManipulator;
     this->currentLineNum = 0;
+    this->currentLine = QString();
     this->stream = new QTextStream(file);
 }
 
@@ -54,6 +55,14 @@ bool Qt_Code_Reader::Read_Next_Patch(qint64 &offset, QByteArray &value, bool &pa
 }
 
 QString Qt_Code_Reader::Get_Next_Line_After_Comments() {
+    //Return what's in the buffer if it is in use
+    if (!this->currentLine.isEmpty()) {
+        QString line = this->currentLine;
+        this->currentLine.clear();
+        return line;
+    }
+
+    //Start searching for the next line
     QString line = QString();
     while (line.isEmpty() && !line.startsWith(Qt_Code_Strings::STRING_COMMENT)) {
         if (this->stream->atEnd()) return QString();
@@ -90,13 +99,11 @@ bool Qt_Code_Reader::Get_Multi_Value_From_Lines(const QString &firstLine, QStrin
 
     //Pull any additional lines
     while (!this->stream->atEnd()) {
-        qint64 posBefore = this->stream->pos();
         ++this->currentLineNum;
         QString line = this->stream->readLine().trimmed();
         if (line.isEmpty()) continue;
-        if (line.contains(Qt_Code_Strings::STRING_WRITE_BYTES_TO_OFFSET)) { //this line is not part of the value. Roll back
-            assert(this->stream->seek(posBefore));
-            --this->currentLineNum;
+        if (line.contains(Qt_Code_Strings::STRING_WRITE_BYTES_TO_OFFSET)) { //this line is not part of the value
+            this->currentLine = line;
             return true;
         } else {
             strings = line.split("\"");

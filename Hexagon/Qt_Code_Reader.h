@@ -25,6 +25,7 @@ private:
     QTextStream *stream;
     Value_Manipulator *valueManipulator;
     int currentLineNum;
+    QString currentLine;
 };
 
 #endif // QT_CODE_READER_H
