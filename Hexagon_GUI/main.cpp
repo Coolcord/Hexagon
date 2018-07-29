@@ -7,6 +7,11 @@
 #include <QMessageBox>
 
 int main(int argc, char *argv[]) {
+    //Use Plastique Theme on Windows
+    #ifdef Q_OS_WIN32
+    QApplication::setStyle("plastique");
+    #endif
+
     QApplication a(argc, argv);
 
     //Load the Hexagon Plugin
