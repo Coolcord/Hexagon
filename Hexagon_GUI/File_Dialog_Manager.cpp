@@ -57,7 +57,6 @@ QString File_Dialog_Manager::Get_File_Location(File_Types::File_Type fileType, Q
     QString extensionFilter = QString();
     QString openLocation = this->settings->defaultFileOpenLocation;
     switch (fileType) {
-    default: assert(false);
     case File_Types::PATCH_FILE:
         windowTitle += "Patch File";
         extensionFilter = Common_Strings::STRING_PATCH_EXTENSION_FILTER+"\n"+Common_Strings::STRING_ALL_FILE_EXTENSION_FILTER;
@@ -87,7 +86,7 @@ QString File_Dialog_Manager::Get_File_Location(File_Types::File_Type fileType, Q
     QString fileLocation = QString();
     if (save) fileLocation = QFileDialog::getSaveFileName(this->parent, windowTitle, openLocation, extensionFilter);
     else fileLocation = QFileDialog::getOpenFileName(this->parent, windowTitle, openLocation, extensionFilter);
-    if (fileLocation == NULL || fileLocation.isEmpty()) return QString();
+    if (fileLocation == nullptr || fileLocation.isEmpty()) return QString();
     QFileInfo fileInfo(fileLocation);
     if (save) {
         if (fileInfo.exists() && !fileInfo.isWritable()) {
@@ -97,7 +96,6 @@ QString File_Dialog_Manager::Get_File_Location(File_Types::File_Type fileType, Q
 
         //Save the path if the file was saved
         switch (fileType) {
-        default: assert(false);
         case File_Types::PATCH_FILE:
             this->settings->defaultPatchSaveLocation = fileInfo.path();
             break;
@@ -117,7 +115,6 @@ QString File_Dialog_Manager::Get_File_Location(File_Types::File_Type fileType, Q
             this->settings->defaultOriginalFileOpenLocation = fileInfo.path();
         } else {
             switch (fileType) {
-            default: assert(false);
             case File_Types::PATCH_FILE:
                 this->settings->defaultPatchOpenLocation = fileInfo.path();
                 break;

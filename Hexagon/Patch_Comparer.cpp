@@ -13,7 +13,7 @@ Patch_Comparer::~Patch_Comparer() {
     delete this->originalValues;
     for (int i = 0; i < this->otherValues->size(); ++i) {
         delete this->otherValues->at(i);
-        this->otherValues->replace(i, NULL);
+        this->otherValues->replace(i, nullptr);
     }
     delete this->otherValues;
 }
@@ -28,7 +28,7 @@ bool Patch_Comparer::Open_Additional_File(const QString &fileLocation, int &line
 
 QVector<QVector<qint64>*> Patch_Comparer::Get_Conflicts() {
     QVector<QVector<qint64>*> conflicts(this->otherValues->size());
-    for (int i = 0; i < conflicts.size(); ++i) conflicts.replace(i, NULL);
+    for (int i = 0; i < conflicts.size(); ++i) conflicts.replace(i, nullptr);
     if (this->otherValues->isEmpty()) return conflicts;
 
     //Start looking for conflicts
@@ -75,7 +75,7 @@ bool Patch_Comparer::Open_File(const QString &fileLocation, int &lineNum, bool i
     qint64 offset = 0;
     QByteArray value;
     while (patchReader.Get_Next_Offset_And_Value(offset, value, parseError)) {
-        for (qint64 i = 0; i < value.size(); ++i) {
+        for (int i = 0; i < value.size(); ++i) {
             if (isOriginal) this->originalValues->push_back(QPair<qint64, unsigned char>(offset+i, static_cast<unsigned char>(value.at(i))));
             else this->otherValues->at(index)->insert(offset+i, static_cast<unsigned char>(value.at(i)));
         }

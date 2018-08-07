@@ -8,7 +8,7 @@ QT       += core
 
 TARGET = Hexagon
 TEMPLATE = lib
-CONFIG += plugin c++11 pendantic Wall
+CONFIG += plugin c++11 pendantic Weverything
 
 DEFINES += HEXAGON_LIBRARY
 

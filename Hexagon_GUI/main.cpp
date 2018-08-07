@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
     }
 
     //Show the Main Window
-    Main_Window w(NULL, hexagonPlugin, &errorMessages);
+    Main_Window w(nullptr, hexagonPlugin, &errorMessages);
     w.show();
 
     return a.exec();

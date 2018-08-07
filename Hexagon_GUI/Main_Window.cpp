@@ -153,7 +153,7 @@ void Main_Window::on_btnConflictsCheckAgainstFolder_clicked() {
 
     //Open the Folder
     QString directoryLocation = QFileDialog::getExistingDirectory(this, "Open Folder", this->settings.defaultPatchOpenLocation);
-    if (directoryLocation == NULL || directoryLocation.isEmpty() || !QDir(directoryLocation).isReadable()) return;
+    if (directoryLocation == nullptr || directoryLocation.isEmpty() || !QDir(directoryLocation).isReadable()) return;
 
     //Get All Files in All Subdirectories
     QDirIterator it(directoryLocation, QStringList() << "*"+Common_Strings::STRING_PATCH_EXTENSION, QDir::Files, QDirIterator::Subdirectories);

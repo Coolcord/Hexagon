@@ -30,7 +30,7 @@ Hexagon_Error_Codes::Error_Code File_Comparer::Scan_For_Differences(QVector<QPai
     //Scan both files for differences
     qint64 offset = 0;
     qint64 currentAddress = 0;
-    QByteArray *difference = NULL;
+    QByteArray *difference = nullptr;
     int localCompareCount = 0;
     while (!originalFile.atEnd()) {
         QByteArray originalBytes = originalFile.read(BUFFER_SIZE);
@@ -45,7 +45,7 @@ Hexagon_Error_Codes::Error_Code File_Comparer::Scan_For_Differences(QVector<QPai
                 if (localCompareCount == 0) {
                     if (difference) {
                         differences.append(QPair<qint64, QByteArray*>(offset, difference));
-                        difference = NULL;
+                        difference = nullptr;
                         tmpBuffer.clear();
                     }
                 } else {
@@ -72,7 +72,7 @@ Hexagon_Error_Codes::Error_Code File_Comparer::Scan_For_Differences(QVector<QPai
     //Append any remaining differences
     if (difference) {
         differences.append(QPair<qint64, QByteArray*>(offset, difference));
-        difference = NULL;
+        difference = nullptr;
     }
     originalFile.close();
     modifiedFile.close();

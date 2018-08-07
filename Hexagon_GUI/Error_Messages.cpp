@@ -4,7 +4,7 @@
 #include <QMessageBox>
 
 Error_Messages::Error_Messages() {
-    this->parent = NULL;
+    this->parent = nullptr;
 }
 
 Error_Messages::Error_Messages(QWidget *parent) {

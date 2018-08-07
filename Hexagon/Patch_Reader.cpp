@@ -52,7 +52,7 @@ bool Patch_Reader::Get_Next_Offset_And_Value(qint64 &offset, QByteArray &value, 
     QString offsetString = values.at(1);
     offsetString = this->valueManipulator->Trim_Hex_Identifier(offsetString);
     bool valid = false;
-    offset = offsetString.toULongLong(&valid, 0x10);
+    offset = offsetString.toLongLong(&valid, 0x10);
     if (!valid) return false;
 
     //Get the Value

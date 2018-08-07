@@ -32,7 +32,7 @@ bool Value_Manipulator::Convert_QString_To_QByteArray(const QString &string, QBy
         bool valid = false;
         int number = numberString.toInt(&valid, 0x10);
         if (!valid) return false;
-        assert(numberString >= 0x00 && numberString <= 0xFF);
+        assert(number >= 0x00 && number <= 0xFF);
         output.data()[j] = static_cast<char>(number);
     }
     return true;

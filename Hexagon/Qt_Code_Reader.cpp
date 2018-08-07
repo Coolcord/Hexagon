@@ -84,8 +84,8 @@ bool Qt_Code_Reader::Get_Offset_From_Line(const QString &line, qint64 &offset) {
         numString = numString.split('x').last();
     }
     qint64 tmpOffset = 0;
-    if (hex) tmpOffset = numString.toULongLong(&valid, 0x10);
-    else tmpOffset = numString.toULongLong(&valid, 10);
+    if (hex) tmpOffset = numString.toLongLong(&valid, 0x10);
+    else tmpOffset = numString.toLongLong(&valid, 10);
     if (!valid) return false;
     offset = tmpOffset;
     return true;
