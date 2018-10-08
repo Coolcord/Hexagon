@@ -11,10 +11,10 @@ struct Settings {
     QString defaultFileSaveLocation;
     QString originalFileLocation;
     int compareSize;
+    bool neverAskForSaveLocation;
     bool alwaysAskForSaveLocation;
     bool verboseConflictOutput;
     bool skipChecksumWhenCreatingPatch;
-    bool skipCommentsWhenCreatingPatch;
 };
 
 #endif // SETTINGS_H

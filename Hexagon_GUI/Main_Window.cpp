@@ -74,7 +74,8 @@ void Main_Window::on_btnApplyPatch_clicked() {
     //Choose Where to Save the New File
     QString outputFileLocation = patchFileInfo.path()+"/"+this->stringManipulator->Get_File_Name_Without_Extension(patchFileInfo.fileName())+"."+this->stringManipulator->Get_Extension(originalFileInfo.fileName());
     QFileInfo outputFileInfo(outputFileLocation);
-    if (this->ui->cbAlwaysAskForSaveLocation->isChecked() || outputFileInfo.exists()) {
+    if (this->ui->radioAlways->isChecked() || (this->ui->radioWhenFileExists->isChecked() && outputFileInfo.exists())) {
+        assert(!this->ui->radioNever->isChecked());
         outputFileLocation = this->fileDialogManager->Get_Save_File_Location(File_Types::ANY_FILE, this->stringManipulator->Get_Extension(originalFileInfo.fileName()));
         if (outputFileLocation.isEmpty()) return;
         outputFileInfo = QFileInfo(outputFileLocation);
@@ -117,7 +118,8 @@ void Main_Window::on_btnCreatePatch_clicked() {
     //Choose Where to Save the New Patch File
     QString outputFileLocation = modifiedFileInfo.path()+"/"+this->stringManipulator->Get_File_Name_Without_Extension(modifiedFileInfo.fileName())+Common_Strings::STRING_PATCH_EXTENSION;
     QFileInfo outputFileInfo(outputFileLocation);
-    if (this->ui->cbAlwaysAskForSaveLocation->isChecked() || outputFileInfo.exists()) {
+    if (this->ui->radioAlways->isChecked() || (this->ui->radioWhenFileExists->isChecked() && outputFileInfo.exists())) {
+        assert(!this->ui->radioNever->isChecked());
         outputFileLocation = this->fileDialogManager->Get_Save_File_Location(File_Types::PATCH_FILE);
         if (outputFileLocation.isEmpty()) return;
         outputFileInfo = QFileInfo(outputFileLocation);
@@ -125,7 +127,7 @@ void Main_Window::on_btnCreatePatch_clicked() {
 
     //Run the Command via the Plugin
     Hexagon_Error_Codes::Error_Code errorCode = this->hexagonPlugin->Create_Hexagon_Patch(originalFileLocation, modifiedFileLocation, outputFileLocation,
-                                                                                          this->ui->sbCompareSize->value(), !this->ui->cbSkipChecksumWhenCreatingPatch->isChecked(), !this->ui->cbSkipCommentsWhenCreatingPatch->isChecked());
+                                                                                          this->ui->sbCompareSize->value(), !this->ui->cbSkipChecksumWhenCreatingPatch->isChecked());
     switch (errorCode) {
     default: assert(false); return;
     case Hexagon_Error_Codes::OK: this->errorMessages->Show_Information(outputFileInfo.fileName()+" created!"); return;
@@ -172,7 +174,8 @@ void Main_Window::on_btnConvertHEXPtoQtCode_clicked() {
     //Choose Where to Save the New Patch File
     QString outputFileLocation = patchFileInfo.path()+"/"+this->stringManipulator->Get_File_Name_Without_Extension(patchFileInfo.fileName())+Common_Strings::STRING_TEXT_EXTENSION;
     QFileInfo outputFileInfo(outputFileLocation);
-    if (this->ui->cbAlwaysAskForSaveLocation->isChecked() || outputFileInfo.exists()) {
+    if (this->ui->radioAlways->isChecked() || (this->ui->radioWhenFileExists->isChecked() && outputFileInfo.exists())) {
+        assert(!this->ui->radioNever->isChecked());
         outputFileLocation = this->fileDialogManager->Get_Save_File_Location(File_Types::QT_CODE_FILE);
         if (outputFileLocation.isEmpty()) return;
         outputFileInfo = QFileInfo(outputFileLocation);
@@ -199,7 +202,8 @@ void Main_Window::on_btnConvertQtCodetoHEXP_clicked() {
     //Choose Where to Save the New Patch File
     QString outputFileLocation = qtCodeFileInfo.path()+"/"+this->stringManipulator->Get_File_Name_Without_Extension(qtCodeFileInfo.fileName())+Common_Strings::STRING_PATCH_EXTENSION;
     QFileInfo outputFileInfo(outputFileLocation);
-    if (this->ui->cbAlwaysAskForSaveLocation->isChecked() || outputFileInfo.exists()) {
+    if (this->ui->radioAlways->isChecked() || (this->ui->radioWhenFileExists->isChecked() && outputFileInfo.exists())) {
+        assert(!this->ui->radioNever->isChecked());
         outputFileLocation = this->fileDialogManager->Get_Save_File_Location(File_Types::PATCH_FILE);
         if (outputFileLocation.isEmpty()) return;
         outputFileInfo = QFileInfo(outputFileLocation);
@@ -207,7 +211,7 @@ void Main_Window::on_btnConvertQtCodetoHEXP_clicked() {
 
     //Run the Command via the Plugin
     int lineNum = 0;
-    Hexagon_Error_Codes::Error_Code errorCode = this->hexagonPlugin->Convert_Qt_Code_To_Hexagon_Patch(qtCodeFileLocation, outputFileLocation, lineNum, !this->ui->cbSkipCommentsWhenCreatingPatch->isChecked());
+    Hexagon_Error_Codes::Error_Code errorCode = this->hexagonPlugin->Convert_Qt_Code_To_Hexagon_Patch(qtCodeFileLocation, outputFileLocation, lineNum);
     switch (errorCode) {
     default: assert(false); return;
     case Hexagon_Error_Codes::OK: this->errorMessages->Show_Information(outputFileInfo.fileName()+" created!"); return;
@@ -257,18 +261,19 @@ void Main_Window::Load_Settings() {
     this->settingsFile->Load_Settings(this->settings);
     this->ui->leOriginalFile->setText(this->settings.originalFileLocation);
     this->ui->sbCompareSize->setValue(this->settings.compareSize);
-    this->ui->cbAlwaysAskForSaveLocation->setChecked(this->settings.alwaysAskForSaveLocation);
+    this->ui->radioWhenFileExists->setChecked(true); //start with default value
+    this->ui->radioNever->setChecked(this->settings.neverAskForSaveLocation);
+    this->ui->radioAlways->setChecked(this->settings.alwaysAskForSaveLocation);
     this->ui->cbVerboseConflictOutput->setChecked(this->settings.verboseConflictOutput);
     this->ui->cbSkipChecksumWhenCreatingPatch->setChecked(this->settings.skipChecksumWhenCreatingPatch);
-    this->ui->cbSkipCommentsWhenCreatingPatch->setChecked(this->settings.skipCommentsWhenCreatingPatch);
 }
 
 void Main_Window::Save_Settings() {
     this->settings.originalFileLocation = this->ui->leOriginalFile->text();
     this->settings.compareSize = this->ui->sbCompareSize->value();
-    this->settings.alwaysAskForSaveLocation = this->ui->cbAlwaysAskForSaveLocation->isChecked();
+    this->settings.neverAskForSaveLocation = this->ui->radioNever->isChecked();
+    this->settings.alwaysAskForSaveLocation = this->ui->radioAlways->isChecked();
     this->settings.verboseConflictOutput = this->ui->cbVerboseConflictOutput->isChecked();
     this->settings.skipChecksumWhenCreatingPatch = this->ui->cbSkipChecksumWhenCreatingPatch->isChecked();
-    this->settings.skipCommentsWhenCreatingPatch = this->ui->cbSkipCommentsWhenCreatingPatch->isChecked();
     this->settingsFile->Save_Settings(this->settings);
 }

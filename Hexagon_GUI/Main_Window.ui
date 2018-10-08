@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>486</width>
-    <height>378</height>
+    <height>387</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -236,34 +236,37 @@
         </spacer>
        </item>
        <item>
-        <widget class="QCheckBox" name="cbAlwaysAskForSaveLocation">
-         <property name="text">
-          <string>Always ask for save location</string>
+        <widget class="QGroupBox" name="groupAskForSaveLocation">
+         <property name="title">
+          <string>Ask for Save Location</string>
          </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QRadioButton" name="radioNever">
+            <property name="text">
+             <string>Never</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="radioWhenFileExists">
+            <property name="text">
+             <string>When file exists</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="radioAlways">
+            <property name="text">
+             <string>Always</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
         <spacer name="verticalSpacer_5">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="cbVerboseConflictOutput">
-         <property name="text">
-          <string>Verbose conflict output</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_4">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -296,17 +299,14 @@
         </spacer>
        </item>
        <item>
-        <widget class="QCheckBox" name="cbSkipCommentsWhenCreatingPatch">
+        <widget class="QCheckBox" name="cbVerboseConflictOutput">
          <property name="text">
-          <string>Skip comments when creating patch</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
+          <string>Verbose conflict output</string>
          </property>
         </widget>
        </item>
        <item>
-        <spacer name="verticalSpacer_7">
+        <spacer name="verticalSpacer_4">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -334,7 +334,7 @@
           </sizepolicy>
          </property>
          <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+          <enum>QFrame::NoFrame</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
@@ -385,7 +385,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>leOriginalFile</tabstop>
   <tabstop>tbOriginalFile</tabstop>
   <tabstop>sbCompareSize</tabstop>
-  <tabstop>cbAlwaysAskForSaveLocation</tabstop>
   <tabstop>textAbout</tabstop>
  </tabstops>
  <resources/>
