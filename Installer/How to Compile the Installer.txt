@@ -9,4 +9,4 @@ C:\Installer\LICENSE.txt
 
 
 New installer scripts can quickly be generated using the script generator tool found here: http://nsis.sourceforge.net/NSIS_Quick_Setup_Script_Generator
-When generating a new installer script, make sure to include the "Config" and "Qt" files and folders, as they won't be deleted by the uninstaller otherwise.
+After generating a new installer script, make sure to include the "Config" and "Qt" files and folders, as they won't be deleted by the uninstaller otherwise.
