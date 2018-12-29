@@ -19,7 +19,9 @@ namespace Qt_Code_Strings {
     //Using a Byte Array
     const static QString STRING_BYTE_ARRAY = ", QByteArray(";
     const static QString STRING_COMMA = ", ";
-    const static QString STRING_ENDING_PARENTHESES = "))";
+    const static QString STRING_STATIC_CAST = "static_cast<char>(";
+    const static QString STRING_ENDING_PARENTHESES = ")";
+    const static QString STRING_2_ENDING_PARENTHESES = "))";
 }
 
 #endif // QT_CODE_STRINGS_H

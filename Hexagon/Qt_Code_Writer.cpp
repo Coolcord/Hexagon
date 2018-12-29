@@ -45,8 +45,9 @@ bool Qt_Code_Writer::Write_Patch(const qint64 offset, const QString &value, bool
     *this->stream << line;
     if (oneByte) {
         line = QString();
-        *this->stream << Qt_Code_Strings::STRING_BYTE_ARRAY << "1" << Qt_Code_Strings::STRING_COMMA << Patch_Strings::STRING_HEX_IDENTIFIER
-                      << value << Qt_Code_Strings::STRING_ENDING_PARENTHESES;
+        *this->stream << Qt_Code_Strings::STRING_BYTE_ARRAY << "1" << Qt_Code_Strings::STRING_COMMA
+                      << Qt_Code_Strings::STRING_STATIC_CAST << Patch_Strings::STRING_HEX_IDENTIFIER
+                      << value << Qt_Code_Strings::STRING_ENDING_PARENTHESES << Qt_Code_Strings::STRING_2_ENDING_PARENTHESES;
     } else {
         int currentLineSize = line.size();
         line = QString();

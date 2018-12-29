@@ -124,6 +124,9 @@ bool Qt_Code_Reader::Get_Single_Value_From_Line(const QString &line, QString &va
     if (strings.size() < 2) return false;
     QString numberOfValues = strings.at(0);
     QString valueNumber = strings.at(1);
+    if (valueNumber.startsWith(Qt_Code_Strings::STRING_STATIC_CAST)) {
+        valueNumber = valueNumber.remove(0, Qt_Code_Strings::STRING_STATIC_CAST.size());
+    }
     bool isHex = false;
     if (valueNumber.startsWith(Patch_Strings::STRING_HEX_IDENTIFIER)) {
         isHex = true;
