@@ -52,8 +52,8 @@ Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QByteArray &p
     QString actualChecksum = QString();
     if (!patchReader.Get_Checksum(expectedChecksum)) return Hexagon_Error_Codes::PARSE_ERROR;
     if (useChecksum) {
-        actualChecksum = valueManipulator.Get_Checksum_From_File(outputFile);
         if (expectedChecksum != Patch_Strings::STRING_SKIP_CHECKSUM) {
+            actualChecksum = valueManipulator.Get_Checksum_From_File(outputFile);
             if (expectedChecksum != actualChecksum) {
                 lineNum = patchReader.Get_Current_Line_Num();
                 return Hexagon_Error_Codes::BAD_CHECKSUM;
@@ -103,10 +103,11 @@ Hexagon_Error_Codes::Error_Code Hexagon::Create_Hexagon_Patch(const QString &ori
     Patch_Writer patchWriter(&outputFile, &valueManipulator, QString::number(originalFileInfo.size(), 0x10).size(), originalFileInfo.fileName());
 
     //Write the checksum
-    if (!useChecksum) checksum = Patch_Strings::STRING_SKIP_CHECKSUM;
-    if (!patchWriter.Write_Checksum(checksum) || !patchWriter.Write_Break_Line()) {
-        outputFile.remove();
-        return Hexagon_Error_Codes::WRITE_ERROR;
+    if (useChecksum) {
+        if (!patchWriter.Write_Checksum(checksum) || !patchWriter.Write_Break_Line()) {
+            outputFile.remove();
+            return Hexagon_Error_Codes::WRITE_ERROR;
+        }
     }
 
     //Write the patches to the output file
@@ -114,7 +115,10 @@ Hexagon_Error_Codes::Error_Code Hexagon::Create_Hexagon_Patch(const QString &ori
         QByteArray *bytes = differences.at(i).second;
         if (!bytes) continue;
         qint64 offset = differences.at(i).first;
-        if (!patchWriter.Write_Next_Patch(offset, *bytes) || !patchWriter.Write_Break_Line()) {
+        bool writeError = false;
+        if (i > 0 && !patchWriter.Write_Break_Line()) writeError = true;
+        if (!patchWriter.Write_Next_Patch(offset, *bytes)) writeError = true;
+        if (writeError) {
             outputFile.remove();
             fileComparer.Deallocate_Differences(differences);
             return Hexagon_Error_Codes::WRITE_ERROR;
@@ -134,14 +138,6 @@ Hexagon_Error_Codes::Error_Code Hexagon::Convert_Hexagon_Patch_To_Qt_Code(const 
     if (!patchFile.exists() || !patchFile.open(QIODevice::ReadOnly)) return Hexagon_Error_Codes::READ_ERROR;
     Value_Manipulator valueManipulator;
     Patch_Reader patchReader(&patchFile, &valueManipulator);
-
-    //Read past the checksum
-    QString checksum = QString();
-    if (!patchReader.Get_Checksum(checksum)) {
-        lineNum = patchReader.Get_Current_Line_Num();
-        patchFile.close();
-        return Hexagon_Error_Codes::READ_ERROR;
-    }
 
     //Open the output file
     QFile outputFile(outputFileLocation);
@@ -191,24 +187,23 @@ Hexagon_Error_Codes::Error_Code Hexagon::Convert_Qt_Code_To_Hexagon_Patch(const 
     Value_Manipulator valueManipulator;
     Qt_Code_Reader qtCodeReader(&qtCodeFile, &valueManipulator);
 
-    //Write the header
+    //Open the output file for writing
     QFile outputFile(outputFileLocation);
     if (outputFile.exists() && !outputFile.remove()) return Hexagon_Error_Codes::WRITE_ERROR;
     if (!outputFile.open(QIODevice::ReadWrite)) return Hexagon_Error_Codes::WRITE_ERROR;
     Patch_Writer patchWriter(&outputFile, &valueManipulator);
-    if (!patchWriter.Write_Checksum(Patch_Strings::STRING_SKIP_CHECKSUM)
-            || !patchWriter.Write_Break_Line()) {
-        qtCodeFile.close();
-        outputFile.remove();
-        return Hexagon_Error_Codes::WRITE_ERROR;
-    }
 
     //Read each patch from the Qt Code file and write it to the patch file
     qint64 offset = 0;
     QString value = QString();
     bool parseError = false;
+    bool firstPatch = true;
     while (qtCodeReader.Read_Next_Patch(offset, value, parseError) && !parseError) {
-        if (!patchWriter.Write_Next_Patch(offset, value) || !patchWriter.Write_Break_Line()) {
+        bool writeError = false;
+        if (firstPatch) firstPatch = false;
+        else if (!patchWriter.Write_Break_Line()) writeError = true;
+        if (!patchWriter.Write_Next_Patch(offset, value)) writeError = true;
+        if (writeError) {
             qtCodeFile.close();
             outputFile.remove();
             lineNum = qtCodeReader.Get_Current_Line_Num();

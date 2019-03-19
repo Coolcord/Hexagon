@@ -31,6 +31,11 @@ int Patch_Reader::Get_Current_Line_Num() {
 
 bool Patch_Reader::Get_Checksum(QString &checksum) {
     QString line = this->Get_Next_Line_After_Comments();
+    if (line.startsWith(Patch_Strings::STRING_OFFSET)) {
+        this->stream->seek(0); //go back to the beginning... we read too far ahead
+        checksum = Patch_Strings::STRING_SKIP_CHECKSUM;
+        return true; //no checksum
+    }
     if (!line.startsWith(Patch_Strings::STRING_CHECKSUM)) return false;
     QStringList values = line.split(' ');
     if (values.size() != 2) return false;
