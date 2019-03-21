@@ -26,10 +26,17 @@ A: For distributing hacks, I'd say no. Hexagon patches tend to be larger than ot
 
 ## Sample Hexagon Patch File
 ```
-# This is a comment
+# This is a comment.
 # Below is the checksum of the file. It is a SHA-256 checksum based on the original file.
-# A value of "SKIP" will ignore the checksum
+# A value of "SKIP" will ignore the checksum.
+# The checksum is optional, but if it is included, it must come BEFORE both the size difference and any patches.
 C: F61548FDF1670CFFEFCC4F0B7BDCDD9EABA0C226E3B74F8666071496988248DE
+
+# This is the size difference.
+# The size difference is optional, but it must come AFTER the checksum (if there is one) and BEFORE any patches.
+# A positive value means that bytes will be padded to the end of the file (resulting in a larger file).
+# A negative value means that bytes will be trimmed from the end of the file (resulting in a smaller file).
+S: +0x8000
 
 # Below is the address or offset of the patch. This number is relative to the beginning of the file.
 # Prefixing "0x" will identify the address as a hex value. Otherwise it will be treated as decimal.
