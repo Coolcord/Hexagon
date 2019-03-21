@@ -54,11 +54,13 @@ bool Patch_Reader::Get_Size(qint64 &size) {
     QStringList values = line.split(' ');
     if (values.size() != 2) return false;
     QString sizeLine = values.at(1).trimmed();
-    if (sizeLine.startsWith("+")) sizeLine.remove(0, 1);
+    bool isNegative = sizeLine.startsWith("-");
+    if (isNegative || sizeLine.startsWith("+")) sizeLine.remove(0, 1);
     bool isHex = sizeLine.startsWith("0x");
     bool valid = false;
     if (isHex) size = sizeLine.toLongLong(&valid, 0x10);
     else size = sizeLine.toLongLong(&valid, 10);
+    if (isNegative) size = 0-size;
     return valid;
 }
 
