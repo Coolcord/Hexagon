@@ -63,9 +63,11 @@ Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QByteArray &p
 
     //Parse the patch file
     bool parseError = false, seekError = false;
-    qint64 offset = 0;
+    qint64 offset = 0, size = 0;
     QByteArray value;
     File_Writer fileWriter(outputFile, &valueManipulator);
+    if (!patchReader.Get_Size(size)) return Hexagon_Error_Codes::PARSE_ERROR;
+    if (!fileWriter.Pad_Or_Trim_File(size)) return Hexagon_Error_Codes::WRITE_ERROR;
     while (patchReader.Get_Next_Offset_And_Value(offset, value, parseError) && !parseError) {
         if (!fileWriter.Write_Bytes_To_Offset(offset, value, seekError)) {
             lineNum = patchReader.Get_Current_Line_Num();
@@ -79,12 +81,20 @@ Hexagon_Error_Codes::Error_Code Hexagon::Apply_Hexagon_Patch(const QByteArray &p
 }
 
 Hexagon_Error_Codes::Error_Code Hexagon::Create_Hexagon_Patch(const QString &originalFileLocation, const QString &modifiedFileLocation,
-                                                              const QString &outputFileLocation, int compareSize, bool useChecksum) {
+                                                              const QString &outputFileLocation, int compareSize, bool useChecksum, bool allowSizeDifference) {
     if (originalFileLocation.isEmpty()) return Hexagon_Error_Codes::READ_ERROR;
     if (modifiedFileLocation.isEmpty()) return Hexagon_Error_Codes::READ_MODIFIED_ERROR;
     if (outputFileLocation.isEmpty()) return Hexagon_Error_Codes::WRITE_ERROR;
     Value_Manipulator valueManipulator;
     File_Comparer fileComparer(originalFileLocation, modifiedFileLocation, compareSize, &valueManipulator);
+
+    //Calculate the size difference
+    QFileInfo originalFileInfo(originalFileLocation);
+    QFileInfo modifiedFileInfo(modifiedFileLocation);
+    if (!originalFileInfo.exists()) return Hexagon_Error_Codes::READ_ERROR;
+    if (!modifiedFileInfo.exists()) return Hexagon_Error_Codes::READ_MODIFIED_ERROR;
+    qint64 sizeDifference = modifiedFileInfo.size()-originalFileInfo.size();
+    if (sizeDifference > 0 && !allowSizeDifference) return Hexagon_Error_Codes::SIZE_DIFFERENCE;
 
     //Run the scan for differences
     QVector<QPair<qint64, QByteArray*>> differences;
@@ -96,7 +106,6 @@ Hexagon_Error_Codes::Error_Code Hexagon::Create_Hexagon_Patch(const QString &ori
     }
 
     //Write the header
-    QFileInfo originalFileInfo(originalFileLocation);
     QFile outputFile(outputFileLocation);
     if (outputFile.exists() && !outputFile.remove()) return Hexagon_Error_Codes::WRITE_ERROR;
     if (!outputFile.open(QIODevice::ReadWrite)) return Hexagon_Error_Codes::WRITE_ERROR;
@@ -104,10 +113,16 @@ Hexagon_Error_Codes::Error_Code Hexagon::Create_Hexagon_Patch(const QString &ori
 
     //Write the checksum
     if (useChecksum) {
-        if (!patchWriter.Write_Checksum(checksum) || !patchWriter.Write_Break_Line()) {
+        if (!patchWriter.Write_Checksum(checksum)) {
             outputFile.remove();
             return Hexagon_Error_Codes::WRITE_ERROR;
         }
+    }
+
+    //Write the size difference
+    if (!patchWriter.Write_Size(sizeDifference)) {
+        outputFile.remove();
+        return Hexagon_Error_Codes::WRITE_ERROR;
     }
 
     //Write the patches to the output file
@@ -229,6 +244,13 @@ Hexagon_Error_Codes::Error_Code Hexagon::Check_For_Compatibility_Between_Hexagon
 Hexagon_Error_Codes::Error_Code Hexagon::Check_For_Conflicts_Between_Hexagon_Patches(const QString &patchFileLocation, const QStringList &otherPatchFileLocations,
                                                                                      QString &output, int &lineNum, int &otherLineNum, int &otherFileNum, bool verbose) {
     return this->Check_For_Conflicts(patchFileLocation, otherPatchFileLocations, output, lineNum, otherLineNum, otherFileNum, verbose, true);
+}
+
+bool Hexagon::Is_Line_End_Of_Header(const QString &line) {
+    if (line.isEmpty()) return false;
+    if (line.startsWith(Patch_Strings::STRING_COMMENT)) return false;
+    if (line.size() > 2 && line.at(1) == ":") return true;
+    return false;
 }
 
 Hexagon_Error_Codes::Error_Code Hexagon::Check_For_Conflicts(const QString &patchFileLocation, const QStringList &otherPatchFileLocations,

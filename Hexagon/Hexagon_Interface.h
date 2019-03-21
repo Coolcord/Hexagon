@@ -15,7 +15,7 @@ public:
                                                                 const QString &outputFileLocation, bool useChecksum, int &lineNum)=0;
     virtual Hexagon_Error_Codes::Error_Code Apply_Hexagon_Patch(const QByteArray &patchFileBytes, QFile *outputFile, bool useChecksum, int &lineNum)=0;
     virtual Hexagon_Error_Codes::Error_Code Create_Hexagon_Patch(const QString &originalFileLocation, const QString &modifiedFileLocation,
-                                                                 const QString &outputFileLocation, int compareSize, bool useChecksum)=0;
+                                                                 const QString &outputFileLocation, int compareSize, bool useChecksum, bool allowSizeDifference)=0;
 
     //Dev Tools
     virtual Hexagon_Error_Codes::Error_Code Convert_Hexagon_Patch_To_Qt_Code(const QString &patchFileLocation, const QString &outputFileLocation,
@@ -26,6 +26,7 @@ public:
                                                                                             QString &output, int &lineNum, int &otherLineNum, int &otherFileNum)=0;
     virtual Hexagon_Error_Codes::Error_Code Check_For_Conflicts_Between_Hexagon_Patches(const QString &patchFileLocation, const QStringList &otherPatchFileLocations,
                                                                                         QString &output, int &lineNum, int &otherLineNum, int &otherFileNum, bool verbose)=0;
+    virtual bool Is_Line_End_Of_Header(const QString &line)=0;
 };
 
 Q_DECLARE_INTERFACE(Hexagon_Interface, "Hexagon_Interface")

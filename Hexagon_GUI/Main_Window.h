@@ -29,6 +29,9 @@ private slots:
     void on_btnConflictsCheckAgainstFolder_clicked();
     void on_btnConvertHEXPtoQtCode_clicked();
     void on_btnConvertQtCodetoHEXP_clicked();
+    void on_radioSlot1_clicked();
+    void on_radioSlot2_clicked();
+    void on_radioSlot3_clicked();
     void on_tbOriginalFile_clicked();
     void on_Main_Window_finished(int result);
 
@@ -36,6 +39,7 @@ private:
     void Check_For_Conflicts(const QString &patchFileLocation, const QStringList &otherPatchFileLocations, bool conflicts);
     void Load_Settings();
     void Save_Settings();
+    void Update_Original_File();
 
     Ui::Main_Window *ui;
     Hexagon_Interface *hexagonPlugin;

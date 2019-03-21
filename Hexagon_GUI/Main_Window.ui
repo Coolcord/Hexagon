@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>486</width>
-    <height>387</height>
+    <height>395</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -149,7 +149,7 @@
       <attribute name="title">
        <string>Options</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
+      <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
         <spacer name="verticalSpacer_3">
          <property name="orientation">
@@ -164,29 +164,52 @@
         </spacer>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="layoutOriginalFile">
-         <item>
-          <widget class="QLabel" name="lblOriginalFile">
-           <property name="text">
-            <string>Original File:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QLineEdit" name="leOriginalFile"/>
-           </item>
-           <item>
-            <widget class="QToolButton" name="tbOriginalFile">
-             <property name="text">
-              <string>...</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
+        <widget class="QGroupBox" name="groupFileSlot">
+         <property name="title">
+          <string>Original File:</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="QRadioButton" name="radioSlot1">
+              <property name="text">
+               <string>Slot 1</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="radioSlot2">
+              <property name="text">
+               <string>Slot 2</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="radioSlot3">
+              <property name="text">
+               <string>Slot 3</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QLineEdit" name="leOriginalFile"/>
+            </item>
+            <item>
+             <widget class="QToolButton" name="tbOriginalFile">
+              <property name="text">
+               <string>...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
        </item>
        <item>
         <spacer name="verticalSpacer">

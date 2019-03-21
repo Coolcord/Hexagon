@@ -17,6 +17,7 @@ public:
     ~Patch_Writer();
     bool Write_Break_Line();
     bool Write_Checksum(const QString &checksum);
+    bool Write_Size(qint64 sizeDifference);
     bool Write_Next_Patch(const qint64 offset, const QString &value);
     bool Write_Next_Patch(const qint64 offset, const QByteArray &value);
 

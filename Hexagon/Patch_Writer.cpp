@@ -35,7 +35,23 @@ bool Patch_Writer::Write_Break_Line() {
 
 bool Patch_Writer::Write_Checksum(const QString &checksum) {
     *this->stream << Patch_Strings::STRING_CHECKSUM << " " << checksum << Patch_Strings::STRING_NEW_LINE;
-    return this->stream->status() == QTextStream::Ok;
+    if (this->stream->status() != QTextStream::Ok) return false;
+    return this->Write_Break_Line();
+}
+
+bool Patch_Writer::Write_Size(qint64 sizeDifference) {
+    if (sizeDifference == 0) return true;
+    QString sign = QString(), sizeString = QString();
+    if (sizeDifference < 0) { //negative
+        sizeString = QString::number(0-sizeDifference, 0x10).toUpper();
+        sign = "-0x";
+    } else { //positive
+        sizeString = QString::number(sizeDifference, 0x10).toUpper();
+        sign = "+0x";
+    }
+    *this->stream << Patch_Strings::STRING_SIZE << " " << sign << sizeString << Patch_Strings::STRING_NEW_LINE;
+    if (this->stream->status() != QTextStream::Ok) return false;
+    return this->Write_Break_Line();
 }
 
 bool Patch_Writer::Write_Next_Patch(const qint64 offset, const QString &value) {

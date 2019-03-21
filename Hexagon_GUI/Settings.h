@@ -9,7 +9,10 @@ struct Settings {
     QString defaultFileOpenLocation;
     QString defaultPatchSaveLocation;
     QString defaultFileSaveLocation;
-    QString originalFileLocation;
+    QString originalFileLocation1;
+    QString originalFileLocation2;
+    QString originalFileLocation3;
+    int originalFileSlot;
     int compareSize;
     bool neverAskForSaveLocation;
     bool alwaysAskForSaveLocation;

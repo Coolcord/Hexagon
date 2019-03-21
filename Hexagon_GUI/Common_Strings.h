@@ -26,7 +26,8 @@ namespace Common_Strings {
     const static QString STRING_ORIGINAL = "ORIGINAL";
     const static QString STRING_MODIFIED = "MODIFIED";
     const static QString STRING_CHECKSUM_FAILED_APPLY_ANYWAY = "This patch was created using a different original file! Apply anyway?";
-    const static QString STRING_FILES_ARE_DIFFERENT_SIZES = "The original and the modified files must be the same size to create a Hexagon patch!";
+    const static QString STRING_FILES_ARE_DIFFERENT_SIZES_CREATE_ANYWAY = "The original and the modified files are not the same size! A Hexagon patch can still be created, but the patch may be larger than intended. Create patch anyway?";
+    const static QString STRING_PATCH_CREATION_ABORTED = "Patch creaton aborted!";
     const static QString STRING_OUT_OF_RANGE = "Offset out of range on line ";
     const static QString STRING_COMPATIBLE_FILES_DETECTED = "Compatible Files Detected!";
     const static QString STRING_CONFLICTS_DETECTED = "Conflicts Detected!";

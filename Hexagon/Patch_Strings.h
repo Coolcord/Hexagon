@@ -5,6 +5,7 @@
 
 namespace Patch_Strings {
     const static QString STRING_CHECKSUM = "C:";
+    const static QString STRING_SIZE = "S:";
     const static QString STRING_COMMENT = "#";
     const static QString STRING_HEX_IDENTIFIER = "0x";
     const static QString STRING_OFFSET = "A:";

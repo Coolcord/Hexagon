@@ -19,7 +19,10 @@ bool Settings_File::Save_Settings(const Settings &settings) {
     stream << settings.defaultFileOpenLocation << Common_Strings::STRING_NEW_LINE;
     stream << settings.defaultPatchSaveLocation << Common_Strings::STRING_NEW_LINE;
     stream << settings.defaultFileSaveLocation << Common_Strings::STRING_NEW_LINE;
-    stream << settings.originalFileLocation << Common_Strings::STRING_NEW_LINE;
+    stream << settings.originalFileLocation1 << Common_Strings::STRING_NEW_LINE;
+    stream << settings.originalFileLocation2 << Common_Strings::STRING_NEW_LINE;
+    stream << settings.originalFileLocation3 << Common_Strings::STRING_NEW_LINE;
+    stream << settings.originalFileSlot << Common_Strings::STRING_NEW_LINE;
     stream << settings.compareSize << Common_Strings::STRING_NEW_LINE;
     stream << settings.neverAskForSaveLocation << Common_Strings::STRING_NEW_LINE;
     stream << settings.alwaysAskForSaveLocation << Common_Strings::STRING_NEW_LINE;
@@ -40,7 +43,10 @@ bool Settings_File::Load_Settings(Settings &settings) {
     settings.defaultFileOpenLocation = file.readLine().trimmed();
     settings.defaultPatchSaveLocation = file.readLine().trimmed();
     settings.defaultFileSaveLocation = file.readLine().trimmed();
-    settings.originalFileLocation = file.readLine().trimmed();
+    settings.originalFileLocation1 = file.readLine().trimmed();
+    settings.originalFileLocation2 = file.readLine().trimmed();
+    settings.originalFileLocation3 = file.readLine().trimmed();
+    settings.originalFileSlot = file.readLine().trimmed().toInt(&valid); if (!valid) return false;
     settings.compareSize = file.readLine().trimmed().toInt(&valid); if (!valid) return false;
     settings.neverAskForSaveLocation = file.readLine().trimmed().toInt(&valid); if (!valid) return false;
     settings.alwaysAskForSaveLocation = file.readLine().trimmed().toInt(&valid); if (!valid) return false;
@@ -53,7 +59,19 @@ bool Settings_File::Load_Settings(Settings &settings) {
     if (!QDir(settings.defaultFileOpenLocation).exists()) settings.defaultFileOpenLocation = this->applicationLocation;
     if (!QDir(settings.defaultPatchSaveLocation).exists()) settings.defaultPatchSaveLocation = this->applicationLocation;
     if (!QDir(settings.defaultFileSaveLocation).exists()) settings.defaultFileSaveLocation = this->applicationLocation;
-    if (!QFileInfo(settings.originalFileLocation).exists()) settings.originalFileLocation = QString();
+    switch (settings.originalFileSlot) {
+    default:
+        return false;
+    case 1:
+        if (!QFileInfo(settings.originalFileLocation1).exists()) settings.originalFileLocation1 = QString();
+        break;
+    case 2:
+        if (!QFileInfo(settings.originalFileLocation2).exists()) settings.originalFileLocation1 = QString();
+        break;
+    case 3:
+        if (!QFileInfo(settings.originalFileLocation3).exists()) settings.originalFileLocation1 = QString();
+        break;
+    }
     return true;
 }
 
@@ -63,7 +81,10 @@ void Settings_File::Load_Default_Settings(Settings &settings) {
     settings.defaultFileOpenLocation = this->applicationLocation;
     settings.defaultPatchSaveLocation = this->applicationLocation;
     settings.defaultFileSaveLocation = this->applicationLocation;
-    settings.originalFileLocation = QString();
+    settings.originalFileLocation1 = QString();
+    settings.originalFileLocation2 = QString();
+    settings.originalFileLocation3 = QString();
+    settings.originalFileSlot = 1;
     settings.compareSize = 5;
     settings.neverAskForSaveLocation = false;
     settings.alwaysAskForSaveLocation = false;

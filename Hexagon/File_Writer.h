@@ -11,6 +11,7 @@ public:
     ~File_Writer() {}
     bool Write_Bytes_To_Offset(qint64 offset, const QByteArray &bytes, bool &seekValid);
     bool Write_Bytes_To_Offset(qint64 offset, const QString &value, bool &seekValid);
+    bool Pad_Or_Trim_File(qint64 amount);
 
 private:
     QFile *file;

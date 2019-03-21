@@ -31,7 +31,7 @@ int Patch_Reader::Get_Current_Line_Num() {
 
 bool Patch_Reader::Get_Checksum(QString &checksum) {
     QString line = this->Get_Next_Line_After_Comments();
-    if (line.startsWith(Patch_Strings::STRING_OFFSET)) {
+    if (line.startsWith(Patch_Strings::STRING_OFFSET) || line.startsWith(Patch_Strings::STRING_SIZE)) {
         this->stream->seek(0); //go back to the beginning... we read too far ahead
         checksum = Patch_Strings::STRING_SKIP_CHECKSUM;
         return true; //no checksum
@@ -39,8 +39,27 @@ bool Patch_Reader::Get_Checksum(QString &checksum) {
     if (!line.startsWith(Patch_Strings::STRING_CHECKSUM)) return false;
     QStringList values = line.split(' ');
     if (values.size() != 2) return false;
-    checksum = values.at(1);
+    checksum = values.at(1).trimmed();
     return true;
+}
+
+bool Patch_Reader::Get_Size(qint64 &size) {
+    size = 0;
+    QString line = this->Get_Next_Line_After_Comments();
+    if (line.startsWith(line.startsWith(Patch_Strings::STRING_OFFSET))) {
+        this->stream->seek(0); //go back to the beginning... we read too far ahead
+        return true; //no size specified
+    }
+    if (!line.startsWith(Patch_Strings::STRING_SIZE)) return false;
+    QStringList values = line.split(' ');
+    if (values.size() != 2) return false;
+    QString sizeLine = values.at(1).trimmed();
+    if (sizeLine.startsWith("+")) sizeLine.remove(0, 1);
+    bool isHex = sizeLine.startsWith("0x");
+    bool valid = false;
+    if (isHex) size = sizeLine.toLongLong(&valid, 0x10);
+    else size = sizeLine.toLongLong(&valid, 10);
+    return valid;
 }
 
 bool Patch_Reader::Get_Next_Offset_And_Value(qint64 &offset, QByteArray &value, bool &parseError) {

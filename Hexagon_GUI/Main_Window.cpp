@@ -127,14 +127,19 @@ void Main_Window::on_btnCreatePatch_clicked() {
 
     //Run the Command via the Plugin
     Hexagon_Error_Codes::Error_Code errorCode = this->hexagonPlugin->Create_Hexagon_Patch(originalFileLocation, modifiedFileLocation, outputFileLocation,
-                                                                                          this->ui->sbCompareSize->value(), !this->ui->cbSkipChecksumWhenCreatingPatch->isChecked());
+                                                                                          this->ui->sbCompareSize->value(), !this->ui->cbSkipChecksumWhenCreatingPatch->isChecked(), false);
+    if (errorCode == Hexagon_Error_Codes::SIZE_DIFFERENCE) {
+        int result = QMessageBox::warning(this, Common_Strings::STRING_HEXAGON, Common_Strings::STRING_FILES_ARE_DIFFERENT_SIZES_CREATE_ANYWAY, QMessageBox::Yes, QMessageBox::No);
+        if (result != QMessageBox::Yes) return;
+        errorCode = this->hexagonPlugin->Create_Hexagon_Patch(originalFileLocation, modifiedFileLocation, outputFileLocation,
+                                                              this->ui->sbCompareSize->value(), !this->ui->cbSkipChecksumWhenCreatingPatch->isChecked(), true);
+    }
     switch (errorCode) {
     default: assert(false); return;
     case Hexagon_Error_Codes::OK: this->errorMessages->Show_Information(outputFileInfo.fileName()+" created!"); return;
     case Hexagon_Error_Codes::READ_ERROR: this->errorMessages->Show_Read_Error(originalFileInfo.fileName()); return;
     case Hexagon_Error_Codes::READ_MODIFIED_ERROR: this->errorMessages->Show_Read_Error(modifiedFileInfo.fileName()); return;
     case Hexagon_Error_Codes::WRITE_ERROR: this->errorMessages->Show_Write_Error(outputFileInfo.fileName()); return;
-    case Hexagon_Error_Codes::SIZE_DIFFERENCE: this->errorMessages->Show_Error(Common_Strings::STRING_FILES_ARE_DIFFERENT_SIZES);
     }
 }
 
@@ -221,6 +226,18 @@ void Main_Window::on_btnConvertQtCodetoHEXP_clicked() {
     }
 }
 
+void Main_Window::on_radioSlot1_clicked() {
+    this->Update_Original_File();
+}
+
+void Main_Window::on_radioSlot2_clicked() {
+    this->Update_Original_File();
+}
+
+void Main_Window::on_radioSlot3_clicked() {
+    this->Update_Original_File();
+}
+
 void Main_Window::on_tbOriginalFile_clicked() {
     QString openLocation = QFileInfo(this->ui->leOriginalFile->text()).absolutePath();
     if (!QFileInfo(openLocation).exists()) openLocation = this->settings.defaultFileOpenLocation;
@@ -259,7 +276,21 @@ void Main_Window::Check_For_Conflicts(const QString &patchFileLocation, const QS
 
 void Main_Window::Load_Settings() {
     this->settingsFile->Load_Settings(this->settings);
-    this->ui->leOriginalFile->setText(this->settings.originalFileLocation);
+    switch (this->settings.originalFileSlot) {
+    default:
+    case 1:
+        this->ui->radioSlot1->setChecked(true);
+        this->ui->leOriginalFile->setText(this->settings.originalFileLocation1);
+        break;
+    case 2:
+        this->ui->radioSlot2->setChecked(true);
+        this->ui->leOriginalFile->setText(this->settings.originalFileLocation2);
+        break;
+    case 3:
+        this->ui->radioSlot3->setChecked(true);
+        this->ui->leOriginalFile->setText(this->settings.originalFileLocation3);
+        break;
+    }
     this->ui->sbCompareSize->setValue(this->settings.compareSize);
     this->ui->radioWhenFileExists->setChecked(true); //start with default value
     this->ui->radioNever->setChecked(this->settings.neverAskForSaveLocation);
@@ -269,11 +300,44 @@ void Main_Window::Load_Settings() {
 }
 
 void Main_Window::Save_Settings() {
-    this->settings.originalFileLocation = this->ui->leOriginalFile->text();
+    this->settings.originalFileSlot = 1;
+    if (this->ui->radioSlot1->isChecked()) {
+        this->settings.originalFileLocation1 = this->ui->leOriginalFile->text();
+        this->settings.originalFileSlot = 1;
+    }
+    if (this->ui->radioSlot2->isChecked()) {
+        this->settings.originalFileLocation2 = this->ui->leOriginalFile->text();
+        this->settings.originalFileSlot = 2;
+    }
+    if (this->ui->radioSlot3->isChecked()) {
+        this->settings.originalFileLocation3 = this->ui->leOriginalFile->text();
+        this->settings.originalFileSlot = 3;
+    }
     this->settings.compareSize = this->ui->sbCompareSize->value();
     this->settings.neverAskForSaveLocation = this->ui->radioNever->isChecked();
     this->settings.alwaysAskForSaveLocation = this->ui->radioAlways->isChecked();
     this->settings.verboseConflictOutput = this->ui->cbVerboseConflictOutput->isChecked();
     this->settings.skipChecksumWhenCreatingPatch = this->ui->cbSkipChecksumWhenCreatingPatch->isChecked();
     this->settingsFile->Save_Settings(this->settings);
+}
+
+void Main_Window::Update_Original_File() {
+    //Save the File Path
+    switch (this->settings.originalFileSlot) {
+    default:    assert(false); break;
+    case 1:     this->settings.originalFileLocation1 = this->ui->leOriginalFile->text(); break;
+    case 2:     this->settings.originalFileLocation2 = this->ui->leOriginalFile->text(); break;
+    case 3:     this->settings.originalFileLocation3 = this->ui->leOriginalFile->text(); break;
+    }
+
+    //Save the File Slot
+    this->settings.originalFileSlot = 1; //use 1 by default
+    if (this->ui->radioSlot1->isChecked()) this->settings.originalFileSlot = 1;
+    if (this->ui->radioSlot2->isChecked()) this->settings.originalFileSlot = 2;
+    if (this->ui->radioSlot3->isChecked()) this->settings.originalFileSlot = 3;
+
+    //Load the New Value
+    if (this->ui->radioSlot1->isChecked()) this->ui->leOriginalFile->setText(this->settings.originalFileLocation1);
+    if (this->ui->radioSlot2->isChecked()) this->ui->leOriginalFile->setText(this->settings.originalFileLocation2);
+    if (this->ui->radioSlot3->isChecked()) this->ui->leOriginalFile->setText(this->settings.originalFileLocation3);
 }

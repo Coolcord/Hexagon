@@ -16,7 +16,6 @@ Hexagon_Error_Codes::Error_Code File_Comparer::Scan_For_Differences(QVector<QPai
     differences.clear();
     QFile originalFile(this->originalFileLocation);
     QFile modifiedFile(this->modifiedFileLocation);
-    if (originalFile.size() != modifiedFile.size()) return Hexagon_Error_Codes::SIZE_DIFFERENCE;
     if (!originalFile.exists() || !originalFile.open(QIODevice::ReadOnly)) return Hexagon_Error_Codes::READ_ERROR;
     if (!modifiedFile.exists() || !modifiedFile.open(QIODevice::ReadOnly)) {
         originalFile.close();
@@ -30,17 +29,17 @@ Hexagon_Error_Codes::Error_Code File_Comparer::Scan_For_Differences(QVector<QPai
     //Scan both files for differences
     qint64 offset = 0;
     qint64 currentAddress = 0;
+    qint64 originalFileSize = originalFile.size();
     QByteArray *difference = nullptr;
     int localCompareCount = 0;
-    while (!originalFile.atEnd()) {
+    while (!modifiedFile.atEnd()) {
         QByteArray originalBytes = originalFile.read(BUFFER_SIZE);
         QByteArray modifiedBytes = modifiedFile.read(BUFFER_SIZE);
-        assert(originalBytes.size() == modifiedBytes.size());
 
         //Search for differences in the buffer
         QByteArray tmpBuffer;
-        for (int i = 0; i < originalBytes.size(); ++i, ++currentAddress) {
-            if (originalBytes.at(i) == modifiedBytes.at(i)) {
+        for (int i = 0; i < modifiedBytes.size(); ++i, ++currentAddress) {
+            if (currentAddress < originalFileSize && originalBytes.at(i) == modifiedBytes.at(i)) {
                 assert(localCompareCount >= 0);
                 if (localCompareCount == 0) {
                     if (difference) {
@@ -53,7 +52,7 @@ Hexagon_Error_Codes::Error_Code File_Comparer::Scan_For_Differences(QVector<QPai
                     --localCompareCount;
                 }
             } else {
-                if (originalBytes.at(i) != modifiedBytes.at(i)) { //difference found!
+                if (currentAddress >= originalFileSize || originalBytes.at(i) != modifiedBytes.at(i)) { //difference found!
                     localCompareCount = this->compareSize-1;
                     if (!difference) {
                         offset = currentAddress;
