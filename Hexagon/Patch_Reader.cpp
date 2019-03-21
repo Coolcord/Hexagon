@@ -33,6 +33,7 @@ bool Patch_Reader::Get_Checksum(QString &checksum) {
     QString line = this->Get_Next_Line_After_Comments();
     if (line.startsWith(Patch_Strings::STRING_OFFSET) || line.startsWith(Patch_Strings::STRING_SIZE)) {
         this->stream->seek(0); //go back to the beginning... we read too far ahead
+        this->currentLineNum = 0;
         checksum = Patch_Strings::STRING_SKIP_CHECKSUM;
         return true; //no checksum
     }
@@ -46,8 +47,9 @@ bool Patch_Reader::Get_Checksum(QString &checksum) {
 bool Patch_Reader::Get_Size(qint64 &size) {
     size = 0;
     QString line = this->Get_Next_Line_After_Comments();
-    if (line.startsWith(line.startsWith(Patch_Strings::STRING_OFFSET))) {
+    if (line.startsWith(Patch_Strings::STRING_OFFSET)) {
         this->stream->seek(0); //go back to the beginning... we read too far ahead
+        this->currentLineNum = 0;
         return true; //no size specified
     }
     if (!line.startsWith(Patch_Strings::STRING_SIZE)) return false;
