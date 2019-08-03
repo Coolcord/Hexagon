@@ -66,10 +66,10 @@ bool Settings_File::Load_Settings(Settings &settings) {
         if (!QFileInfo(settings.originalFileLocation1).exists()) settings.originalFileLocation1 = QString();
         break;
     case 2:
-        if (!QFileInfo(settings.originalFileLocation2).exists()) settings.originalFileLocation1 = QString();
+        if (!QFileInfo(settings.originalFileLocation2).exists()) settings.originalFileLocation2 = QString();
         break;
     case 3:
-        if (!QFileInfo(settings.originalFileLocation3).exists()) settings.originalFileLocation1 = QString();
+        if (!QFileInfo(settings.originalFileLocation3).exists()) settings.originalFileLocation3 = QString();
         break;
     }
     return true;
