@@ -19,6 +19,7 @@ public:
 
 private:
     QString Get_Next_Line_After_Comments();
+    QString Get_Next_Line_After_Header(bool &parseError);
     bool Is_Line_Hex_String(const QString &line);
     bool Parse_Value(QByteArray &value);
     QString Trim_Hex_Identifier(QString &hexString);

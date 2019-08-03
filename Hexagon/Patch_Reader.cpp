@@ -69,7 +69,17 @@ bool Patch_Reader::Get_Size(qint64 &size) {
 bool Patch_Reader::Get_Next_Offset_And_Value(qint64 &offset, QByteArray &value, bool &parseError) {
     //Get the Offset
     parseError = true;
-    QString line = this->Get_Next_Line_After_Comments();
+    QString line = QString();
+    if (this->currentLineNum > 0) {
+        line = this->Get_Next_Line_After_Comments();
+    } else { //we might have to read the header again in some circumstances
+        bool headerParseError = false;
+        line = this->Get_Next_Line_After_Header(headerParseError);
+        if (headerParseError) {
+            parseError = true;
+            return false;
+        }
+    }
     if (line.isEmpty()) { //nothing left to read
         parseError = false;
         return false;
@@ -107,6 +117,30 @@ QString Patch_Reader::Get_Next_Line_After_Comments() {
         else return line;
     }
     return QString(); //nothing left to read
+}
+
+QString Patch_Reader::Get_Next_Line_After_Header(bool &parseError) {
+    parseError = false;
+    bool foundChecksum = false, foundSize = false;
+    QString line = this->Get_Next_Line_After_Comments();
+    while (!line.isEmpty()) {
+        if (line.startsWith(Patch_Strings::STRING_OFFSET)) {
+            parseError = false;
+            return line;
+        }
+        if (line.startsWith(Patch_Strings::STRING_CHECKSUM)) {
+            if (foundChecksum) parseError = true;
+            foundChecksum = true;
+        }
+        if (line.startsWith(Patch_Strings::STRING_SIZE)) {
+            if (foundSize) parseError = true;
+            foundSize = true;
+        }
+        if (parseError) return line;
+        line = this->Get_Next_Line_After_Comments();
+    }
+    parseError = false;
+    return line;
 }
 
 bool Patch_Reader::Parse_Value(QByteArray &value) {
