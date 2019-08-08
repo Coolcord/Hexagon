@@ -2,7 +2,7 @@
 
 !define APP_NAME "Hexagon"
 !define COMP_NAME "Coolcord"
-!define VERSION "1.1.0.0"
+!define VERSION "1.1.1.0"
 !define COPYRIGHT ""
 !define DESCRIPTION "Simple Plain Text Hexadecimal Patcher"
 !define LICENSE_TXT "C:\Installer\LICENSE.txt"
