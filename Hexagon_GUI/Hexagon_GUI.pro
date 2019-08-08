@@ -31,7 +31,8 @@ SOURCES += \
     String_Manipulator.cpp \
     Error_Messages.cpp \
     File_Dialog_Manager.cpp \
-    Conflicts_Window.cpp
+    Conflicts_Window.cpp \
+    ../../C_Common_Code/Qt/Readable_Config_File/Readable_Config_File.cpp
 
 HEADERS += \
     Common_Strings.h \
@@ -43,7 +44,8 @@ HEADERS += \
     Error_Messages.h \
     File_Dialog_Manager.h \
     File_Types.h \
-    Conflicts_Window.h
+    Conflicts_Window.h \
+    ../../C_Common_Code/Qt/Readable_Config_File/Readable_Config_File.h
 
 FORMS += \
         Main_Window.ui \

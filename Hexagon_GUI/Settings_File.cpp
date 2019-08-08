@@ -3,55 +3,54 @@
 #include <QDir>
 #include <QFile>
 #include <QTextStream>
+#include "../../C_Common_Code/Qt/Readable_Config_File/Readable_Config_File.h"
 
 Settings_File::Settings_File(const QString &applicationLocation) {
     this->applicationLocation = applicationLocation;
+    this->readableConfigFile = new Readable_Config_File();
+}
+
+Settings_File::~Settings_File() {
+    delete this->readableConfigFile;
 }
 
 bool Settings_File::Save_Settings(const Settings &settings) {
-    if (!QDir().mkpath(this->applicationLocation + "/" + Common_Strings::STRING_CONFIG)) return false;
-    QFile file(this->applicationLocation + "/" + Common_Strings::STRING_CONFIG + "/" + Common_Strings::STRING_HEXAGON_SETTINGS_FILENAME);
-    if (file.exists() && !file.remove()) return false;
-    if (!file.open(QIODevice::ReadWrite)) return false;
-    QTextStream stream(&file);
-    stream << settings.defaultOriginalFileOpenLocation << Common_Strings::STRING_NEW_LINE;
-    stream << settings.defaultPatchOpenLocation << Common_Strings::STRING_NEW_LINE;
-    stream << settings.defaultFileOpenLocation << Common_Strings::STRING_NEW_LINE;
-    stream << settings.defaultPatchSaveLocation << Common_Strings::STRING_NEW_LINE;
-    stream << settings.defaultFileSaveLocation << Common_Strings::STRING_NEW_LINE;
-    stream << settings.originalFileLocation1 << Common_Strings::STRING_NEW_LINE;
-    stream << settings.originalFileLocation2 << Common_Strings::STRING_NEW_LINE;
-    stream << settings.originalFileLocation3 << Common_Strings::STRING_NEW_LINE;
-    stream << settings.originalFileSlot << Common_Strings::STRING_NEW_LINE;
-    stream << settings.compareSize << Common_Strings::STRING_NEW_LINE;
-    stream << settings.neverAskForSaveLocation << Common_Strings::STRING_NEW_LINE;
-    stream << settings.alwaysAskForSaveLocation << Common_Strings::STRING_NEW_LINE;
-    stream << settings.verboseConflictOutput << Common_Strings::STRING_NEW_LINE;
-    stream << settings.skipChecksumWhenCreatingPatch << Common_Strings::STRING_NEW_LINE;
-    stream.flush();
-    file.close();
-    return true;
+    if (!this->readableConfigFile->Open_Without_Loading(this->applicationLocation + "/" + Common_Strings::STRING_CONFIG + "/" + Common_Strings::STRING_HEXAGON_SETTINGS_FILENAME)) return false;
+    if (!this->readableConfigFile->Set_Value("Default_Original_File_Open_Location", settings.defaultOriginalFileOpenLocation)) return false;
+    if (!this->readableConfigFile->Set_Value("Default_Patch_Open_Location", settings.defaultPatchOpenLocation)) return false;
+    if (!this->readableConfigFile->Set_Value("Default_File_Open_Location", settings.defaultFileOpenLocation)) return false;
+    if (!this->readableConfigFile->Set_Value("Default_Patch_Save_Location", settings.defaultPatchSaveLocation)) return false;
+    if (!this->readableConfigFile->Set_Value("Default_File_Save_Location", settings.defaultFileSaveLocation)) return false;
+    if (!this->readableConfigFile->Set_Value("Original_File_Location_1", settings.originalFileLocation1)) return false;
+    if (!this->readableConfigFile->Set_Value("Original_File_Location_2", settings.originalFileLocation2)) return false;
+    if (!this->readableConfigFile->Set_Value("Original_File_Location_3", settings.originalFileLocation3)) return false;
+    if (!this->readableConfigFile->Set_Value("Original_File_Slot", settings.originalFileSlot)) return false;
+    if (!this->readableConfigFile->Set_Value("Compare_Size", settings.compareSize)) return false;
+    if (!this->readableConfigFile->Set_Value("Never_Ask_For_Save_Location", settings.neverAskForSaveLocation)) return false;
+    if (!this->readableConfigFile->Set_Value("Always_Ask_For_Save_Location", settings.alwaysAskForSaveLocation)) return false;
+    if (!this->readableConfigFile->Set_Value("Verbose_Conflict_Output", settings.verboseConflictOutput)) return false;
+    if (!this->readableConfigFile->Set_Value("Skip_Checksum_When_Creating_Patch", settings.skipChecksumWhenCreatingPatch)) return false;
+    return this->readableConfigFile->Save_And_Close();
 }
 
 bool Settings_File::Load_Settings(Settings &settings) {
-    QFile file(this->applicationLocation + "/" + Common_Strings::STRING_CONFIG + "/" + Common_Strings::STRING_HEXAGON_SETTINGS_FILENAME);
-    if (!file.exists()) return true; //first time running the plugin
-    if (!file.open(QIODevice::ReadWrite)) return false;
-    bool valid = true;
-    settings.defaultOriginalFileOpenLocation = file.readLine().trimmed();
-    settings.defaultPatchOpenLocation = file.readLine().trimmed();
-    settings.defaultFileOpenLocation = file.readLine().trimmed();
-    settings.defaultPatchSaveLocation = file.readLine().trimmed();
-    settings.defaultFileSaveLocation = file.readLine().trimmed();
-    settings.originalFileLocation1 = file.readLine().trimmed();
-    settings.originalFileLocation2 = file.readLine().trimmed();
-    settings.originalFileLocation3 = file.readLine().trimmed();
-    settings.originalFileSlot = file.readLine().trimmed().toInt(&valid); if (!valid) return false;
-    settings.compareSize = file.readLine().trimmed().toInt(&valid); if (!valid) return false;
-    settings.neverAskForSaveLocation = file.readLine().trimmed().toInt(&valid); if (!valid) return false;
-    settings.alwaysAskForSaveLocation = file.readLine().trimmed().toInt(&valid); if (!valid) return false;
-    settings.verboseConflictOutput = file.readLine().trimmed().toInt(&valid); if (!valid) return false;
-    settings.skipChecksumWhenCreatingPatch = file.readLine().trimmed().toInt(&valid); if (!valid) return false;
+    this->Load_Default_Settings(settings);
+    if (!this->readableConfigFile->Open(this->applicationLocation + "/" + Common_Strings::STRING_CONFIG + "/" + Common_Strings::STRING_HEXAGON_SETTINGS_FILENAME)) return false;
+    this->readableConfigFile->Get_Value("Default_Original_File_Open_Location", settings.defaultOriginalFileOpenLocation);
+    this->readableConfigFile->Get_Value("Default_Patch_Open_Location", settings.defaultPatchOpenLocation);
+    this->readableConfigFile->Get_Value("Default_File_Open_Location", settings.defaultFileOpenLocation);
+    this->readableConfigFile->Get_Value("Default_Patch_Save_Location", settings.defaultPatchSaveLocation);
+    this->readableConfigFile->Get_Value("Default_File_Save_Location", settings.defaultFileSaveLocation);
+    this->readableConfigFile->Get_Value("Original_File_Location_1", settings.originalFileLocation1);
+    this->readableConfigFile->Get_Value("Original_File_Location_2", settings.originalFileLocation2);
+    this->readableConfigFile->Get_Value("Original_File_Location_3", settings.originalFileLocation3);
+    this->readableConfigFile->Get_Value("Original_File_Slot", settings.originalFileSlot);
+    this->readableConfigFile->Get_Value("Compare_Size", settings.compareSize);
+    this->readableConfigFile->Get_Value("Never_Ask_For_Save_Location", settings.neverAskForSaveLocation);
+    this->readableConfigFile->Get_Value("Always_Ask_For_Save_Location", settings.alwaysAskForSaveLocation);
+    this->readableConfigFile->Get_Value("Verbose_Conflict_Output", settings.verboseConflictOutput);
+    this->readableConfigFile->Get_Value("Skip_Checksum_When_Creating_Patch", settings.skipChecksumWhenCreatingPatch);
+    if (!this->readableConfigFile->Discard_And_Close()) return false;
 
     //Make Sure Settings are Valid
     if (!QDir(settings.defaultOriginalFileOpenLocation).exists()) settings.defaultOriginalFileOpenLocation = this->applicationLocation;
