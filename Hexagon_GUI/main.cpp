@@ -7,12 +7,10 @@
 #include <QMessageBox>
 
 int main(int argc, char *argv[]) {
-    //Use Plastique Theme on Windows
-    #ifdef Q_OS_WIN32
-    QApplication::setStyle("plastique");
-    #endif
-
     QApplication a(argc, argv);
+    #ifdef Q_OS_WIN32
+    a.setStyle("fusion"); //use fusion theme on Windows
+    #endif
 
     //Load the Hexagon Plugin
     QString unableToLoadPluginMessage = Common_Strings::STRING_HEXAGON+" is unable to load the backend plugin! Make sure the plugin is in the plugins folder!";
