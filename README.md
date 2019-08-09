@@ -4,7 +4,7 @@ Simple Plain Text Hexadecimal Patcher
 [![GitHub release](https://img.shields.io/github/release/Coolcord/Hexagon.svg)](https://GitHub.com/Coolcord/Hexagon/releases)
 [![Github all releases](https://img.shields.io/github/downloads/Coolcord/Hexagon/total.svg)](https://GitHub.com/Coolcord/Hexagon/releases)
 
-# [Download for Windows](https://github.com/Coolcord/Hexagon/releases/download/v1.1.1/Hexagon.v1.1.1.Setup.exe)
+# [Download for Windows](https://github.com/Coolcord/Hexagon/releases/download/v1.1.1-1/Hexagon.v1.1.1-1.Setup.exe)
 
 ## About Hexagon
 Hexagon is a file patcher tool. It creates Hexagon patches (.hexp) which act as a binary diff between two files. Unlike most other patch formats, Hexagon patches are plain text, making them very easy to work with.
