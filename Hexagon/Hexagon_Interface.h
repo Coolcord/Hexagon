@@ -17,6 +17,14 @@ public:
     virtual Hexagon_Error_Codes::Error_Code Create_Hexagon_Patch(const QString &originalFileLocation, const QString &modifiedFileLocation,
                                                                  const QString &outputFileLocation, int compareSize, bool useChecksum, bool allowSizeDifference)=0;
 
+    //Manually create patch
+    virtual Hexagon_Error_Codes::Error_Code Start_Creating_Patch(const QString &outputPatchLocation)=0;
+    virtual Hexagon_Error_Codes::Error_Code Start_Creating_Patch(const QString &outputPatchLocation, const QString &checksum)=0;
+    virtual Hexagon_Error_Codes::Error_Code Start_Creating_Patch(const QString &outputPatchLocation, qint64 size)=0;
+    virtual Hexagon_Error_Codes::Error_Code Start_Creating_Patch(const QString &outputPatchLocation, const QString &checksum, qint64 size)=0;
+    virtual Hexagon_Error_Codes::Error_Code Write_Next_Patch(qint64 offset, const QByteArray &bytes)=0;
+    virtual Hexagon_Error_Codes::Error_Code Finish_Creating_Patch()=0;
+
     //Dev Tools
     virtual Hexagon_Error_Codes::Error_Code Convert_Hexagon_Patch_To_Qt_Code(const QString &patchFileLocation, const QString &outputFileLocation,
                                                                              int &lineNum)=0;
