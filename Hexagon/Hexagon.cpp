@@ -190,7 +190,7 @@ Hexagon_Error_Codes::Error_Code Hexagon::Write_Next_Patch(qint64 offset, const Q
 }
 
 Hexagon_Error_Codes::Error_Code Hexagon::Finish_Creating_Patch() {
-    this->manualPatchBuffer->Flush();
+    if (this->manualPatchBuffer) this->manualPatchBuffer->Flush();
     delete this->manualPatchBuffer;
     if (this->manualPatchFile) this->manualPatchFile->close();
     delete this->manualPatchFile;
