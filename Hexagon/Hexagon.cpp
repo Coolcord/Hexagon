@@ -179,8 +179,9 @@ Hexagon_Error_Codes::Error_Code Hexagon::Start_Creating_Patch(const QString &out
 
 Hexagon_Error_Codes::Error_Code Hexagon::Write_Next_Patch(qint64 offset, const QByteArray &bytes) {
     if (!this->manualPatchFile || !this->manualPatchWriter || !this->manualPatchFileValueManipulator) return Hexagon_Error_Codes::WRITE_ERROR;
-    if (this->manualPatchWriter->Write_Next_Patch(offset, bytes)) return Hexagon_Error_Codes::OK;
-    else return Hexagon_Error_Codes::WRITE_ERROR;
+    if (!this->manualPatchWriter->Write_Next_Patch(offset, bytes)) return Hexagon_Error_Codes::WRITE_ERROR;
+    if (!this->manualPatchWriter->Write_Break_Line()) return Hexagon_Error_Codes::WRITE_ERROR;
+    return Hexagon_Error_Codes::OK;
 }
 
 Hexagon_Error_Codes::Error_Code Hexagon::Finish_Creating_Patch() {
@@ -188,6 +189,9 @@ Hexagon_Error_Codes::Error_Code Hexagon::Finish_Creating_Patch() {
     if (this->manualPatchFile) this->manualPatchFile->close();
     delete this->manualPatchFileValueManipulator;
     delete this->manualPatchFile;
+    this->manualPatchWriter = nullptr;
+    this->manualPatchFileValueManipulator = nullptr;
+    this->manualPatchFile = nullptr;
     return Hexagon_Error_Codes::OK;
 }
 
