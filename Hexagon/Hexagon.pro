@@ -25,6 +25,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         Hexagon.cpp \
+    Patch_Buffer.cpp \
     Patch_Reader.cpp \
     Patch_Writer.cpp \
     Qt_Code_Reader.cpp \
@@ -37,6 +38,7 @@ SOURCES += \
 HEADERS += \
         Hexagon.h \
     Hexagon_Interface.h \
+    Patch_Buffer.h \
     Patch_Strings.h \
     Patch_Reader.h \
     Patch_Writer.h \

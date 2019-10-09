@@ -2,6 +2,7 @@
 #include "File_Comparer.h"
 #include "File_Writer.h"
 #include "Patch_Comparer.h"
+#include "Patch_Buffer.h"
 #include "Patch_Reader.h"
 #include "Patch_Strings.h"
 #include "Patch_Writer.h"
@@ -12,9 +13,8 @@
 #include <QFileInfo>
 
 Hexagon::Hexagon() {
-    this->manualPatchWriter = nullptr;
+    this->manualPatchBuffer = nullptr;
     this->manualPatchFile = nullptr;
-    this->manualPatchFileValueManipulator = nullptr;
 }
 
 Hexagon::~Hexagon() {
@@ -170,27 +170,23 @@ Hexagon_Error_Codes::Error_Code Hexagon::Start_Creating_Patch(const QString &out
     this->manualPatchFile = new QFile(outputPatchLocation);
     if (this->manualPatchFile->exists() && !this->manualPatchFile->remove()) { this->Finish_Creating_Patch(); return Hexagon_Error_Codes::WRITE_ERROR; }
     if (!this->manualPatchFile->open(QIODevice::ReadWrite)) { this->Finish_Creating_Patch(); return Hexagon_Error_Codes::WRITE_ERROR; }
-    this->manualPatchFileValueManipulator = new Value_Manipulator();
-    this->manualPatchWriter = new Patch_Writer(this->manualPatchFile, this->manualPatchFileValueManipulator);
-    if (!checksum.isEmpty() && !this->manualPatchWriter->Write_Checksum(checksum)) { this->Finish_Creating_Patch(); return Hexagon_Error_Codes::WRITE_ERROR; }
-    if (size != 0 && !this->manualPatchWriter->Write_Size(size))  { this->Finish_Creating_Patch(); return Hexagon_Error_Codes::WRITE_ERROR; }
+    this->manualPatchBuffer = new Patch_Buffer(this->manualPatchFile);
+    if (!checksum.isEmpty() && !this->manualPatchBuffer->Write_Checksum(checksum)) { this->Finish_Creating_Patch(); return Hexagon_Error_Codes::WRITE_ERROR; }
+    if (size != 0 && !this->manualPatchBuffer->Write_Size(size))  { this->Finish_Creating_Patch(); return Hexagon_Error_Codes::WRITE_ERROR; }
     return Hexagon_Error_Codes::OK;
 }
 
 Hexagon_Error_Codes::Error_Code Hexagon::Write_Next_Patch(qint64 offset, const QByteArray &bytes) {
-    if (!this->manualPatchFile || !this->manualPatchWriter || !this->manualPatchFileValueManipulator) return Hexagon_Error_Codes::WRITE_ERROR;
-    if (!this->manualPatchWriter->Write_Next_Patch(offset, bytes)) return Hexagon_Error_Codes::WRITE_ERROR;
-    if (!this->manualPatchWriter->Write_Break_Line()) return Hexagon_Error_Codes::WRITE_ERROR;
+    if (!this->manualPatchFile || !this->manualPatchBuffer) return Hexagon_Error_Codes::WRITE_ERROR;
+    this->manualPatchBuffer->Add_Next_Patch(offset, bytes);
     return Hexagon_Error_Codes::OK;
 }
 
 Hexagon_Error_Codes::Error_Code Hexagon::Finish_Creating_Patch() {
-    delete this->manualPatchWriter;
+    delete this->manualPatchBuffer;
     if (this->manualPatchFile) this->manualPatchFile->close();
-    delete this->manualPatchFileValueManipulator;
     delete this->manualPatchFile;
-    this->manualPatchWriter = nullptr;
-    this->manualPatchFileValueManipulator = nullptr;
+    this->manualPatchBuffer = nullptr;
     this->manualPatchFile = nullptr;
     return Hexagon_Error_Codes::OK;
 }

@@ -6,8 +6,7 @@
 #include <QTextStream>
 #include <QString>
 
-class Patch_Writer;
-class Value_Manipulator;
+class Patch_Buffer;
 
 class Hexagon : public Hexagon_Interface {
     Q_OBJECT
@@ -49,8 +48,7 @@ private:
                                                         QString &output, int &lineNum, int &otherLineNum, int &otherFileNum, bool verbose, bool conflicts);
 
     QFile *manualPatchFile;
-    Patch_Writer *manualPatchWriter;
-    Value_Manipulator *manualPatchFileValueManipulator;
+    Patch_Buffer *manualPatchBuffer;
 };
 
 #endif // HEXAGON_H
