@@ -22,6 +22,7 @@ public:
     virtual Hexagon_Error_Codes::Error_Code Start_Creating_Patch(const QString &outputPatchLocation, const QString &checksum)=0;
     virtual Hexagon_Error_Codes::Error_Code Start_Creating_Patch(const QString &outputPatchLocation, qint64 size)=0;
     virtual Hexagon_Error_Codes::Error_Code Start_Creating_Patch(const QString &outputPatchLocation, const QString &checksum, qint64 size)=0;
+    virtual Hexagon_Error_Codes::Error_Code Cancel_Creating_Patch()=0;
     virtual Hexagon_Error_Codes::Error_Code Write_Next_Patch(qint64 offset, const QByteArray &bytes)=0;
     virtual Hexagon_Error_Codes::Error_Code Finish_Creating_Patch()=0;
 

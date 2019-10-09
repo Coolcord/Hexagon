@@ -19,6 +19,10 @@ void Patch_Buffer::Add_Next_Patch(const qint64 offset, const QByteArray &value) 
     for (int i = 0; i < value.size(); ++i) this->patchMap->insert(offset+i, value.at(i));
 }
 
+void Patch_Buffer::Clear_Buffer() {
+    this->patchMap->clear();
+}
+
 bool Patch_Buffer::Flush() {
     if (this->patchMap->isEmpty()) return true; //nothing to do
     qint64 offset = 0;

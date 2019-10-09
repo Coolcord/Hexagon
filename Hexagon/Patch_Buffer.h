@@ -13,6 +13,7 @@ public:
     Patch_Buffer(QFile *file);
     ~Patch_Buffer();
     void Add_Next_Patch(const qint64 offset, const QByteArray &value);
+    void Clear_Buffer();
     bool Flush();
     bool Write_Checksum(const QString &checksum);
     bool Write_Size(qint64 sizeDifference);
