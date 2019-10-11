@@ -44,7 +44,9 @@ bool Patch_Buffer::Flush() {
         }
     }
     //Flush the remaining data
-    return this->Flush_Current_Buffer(firstOffsetOfPatch, bytes);
+    if (!this->Flush_Current_Buffer(firstOffsetOfPatch, bytes)) return false;
+    this->Clear_Buffer();
+    return true;
 }
 
 bool Patch_Buffer::Write_Checksum(const QString &checksum) {
