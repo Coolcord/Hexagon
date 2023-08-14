@@ -13,11 +13,11 @@ Error_Messages::Error_Messages(QWidget *parent) {
 }
 
 void Error_Messages::Show_Information(const QString &message) {
-    QMessageBox::information(this->parent, Common_Strings::STRING_HEXAGON, message, Common_Strings::STRING_OK);
+    QMessageBox::information(this->parent, Common_Strings::STRING_HEXAGON, message, QMessageBox::Ok);
 }
 
 void Error_Messages::Show_Error(const QString &message) {
-    QMessageBox::critical(this->parent, Common_Strings::STRING_HEXAGON, message, Common_Strings::STRING_OK);
+    QMessageBox::critical(this->parent, Common_Strings::STRING_HEXAGON, message, QMessageBox::Ok);
 }
 
 void Error_Messages::Show_Parse_Error(int lineNum) {

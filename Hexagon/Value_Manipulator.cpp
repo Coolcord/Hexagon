@@ -56,7 +56,7 @@ bool Value_Manipulator::Is_Line_Hex_String(const QString &line) {
     int size = MAX_DIGITS;
     if (line.size() < MAX_DIGITS) size = line.size();
     while (size > 0) {
-        QStringRef subString(&line, start, size);
+        QString subString = line.mid(start, size);
         subString.toULongLong(&valid, 0x10);
         if (!valid) return false;
         start += size;

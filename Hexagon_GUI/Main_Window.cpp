@@ -96,7 +96,7 @@ void Main_Window::on_btnApplyPatch_clicked() {
     case Hexagon_Error_Codes::READ_ERROR: this->errorMessages->Show_Read_Error(originalFileInfo.fileName()); return;
     case Hexagon_Error_Codes::WRITE_ERROR: this->errorMessages->Show_Write_Error(outputFileInfo.fileName()); return;
     case Hexagon_Error_Codes::PARSE_ERROR: this->errorMessages->Show_Parse_Error(lineNum); return;
-    case Hexagon_Error_Codes::OFFSET_OUT_OF_RANGE: this->errorMessages->Show_Error(Common_Strings::STRING_OUT_OF_RANGE+QString(lineNum)+"!");
+    case Hexagon_Error_Codes::OFFSET_OUT_OF_RANGE: this->errorMessages->Show_Error(Common_Strings::STRING_OUT_OF_RANGE+QString::number(lineNum)+"!");
     }
 }
 

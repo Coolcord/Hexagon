@@ -305,7 +305,7 @@ Hexagon_Error_Codes::Error_Code Hexagon::Check_For_Conflicts_Between_Hexagon_Pat
 bool Hexagon::Is_Line_End_Of_Header(const QString &line) {
     if (line.isEmpty()) return false;
     if (line.startsWith(Patch_Strings::STRING_COMMENT)) return false;
-    if (line.size() > 2 && line.at(1) == ":") return true;
+    if (line.size() > 2 && line.at(1) == QChar(':')) return true;
     return false;
 }
 
