@@ -128,6 +128,7 @@ fi
 cp source/Hexagon/Hexagon_GUI/build/Hexagon_GUI"$exeExt" ./Hexagon/Hexagon"$exeExt"
 chmod +x ./Hexagon/Hexagon"$exeExt"
 cp source/Hexagon/Hexagon/build/libHexagon"$dllExt" ./Hexagon/Plugins/Hexagon"$dllExt"
+cp -f "$localSourceCodeLocation/Hexagon/Hexagon_GUI/Build_Scripts/Windows/Installer/UPDATES AND SOURCE CODE.TXT" ./Hexagon
 
 # Install Qt DLLs
 if [ ${dllExt} == ".dll" ]; then
