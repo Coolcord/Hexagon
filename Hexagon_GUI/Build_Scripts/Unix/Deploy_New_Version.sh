@@ -97,7 +97,7 @@ cd Hexagon/
 # Build Hexagon
 echo ""; echo [2/5] Compiling Hexagon...
 cd Hexagon/
-mkdir -p build
+rm -rf build >/dev/null 2>&1; mkdir -p build
 cd build
 cmake .. -G Ninja
 ninja -j "$CPUcores" || exit 1
@@ -105,7 +105,7 @@ cd ../../
 
 echo ""; echo [3/5] Compiling Hexagon GUI...
 cd Hexagon_GUI/
-mkdir -p build
+rm -rf build >/dev/null 2>&1; mkdir -p build
 cd build
 cmake .. -G Ninja
 ninja -j "$CPUcores" || exit 1
