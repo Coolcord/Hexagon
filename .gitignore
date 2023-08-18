@@ -2,6 +2,7 @@ build-*/
 build/
 Plugin_Debugger/
 Generator_Plugin_Tester/
+Deployed_Files/
 *.pro.user
 *.pro.user.*
 *.txt.user

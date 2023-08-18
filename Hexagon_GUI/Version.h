@@ -4,7 +4,7 @@
 #include <QString>
 
 namespace Version {
-    const static QString VERSION_NUMBER = "1.1.1-1";
+    const static QString VERSION_NUMBER = "1.1.2";
     const static QString VERSION = "v"+VERSION_NUMBER;
 }
 
