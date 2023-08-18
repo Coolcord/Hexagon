@@ -22,6 +22,7 @@ set(SOURCES
     File_Dialog_Manager.cpp
     Conflicts_Window.cpp
     ../../C_Common_Code/Qt/Readable_Config_File/Readable_Config_File.cpp
+    ../../C_Common_Code/Qt/Qt_App_Theme_Fixes/Fusion_Fixes.cpp
 )
 
 set(HEADERS
@@ -36,6 +37,7 @@ set(HEADERS
     File_Types.h
     Conflicts_Window.h
     ../../C_Common_Code/Qt/Readable_Config_File/Readable_Config_File.h
+    ../../C_Common_Code/Qt/Qt_App_Theme_Fixes/Fusion_Fixes.h
 )
 
 set(FORMS
