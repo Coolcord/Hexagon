@@ -165,7 +165,7 @@ mkdir ./Hexagon/Config
 # Zip up Hexagon archive for users who don't want an installer
 echo ""; echo "Creating 7zip archive..."
 mv ./Hexagon/ "./Hexagon $version"
-7z a "./Hexagon $version.7z" "./Hexagon $version"
+7z a "./Hexagon.$version.7z" "./Hexagon $version"
 mv "./Hexagon $version" ./Hexagon/
 
 # Windows Setup.exe section
